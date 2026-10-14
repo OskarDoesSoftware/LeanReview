@@ -1,0 +1,60 @@
+{
+  "name": "leanreview",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "workspaces": [
+    "frontend",
+    "backend",
+    "packages/contracts"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build --config frontend/vite.config.ts && tsup backend/src/index.ts --format esm --out-dir backend/dist --platform node --external better-sqlite3 --external @napi-rs/keyring",
+    "start": "node backend/dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:browser": "playwright test"
+  },
+  "dependencies": {
+    "@napi-rs/keyring": "2.1.1",
+    "@radix-ui/react-slot": "1.5.0",
+    "better-sqlite3": "13.0.3",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "diff": "9.0.0",
+    "express": "5.3.0",
+    "lucide-react": "1.57.0",
+    "monaco-editor": "0.57.0",
+    "open": "11.0.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.7"
+  },
+  "overrides": {
+    "dompurify": "3.4.17",
+    "esbuild": "0.28.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/better-sqlite3": "9.6.0",
+    "@types/express": "5.0.6",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "node": "24.21.0",
+    "prettier": "3.9.10",
+    "tailwindcss": "4.3.3",
+    "tsup": "8.5.1",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  }
+}

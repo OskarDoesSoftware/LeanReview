@@ -1,0 +1,5 @@
+{
+  "name": "@leanreview/frontend",
+  "private": true,
+  "type": "module"
+}

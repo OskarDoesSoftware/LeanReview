@@ -1,2 +1,9 @@
 .worktrees/
 docs/planning/
+node_modules/
+frontend/dist/
+backend/dist/
+.leanreview-test/
+test-results/
+playwright-report/
+coverage/
