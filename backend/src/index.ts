@@ -40,8 +40,8 @@ const server = app.listen(4318, "127.0.0.1", () => {
       console.log(`Open ${origin}/#bootstrap=${nonce}`),
     );
 });
-const shutdown = () => {
-  abort();
+const shutdown = async () => {
+  await abort();
   server.close(() => {
     store.close();
     process.exit(0);

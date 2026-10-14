@@ -6,7 +6,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  const { root } = JSON.parse(
+  const { root, node, vitest } = JSON.parse(
     await readFile(".leanreview-test/browser-fixture.json", "utf8"),
   );
   await page.goto("/#bootstrap=browser-fixture-nonce");
@@ -97,6 +97,67 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(page.locator(".monaco-diff-editor")).toBeVisible();
   await page.screenshot({
     path: ".leanreview-test/review-workspace.png",
+    fullPage: true,
+  });
+  await page.getByRole("button", { name: "CRAP", exact: true }).click();
+  await expect(page.locator(".crap-value")).toHaveText("Unavailable");
+  await page
+    .getByRole("button", { name: "Configure tests", exact: true })
+    .click();
+  await page
+    .getByRole("textbox", { name: "Test command steps" })
+    .fill(
+      JSON.stringify([
+        {
+          executable: node,
+          args: [
+            vitest,
+            "run",
+            "--root",
+            root,
+            "--config",
+            path.join(root, "vitest.config.mjs"),
+          ],
+          shell: false,
+        },
+      ]),
+    );
+  await page
+    .getByRole("button", { name: "Save test configuration", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Run tests & coverage", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "Run tests and measure coverage?" }),
+  ).toContainText(root);
+  await page
+    .getByRole("button", { name: "Confirm & run tests", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Test run · succeeded" }),
+  ).toBeVisible({ timeout: 30000 });
+  await expect(page.locator(".crap-value")).toHaveText("2.00");
+  await page
+    .getByRole("button", { name: "Import report", exact: true })
+    .click();
+  await page
+    .getByLabel("Coverage report file", { exact: true })
+    .setInputFiles(path.join(root, "coverage/coverage-final.json"));
+  await page
+    .getByLabel("Coverage provenance file", { exact: true })
+    .setInputFiles(
+      path.join(root, "coverage/coverage-final.json.leanreview.json"),
+    );
+  await page
+    .getByRole("button", { name: "Import measured data", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "Import coverage report" }),
+  ).not.toBeVisible();
+  await expect(page.locator(".crap-value")).toHaveText("2.00");
+  await page.screenshot({
+    path: ".leanreview-test/crap-meter.png",
     fullPage: true,
   });
   await writeFile(

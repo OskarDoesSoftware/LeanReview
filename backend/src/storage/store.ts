@@ -3,6 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { hash } from "../git/local";
+import type {
+  CoverageMetrics,
+  CoverageProvenance,
+  TestRun,
+} from "../../../packages/contracts/src/coverage";
 import {
   emptyState,
   type Content,
@@ -24,7 +29,7 @@ export class Store {
     this.db.pragma("journal_mode = WAL");
     this.db.pragma("busy_timeout = 5000");
     const version = this.db.pragma("user_version", { simple: true }) as number;
-    if (version > 1)
+    if (version > 2)
       throw new Error(
         "Database is newer than this application; use the newer version.",
       );
@@ -36,6 +41,30 @@ export class Store {
         CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
         PRAGMA user_version = 1;`);
       })();
+    if (version < 2) {
+      if (version === 1)
+        this.db
+          .prepare("VACUUM INTO ?")
+          .run(path.join(directory, `leanreview.pre-v2.${Date.now()}.sqlite`));
+      this.db.transaction(() => {
+        this.db
+          .exec(`CREATE TABLE coverage_reports (snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, format TEXT NOT NULL, data TEXT NOT NULL, raw_hash TEXT NOT NULL, provenance TEXT, PRIMARY KEY(snapshot_id,format));
+          CREATE TABLE test_runs (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, data TEXT NOT NULL);
+          PRAGMA user_version = 2;`);
+      })();
+    }
+    for (const row of this.db
+      .prepare("SELECT id,data FROM test_runs")
+      .all() as { id: string; data: string }[]) {
+      const run = JSON.parse(row.data) as TestRun;
+      if (run.status === "running") {
+        run.status = "interrupted";
+        run.finishedAt = new Date().toISOString();
+        run.error =
+          "Test run interrupted by application restart; not resumed automatically.";
+        this.saveTestRun(run);
+      }
+    }
     for (const row of this.db
       .prepare("SELECT * FROM snapshots")
       .all() as Row[]) {
@@ -56,6 +85,75 @@ export class Store {
       fs.renameSync(temp, file);
     }
     return digest;
+  }
+  saveCoverage(
+    metrics: CoverageMetrics,
+    raw: string,
+    provenance?: CoverageProvenance,
+  ) {
+    const rawHash = this.cacheText(raw);
+    this.db
+      .prepare(
+        "INSERT INTO coverage_reports VALUES (?,?,?,?,?) ON CONFLICT(snapshot_id,format) DO UPDATE SET data=excluded.data,raw_hash=excluded.raw_hash,provenance=excluded.provenance",
+      )
+      .run(
+        metrics.snapshotId,
+        metrics.format,
+        JSON.stringify(metrics),
+        rawHash,
+        provenance ? JSON.stringify(provenance) : null,
+      );
+  }
+  coverage(snapshotId: string, format: string) {
+    const row = this.db
+      .prepare(
+        "SELECT data FROM coverage_reports WHERE snapshot_id=? AND format=?",
+      )
+      .get(snapshotId, format) as { data: string } | undefined;
+    return row ? (JSON.parse(row.data) as CoverageMetrics) : null;
+  }
+  coverageArtifact(snapshotId: string, format: string) {
+    const row = this.db
+      .prepare(
+        "SELECT raw_hash,provenance FROM coverage_reports WHERE snapshot_id=? AND format=?",
+      )
+      .get(snapshotId, format) as
+      { raw_hash: string; provenance: string | null } | undefined;
+    if (!row) throw new Error("Coverage report not found.");
+    const report = fs.readFileSync(path.join(this.cache, row.raw_hash), "utf8");
+    if (hash(report) !== row.raw_hash)
+      throw new Error("Coverage report cache is corrupt.");
+    return {
+      report,
+      provenance: row.provenance
+        ? (JSON.parse(row.provenance) as CoverageProvenance)
+        : null,
+    };
+  }
+  saveTestRun(run: TestRun) {
+    this.db
+      .prepare(
+        "INSERT INTO test_runs VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data",
+      )
+      .run(run.id, run.snapshotId, JSON.stringify(run));
+  }
+  testRun(id: string) {
+    const row = this.db
+      .prepare("SELECT data FROM test_runs WHERE id=?")
+      .get(id) as { data: string } | undefined;
+    return row ? (JSON.parse(row.data) as TestRun) : null;
+  }
+  latestTestRun(snapshotId: string, format: string) {
+    const rows = this.db
+      .prepare(
+        "SELECT data FROM test_runs WHERE snapshot_id=? ORDER BY rowid DESC",
+      )
+      .all(snapshotId) as { data: string }[];
+    return (
+      rows
+        .map((row) => JSON.parse(row.data) as TestRun)
+        .find((run) => run.config.format === format) ?? null
+    );
   }
   private encode(snapshot: Snapshot) {
     return JSON.stringify({

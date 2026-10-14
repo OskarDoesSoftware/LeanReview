@@ -15,6 +15,10 @@ git("init", "-b", "main");
 git("config", "user.name", "Fixture");
 git("config", "user.email", "fixture@example.invalid");
 await writeFile(
+  path.join(root, ".gitignore"),
+  "coverage/\nnode_modules/\n*.test.ts\nvitest.config.mjs\n",
+);
+await writeFile(
   path.join(root, "src/auth/validatePassword.ts"),
   "export function validatePassword(value: string) {\n  return value.length >= 8;\n}\n",
 );
@@ -29,8 +33,20 @@ await writeFile(
   "export interface LoginRequest {\n  email: string;\n  password: string;\n}\n",
 );
 await writeFile(
+  path.join(root, "password.test.ts"),
+  'import {it,expect} from "vitest";import {validatePassword} from "./src/auth/validatePassword";it("password branches",()=>{expect(validatePassword("Abcdefghijk12")).toBe(true);expect(validatePassword("short")).toBe(false);});',
+);
+await writeFile(
+  path.join(root, "vitest.config.mjs"),
+  'export default {test:{include:["password.test.ts"],coverage:{provider:"v8",enabled:true,reporter:["json"],include:["src/auth/*.ts"]}}};',
+);
+await writeFile(
   ".leanreview-test/browser-fixture.json",
-  JSON.stringify({ root }),
+  JSON.stringify({
+    root,
+    node: process.execPath,
+    vitest: path.resolve("node_modules/vitest/vitest.mjs"),
+  }),
 );
 const store = new Store(path.join(dir, "data"));
 store.setSetting("provider", {
@@ -62,14 +78,15 @@ const fixtureProvider = createServer(async (req, res) => {
   res.setHeader("content-type", "application/json");
   res.end(JSON.stringify({ message: { content: JSON.stringify(result) } }));
 }).listen(11435, "127.0.0.1");
-const { app } = createApp(
+const { app, abort } = createApp(
   store,
   "http://127.0.0.1:4318",
   "browser-fixture-nonce",
 );
 app.use(express.static(path.resolve("frontend/dist")));
 const server = app.listen(4318, "127.0.0.1");
-const close = () => {
+const close = async () => {
+  await abort();
   server.closeAllConnections();
   fixtureProvider.closeAllConnections();
   server.close();

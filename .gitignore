@@ -6,4 +6,4 @@ backend/dist/
 .leanreview-test/
 test-results/
 playwright-report/
-coverage/
+/coverage/

@@ -30,6 +30,8 @@ import type {
 } from "../../packages/contracts/src/index";
 import "./style.css";
 import { nextUnreviewed } from "./lib/navigation";
+import { api } from "./lib/api";
+import { CoveragePanel } from "./components/coverage-panel";
 type EditorConfig = { name: string; executable: string; args: string[] };
 (globalThis as any).MonacoEnvironment = {
   getWorker: (_id: string, label: string) =>
@@ -37,21 +39,6 @@ type EditorConfig = { name: string; executable: string; args: string[] };
       ? new TypeScriptWorker()
       : new EditorWorker(),
 };
-async function api<T>(
-  url: string,
-  body?: unknown,
-  method = body === undefined ? "GET" : "POST",
-): Promise<T> {
-  const response = await fetch(`/api${url}`, {
-    method,
-    credentials: "same-origin",
-    headers: body === undefined ? {} : { "content-type": "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error ?? "Request failed.");
-  return data;
-}
 const initialConfig: ProviderConfig = {
   provider: "ollama",
   endpoint: "http://127.0.0.1:11434",
@@ -837,7 +824,7 @@ function App({ startupError }: { startupError?: string }) {
             </section>
             <aside className="detail-pane">
               <div className="detail-tabs">
-                {["Explanation", "Comments"].map((t) => (
+                {["Explanation", "CRAP", "Comments"].map((t) => (
                   <button
                     key={t}
                     className={tab === t ? "active" : ""}
@@ -850,7 +837,14 @@ function App({ startupError }: { startupError?: string }) {
                   </button>
                 ))}
               </div>
-              {tab === "Explanation" ? (
+              {tab === "CRAP" ? (
+                <CoveragePanel
+                  key={`${review.snapshot.id}:${file?.id}`}
+                  review={review}
+                  fileId={file?.id}
+                  active={active}
+                />
+              ) : tab === "Explanation" ? (
                 <div className="details-content">
                   <span className="eyebrow">READING ORDER</span>
                   <h2>{selectedLayer?.name ?? "Review this file"}</h2>
@@ -948,10 +942,11 @@ function App({ startupError }: { startupError?: string }) {
                     </label>
                   )}
                   <div className="phase-note">
-                    <h3>Measured metrics & graphs</h3>
+                    <h3>Measured metrics</h3>
                     <p>
-                      CRAP collection and module extraction are not connected in
-                      this initial slice. No estimated quality scores are shown.
+                      Use the CRAP tab to import coverage or explicitly run your
+                      tests. Module graphs are still a separate implementation
+                      step.
                     </p>
                   </div>
                 </div>

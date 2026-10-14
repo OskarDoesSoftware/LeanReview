@@ -52,13 +52,17 @@ npm run test:browser
 
 Integration tests create isolated fixture repositories/databases under ignored `.leanreview-test/`. Browser verification runs the built UI with a **fixture LLM response server**, not real inference. It exercises actual Git capture, AI input authorization/result validation, Monaco, draft comments, progress, reload, explicit proposal acceptance, refresh, and read-only history. It does not establish model grouping quality or cloud API account access.
 
+## CRAP meter
+
+The CRAP tab supports TS/JS Istanbul JSON and Java JaCoCo XML, coverage report import/export, and explicitly approved local test execution. Results and progress persist locally. See [coverage setup and alignment](docs/coverage.md) for commands, provenance, and verification.
+
 ## Current scope
 
 This is the **core Phase 1 vertical slice**, not the completed Phase 1 contract or MVP. It supports local comparisons and local drafts, three foreground LLM HTTP adapters, bounded sequential batches, explicit proposal acceptance, immediate SQLite progress, immutable source caching, refresh/history, and protected loopback access.
 
-Remaining Phase 1 work includes measured CRAP with aligned report imports/explicit test collection, TS/JS and Java module graphs, richer related-file context/dependency evidence and cross-batch semantic reconciliation, transient retry policy, draft editing/reattachment UX, full backup/restore and cache deletion, and broad quality/platform acceptance. Snapshot capture currently rejects unsupported/conflicted/submodule changes rather than silently showing a complete result. Content over 2 MiB or non-UTF-8/binary/symlink files is metadata-only. Byte-based token estimates are deliberately conservative, not exact token counts.
+Remaining Phase 1 work includes TS/JS and Java module graphs, richer related-file context/dependency evidence and cross-batch semantic reconciliation, transient retry policy, draft editing/reattachment UX, full backup/restore and cache deletion, and broad quality/platform acceptance. Snapshot capture currently rejects unsupported/conflicted/submodule changes rather than silently showing a complete result. Content over 2 MiB or non-UTF-8/binary/symlink files is metadata-only. Byte-based token estimates are deliberately conservative, not exact token counts.
 
-GitHub and Azure DevOps repository/PR adapters and tested publication are later phases. No remote publishing, PR verdicts, test execution, coverage collection, or graph extraction is wired into this slice. Live Ollama/cloud model quality and macOS/Linux acceptance still need verification. The MVP requires all three sources and the remaining features in the [approved contract](https://github.com/OskarDoesSoftware/LeanReview/issues/10).
+GitHub and Azure DevOps repository/PR adapters and tested publication are later phases. No remote publishing, PR verdicts, or graph extraction is wired into this slice. Live Ollama/cloud model quality and macOS/Linux acceptance still need verification. The MVP requires all three sources and the remaining features in the [approved contract](https://github.com/OskarDoesSoftware/LeanReview/issues/10).
 
 ## Structure
 

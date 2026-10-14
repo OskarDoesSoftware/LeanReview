@@ -1,4 +1,64 @@
 @import "tailwindcss";
+.crap-value {
+  font-size: 32px;
+  letter-spacing: -1px;
+  margin: 16px 0 3px;
+  font-variant-numeric: tabular-nums;
+}
+.coverage-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  font-size: 11px;
+  margin: 12px 0;
+}
+.function-metric {
+  padding: 13px 0;
+  border-top: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+.function-metric > strong,
+.function-metric > span {
+  display: block;
+}
+.metric-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 11px;
+  margin: 8px 0;
+}
+.metric-values b {
+  font-variant-numeric: tabular-nums;
+}
+.coverage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 18px 0;
+}
+.coverage-panel input,
+.coverage-panel select {
+  width: 100%;
+  margin: 5px 0;
+}
+.coverage-panel pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 240px;
+  overflow: auto;
+  background: var(--canvas);
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+.test-run {
+  border-top: 1px solid var(--border);
+  padding: 15px 0;
+}
+.coverage-panel .modal input {
+  width: 100%;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

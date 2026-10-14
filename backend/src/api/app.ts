@@ -17,6 +17,7 @@ import {
   openEditor,
   type EditorConfig,
 } from "./editor";
+import { mountCoverage } from "./coverage";
 export function createApp(
   store: Store,
   origin: string,
@@ -334,6 +335,7 @@ export function createApp(
     jobs.get(review.snapshot.id)?.abort();
     res.json({ ok: true });
   });
+  const coverageRunner = mountCoverage(app, store, current);
   app.use("/api", (_req, res) =>
     res.status(404).json({ error: "API endpoint not found." }),
   );
@@ -349,5 +351,12 @@ export function createApp(
       });
     },
   );
-  return { app, nonce, abort: () => jobs.forEach((job) => job.abort()) };
+  return {
+    app,
+    nonce,
+    abort: async () => {
+      jobs.forEach((job) => job.abort());
+      await coverageRunner.shutdown();
+    },
+  };
 }

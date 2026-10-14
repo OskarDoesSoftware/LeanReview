@@ -17,6 +17,7 @@
     "start": "node backend/dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:prepare-java": "node scripts/prepare-java-fixture.mjs",
     "test:browser": "playwright test"
   },
   "dependencies": {
@@ -27,12 +28,14 @@
     "clsx": "2.1.1",
     "diff": "9.0.0",
     "express": "5.3.0",
+    "fast-xml-parser": "5.11.2",
     "lucide-react": "1.57.0",
     "monaco-editor": "0.57.0",
     "open": "11.0.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "tailwind-merge": "3.7.0",
+    "typescript-ast": "npm:typescript@6.0.3",
     "zod": "4.6.7"
   },
   "overrides": {
@@ -48,6 +51,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
+    "@vitest/coverage-v8": "5.0.4",
     "node": "24.21.0",
     "prettier": "3.9.10",
     "tailwindcss": "4.3.3",
