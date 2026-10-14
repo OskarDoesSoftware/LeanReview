@@ -23,13 +23,11 @@ import {
 import { Button } from "./components/ui/button";
 import type {
   Analysis,
-  Manifest,
   ProviderConfig,
-  Review,
   SessionSummary,
 } from "../../packages/contracts/src/index";
 import "./style.css";
-import { nextUnreviewed } from "./lib/navigation";
+import { useReviewNavigation } from "./lib/use-review-navigation";
 import { api } from "./lib/api";
 import { CoveragePanel } from "./components/coverage-panel";
 type EditorConfig = { name: string; executable: string; args: string[] };
@@ -49,16 +47,30 @@ const initialConfig: ProviderConfig = {
 };
 function App({ startupError }: { startupError?: string }) {
   const [sessions, setSessions] = React.useState<SessionSummary[]>([]);
-  const [review, setReview] = React.useState<Review | null>(null);
   const [root, setRoot] = React.useState("");
   const [mode, setMode] = React.useState<
     "unstaged" | "staged" | "all" | "branch"
   >("all");
   const [base, setBase] = React.useState("main");
-  const [selected, setSelected] = React.useState("");
   const [tab, setTab] = React.useState("Explanation");
   const [split, setSplit] = React.useState(true);
   const [error, setError] = React.useState(startupError ?? "");
+  const reportNavigationError = React.useCallback(
+    (error: Error) => setError(error.message),
+    [],
+  );
+  const {
+    review,
+    selected,
+    anchor,
+    comment,
+    manifest,
+    navigating,
+    navigation,
+  } = useReviewNavigation(reportNavigationError);
+  const setSelected = (id: string) => navigation.selectFile(id);
+  const setAnchor = (value: typeof anchor) => navigation.setAnchor(value);
+  const setComment = (value: string) => navigation.setComment(value);
   const [busy, setBusy] = React.useState(false);
   const [settings, showSettings] = React.useState(false);
   const [config, setConfig] = React.useState(initialConfig);
@@ -76,20 +88,13 @@ function App({ startupError }: { startupError?: string }) {
   const [editorSettings, showEditorSettings] = React.useState(false);
   const [openAfterConfigure, setOpenAfterConfigure] = React.useState(false);
   const [persist, setPersist] = React.useState(true);
-  const [manifest, setManifest] = React.useState<Manifest | null>(null);
-  const [comment, setComment] = React.useState("");
-  const [anchor, setAnchor] = React.useState<{
-    fileId: string;
-    side: "before" | "after";
-    line: number;
-  } | null>(null);
   const [theme, setTheme] = React.useState(
     matchMedia("(prefers-color-scheme: dark)").matches ? "vs-dark" : "light",
   );
   const file =
     review?.snapshot.files.find((f) => f.id === selected) ??
     review?.snapshot.files[0];
-  const active = review?.snapshot.id === review?.history[0]?.id;
+  const active = !navigating && review?.snapshot.id === review?.history[0]?.id;
   const run = async (work: () => Promise<void>) => {
     setBusy(true);
     setError("");
@@ -130,30 +135,9 @@ function App({ startupError }: { startupError?: string }) {
     mq.addEventListener("change", change);
     return () => mq.removeEventListener("change", change);
   }, []);
-  React.useEffect(() => {
-    if (review?.state.analysisStatus !== "running") return;
-    const id = setInterval(
-      () =>
-        void api<Review>(`/sessions/${review.snapshot.sessionId}`)
-          .then(setReview)
-          .catch((e) => setError(e.message)),
-      1000,
-    );
-    return () => clearInterval(id);
-  }, [review?.snapshot.sessionId, review?.state.analysisStatus]);
-  React.useEffect(() => {
-    setAnchor(null);
-    setComment("");
-  }, [file?.id, review?.snapshot.id]);
   const mutate = (route: string, body: object) =>
     run(async () => {
-      if (!review) return;
-      setReview(
-        await api(`/sessions/${review.snapshot.sessionId}/${route}`, {
-          snapshotId: review.snapshot.id,
-          ...body,
-        }),
-      );
+      await navigation.mutate(route, body);
       await loadSessions();
     });
   const reviewed = review?.state.reviewed ?? [];
@@ -199,19 +183,11 @@ function App({ startupError }: { startupError?: string }) {
     run(async () => {
       if (!review || !file) return;
       const marking = !reviewed.includes(file.id);
-      const next = await api<Review>(
-        `/sessions/${review.snapshot.sessionId}/progress`,
-        {
-          snapshotId: review.snapshot.id,
-          fileIds: [file.id],
-          reviewed: marking,
-        },
+      await navigation.mutate(
+        "progress",
+        { fileIds: [file.id], reviewed: marking },
+        { advance: marking },
       );
-      setReview(next);
-      if (marking) {
-        const nextId = nextUnreviewed(next, file.id);
-        if (nextId) setSelected(nextId);
-      }
       await loadSessions();
     });
   return (
@@ -279,12 +255,7 @@ function App({ startupError }: { startupError?: string }) {
           disabled={busy || !root || !!startupError}
           onClick={() =>
             void run(async () => {
-              const created = await api<Review>("/sessions", {
-                root,
-                comparison: { mode, base },
-              });
-              setReview(created);
-              setSelected(created.snapshot.files[0]?.id ?? "");
+              await navigation.open(root, { mode, base });
               await loadSessions();
             })
           }
@@ -297,10 +268,7 @@ function App({ startupError }: { startupError?: string }) {
           onChange={(e) => {
             if (e.target.value)
               void run(async () => {
-                const next = await api<Review>(`/sessions/${e.target.value}`);
-                setReview(next);
-                setRoot(next.snapshot.root);
-                setSelected(next.snapshot.files[0]?.id ?? "");
+                await navigation.navigate(e.target.value);
               });
           }}
         >
@@ -379,13 +347,12 @@ function App({ startupError }: { startupError?: string }) {
                   aria-label="Snapshot history"
                   value={review.snapshot.id}
                   onChange={(e) =>
-                    void run(async () =>
-                      setReview(
-                        await api(
-                          `/sessions/${review.snapshot.sessionId}?snapshot=${e.target.value}`,
-                        ),
-                      ),
-                    )
+                    void run(async () => {
+                      await navigation.navigate(
+                        review.snapshot.sessionId,
+                        e.target.value,
+                      );
+                    })
                   }
                 >
                   {review.history.map((h, i) => (
@@ -429,13 +396,9 @@ function App({ startupError }: { startupError?: string }) {
                 !review.snapshot.files.length
               }
               onClick={() =>
-                void run(async () =>
-                  setManifest(
-                    await api(
-                      `/sessions/${review.snapshot.sessionId}/manifest`,
-                    ),
-                  ),
-                )
+                void run(async () => {
+                  await navigation.previewAnalysis();
+                })
               }
             >
               <Sparkles size={15} />
@@ -974,18 +937,11 @@ function App({ startupError }: { startupError?: string }) {
                         onClick={() =>
                           void run(async () => {
                             if (!review) return;
-                            setReview(
-                              await api(
-                                `/sessions/${review.snapshot.sessionId}/drafts`,
-                                {
-                                  snapshotId: review.snapshot.id,
-                                  ...anchor,
-                                  text: comment,
-                                },
-                              ),
+                            await navigation.mutate(
+                              "drafts",
+                              { ...anchor, text: comment },
+                              { clearComment: true },
                             );
-                            setComment("");
-                            setAnchor(null);
                           })
                         }
                       >
@@ -1011,15 +967,13 @@ function App({ startupError }: { startupError?: string }) {
                           aria-label="Delete draft"
                           disabled={!active}
                           onClick={() =>
-                            void run(async () =>
-                              setReview(
-                                await api(
-                                  `/sessions/${review.snapshot.sessionId}/drafts/${d.id}`,
-                                  { snapshotId: review.snapshot.id },
-                                  "DELETE",
-                                ),
-                              ),
-                            )
+                            void run(async () => {
+                              await navigation.mutate(
+                                `drafts/${d.id}`,
+                                {},
+                                { method: "DELETE" },
+                              );
+                            })
                           }
                         >
                           <X size={12} />
@@ -1336,7 +1290,10 @@ function App({ startupError }: { startupError?: string }) {
               model downloads.
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setManifest(null)}>
+              <Button
+                variant="outline"
+                onClick={() => navigation.closeManifest()}
+              >
                 Cancel
               </Button>
               <Button
@@ -1345,17 +1302,10 @@ function App({ startupError }: { startupError?: string }) {
                   void run(async () => {
                     if (!review || manifest.snapshotId !== review.snapshot.id)
                       throw new Error("Snapshot changed; preview again.");
-                    setReview(
-                      await api(
-                        `/sessions/${review.snapshot.sessionId}/analysis`,
-                        {
-                          snapshotId: manifest.snapshotId,
-                          manifestId: manifest.id,
-                          authorize: true,
-                        },
-                      ),
-                    );
-                    setManifest(null);
+                    await navigation.mutate("analysis", {
+                      manifestId: manifest.id,
+                      authorize: true,
+                    });
                   })
                 }
               >

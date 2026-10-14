@@ -1,8 +1,7 @@
 import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
-import { hash } from "../git/local";
+import { CapturedArtifacts } from "./artifacts";
 import type {
   CoverageMetrics,
   CoverageProvenance,
@@ -20,10 +19,11 @@ type Row = { id: string; session_id: string; data: string; state: string };
 export class Store {
   db: Database.Database;
   cache: string;
+  private artifacts: CapturedArtifacts;
   constructor(public directory: string) {
     fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
     this.cache = path.join(directory, "cache");
-    fs.mkdirSync(this.cache, { recursive: true, mode: 0o700 });
+    this.artifacts = new CapturedArtifacts(this.cache);
     this.db = new Database(path.join(directory, "leanreview.sqlite"));
     this.db.pragma("foreign_keys = ON");
     this.db.pragma("journal_mode = WAL");
@@ -76,22 +76,12 @@ export class Store {
       }
     }
   }
-  private cacheText(text: string) {
-    const digest = hash(text);
-    const file = path.join(this.cache, digest);
-    if (!fs.existsSync(file)) {
-      const temp = `${file}.${randomUUID()}.tmp`;
-      fs.writeFileSync(temp, text, { mode: 0o600 });
-      fs.renameSync(temp, file);
-    }
-    return digest;
-  }
   saveCoverage(
     metrics: CoverageMetrics,
     raw: string,
     provenance?: CoverageProvenance,
   ) {
-    const rawHash = this.cacheText(raw);
+    const rawHash = this.artifacts.write(raw);
     this.db
       .prepare(
         "INSERT INTO coverage_reports VALUES (?,?,?,?,?) ON CONFLICT(snapshot_id,format) DO UPDATE SET data=excluded.data,raw_hash=excluded.raw_hash,provenance=excluded.provenance",
@@ -120,9 +110,7 @@ export class Store {
       .get(snapshotId, format) as
       { raw_hash: string; provenance: string | null } | undefined;
     if (!row) throw new Error("Coverage report not found.");
-    const report = fs.readFileSync(path.join(this.cache, row.raw_hash), "utf8");
-    if (hash(report) !== row.raw_hash)
-      throw new Error("Coverage report cache is corrupt.");
+    const report = this.artifacts.read(row.raw_hash);
     return {
       report,
       provenance: row.provenance
@@ -163,27 +151,22 @@ export class Store {
         patch: undefined,
         before:
           file.before.kind === "text"
-            ? { kind: "text", hash: this.cacheText(file.before.text) }
+            ? { kind: "text", hash: this.artifacts.write(file.before.text) }
             : file.before,
         after:
           file.after.kind === "text"
-            ? { kind: "text", hash: this.cacheText(file.after.text) }
+            ? { kind: "text", hash: this.artifacts.write(file.after.text) }
             : file.after,
-        patchHash: this.cacheText(file.patch),
+        patchHash: this.artifacts.write(file.patch),
       })),
     });
   }
   private decode(data: string): Snapshot {
     const raw = JSON.parse(data);
-    const read = (digest: string) => {
-      if (!/^[a-f0-9]{64}$/.test(digest))
-        throw new Error("Invalid cache identity.");
-      const text = fs.readFileSync(path.join(this.cache, digest), "utf8");
-      if (hash(text) !== digest) throw new Error("Cached source is corrupt.");
-      return text;
-    };
     const expand = (value: Content & { hash?: string }): Content =>
-      value.kind === "text" ? { kind: "text", text: read(value.hash!) } : value;
+      value.kind === "text"
+        ? { kind: "text", text: this.artifacts.read(value.hash!) }
+        : value;
     return {
       ...raw,
       files: raw.files.map(
@@ -191,7 +174,7 @@ export class Store {
           ...file,
           before: expand(file.before),
           after: expand(file.after),
-          patch: read(file.patchHash),
+          patch: this.artifacts.read(file.patchHash),
         }),
       ),
     };

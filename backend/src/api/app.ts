@@ -4,13 +4,12 @@ import { z } from "zod";
 import {
   comparisonSchema,
   providerSchema,
-  type Analysis,
 } from "../../../packages/contracts/src/index";
 import { captureSnapshot, selectRepository } from "../git/local";
 import { Store } from "../storage/store";
 import { CredentialVault } from "../credentials/vault";
-import { prepare, configKey, validateAnalysis } from "../review/analysis";
-import { infer } from "../llm/providers";
+import { configKey, validateAnalysis } from "../review/analysis";
+import { ReviewAnalysis } from "../review/runner";
 import {
   editorSchema,
   editorPresets,
@@ -27,7 +26,7 @@ export function createApp(
   const vault = new CredentialVault();
   const browserSession = randomBytes(32).toString("hex");
   let bootstrapExpires = Date.now() + 5 * 60 * 1000;
-  const jobs = new Map<string, AbortController>();
+  const analysis = new ReviewAnalysis(store, vault);
   const safeEqual = (a: string, b: string) => {
     const left = Buffer.from(a);
     const right = Buffer.from(b);
@@ -108,7 +107,7 @@ export function createApp(
   }
   app.post("/api/sessions/:id/refresh", async (req, res) => {
     const review = current(String(req.params.id), req.body);
-    jobs.get(review.snapshot.id)?.abort();
+    analysis.cancel(review.snapshot.id);
     const next = await captureSnapshot(
       review.snapshot.root,
       review.snapshot.comparison,
@@ -248,91 +247,14 @@ export function createApp(
     res.json({ config });
   });
   app.get("/api/sessions/:id/manifest", (req, res) => {
-    const review = store.review(String(req.params.id));
-    const config = store.setting<z.infer<typeof providerSchema>>("provider");
-    if (!config) throw new Error("Configure an LLM provider first.");
-    res.json(prepare(review.snapshot, config).manifest);
+    res.json(analysis.manifest(String(req.params.id)));
   });
   app.post("/api/sessions/:id/analysis", async (req, res) => {
-    const review = current(String(req.params.id), req.body);
-    const config = store.setting<z.infer<typeof providerSchema>>("provider");
-    if (!config) throw new Error("Configure an LLM provider first.");
-    if (!review.snapshot.files.length)
-      throw new Error("No changed files to analyze.");
-    const authorize = z.boolean().parse(req.body.authorize);
-    if (!authorize)
-      throw new Error(
-        "Confirm this run’s input manifest before sending repository data.",
-      );
-    if (jobs.size)
-      throw new Error(
-        "One analysis runs at a time. Cancel or wait for the current run.",
-      );
-    const prepared = prepare(review.snapshot, config);
-    if (req.body.manifestId !== prepared.manifest.id)
-      throw new Error(
-        "Provider configuration or snapshot changed. Preview and authorize again.",
-      );
-    const token = await vault.get(
-      configKey(config),
-      store.setting(`credential-mode:${configKey(config)}`) === "os",
-    );
-    if (config.provider !== "ollama" && !token)
-      throw new Error(
-        "The API key is unavailable. Enter it in provider settings.",
-      );
-    const controller = new AbortController();
-    jobs.set(review.snapshot.id, controller);
-    review.state.analysisStatus = "running";
-    review.state.analysisError = undefined;
-    review.state.manifest = prepared.manifest;
-    store.saveState(review.snapshot.id, review.state);
-    res.status(202).json(store.review(review.snapshot.sessionId));
-    void (async () => {
-      try {
-        const results: Analysis[] = [];
-        for (const batch of prepared.batches) {
-          const result = await infer(config, token, batch, controller.signal);
-          const batchIds = new Set(batch.files.map((f) => f.id));
-          validateAnalysis(result, {
-            files: review.snapshot.files.filter((f) => batchIds.has(f.id)),
-          });
-          results.push(result);
-        }
-        if (controller.signal.aborted) throw new Error("Canceled");
-        const proposal = validateAnalysis(
-          {
-            cohorts: results.flatMap((r) => r.cohorts),
-            findings: results.flatMap((r) => r.findings),
-          },
-          review.snapshot,
-        );
-        const latest = store.review(
-          review.snapshot.sessionId,
-          review.snapshot.id,
-        );
-        latest.state.proposal = proposal;
-        latest.state.analysisStatus = "ready";
-        store.saveState(review.snapshot.id, latest.state);
-      } catch (error) {
-        const latest = store.review(
-          review.snapshot.sessionId,
-          review.snapshot.id,
-        );
-        latest.state.analysisStatus = controller.signal.aborted
-          ? "canceled"
-          : "failed";
-        latest.state.analysisError =
-          error instanceof Error ? error.message : "Analysis failed.";
-        store.saveState(review.snapshot.id, latest.state);
-      } finally {
-        jobs.delete(review.snapshot.id);
-      }
-    })();
+    res.status(202).json(await analysis.start(String(req.params.id), req.body));
   });
   app.post("/api/sessions/:id/cancel", (req, res) => {
     const review = current(String(req.params.id), req.body);
-    jobs.get(review.snapshot.id)?.abort();
+    analysis.cancel(review.snapshot.id);
     res.json({ ok: true });
   });
   const coverageRunner = mountCoverage(app, store, current);
@@ -355,8 +277,7 @@ export function createApp(
     app,
     nonce,
     abort: async () => {
-      jobs.forEach((job) => job.abort());
-      await coverageRunner.shutdown();
+      await Promise.all([analysis.shutdown(), coverageRunner.shutdown()]);
     },
   };
 }

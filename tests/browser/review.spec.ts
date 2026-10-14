@@ -104,24 +104,22 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await page
     .getByRole("button", { name: "Configure tests", exact: true })
     .click();
-  await page
-    .getByRole("textbox", { name: "Test command steps" })
-    .fill(
-      JSON.stringify([
-        {
-          executable: node,
-          args: [
-            vitest,
-            "run",
-            "--root",
-            root,
-            "--config",
-            path.join(root, "vitest.config.mjs"),
-          ],
-          shell: false,
-        },
-      ]),
-    );
+  await page.getByRole("textbox", { name: "Test command steps" }).fill(
+    JSON.stringify([
+      {
+        executable: node,
+        args: [
+          vitest,
+          "run",
+          "--root",
+          root,
+          "--config",
+          path.join(root, "vitest.config.mjs"),
+        ],
+        shell: false,
+      },
+    ]),
+  );
   await page
     .getByRole("button", { name: "Save test configuration", exact: true })
     .click();
@@ -181,5 +179,71 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(
     page.getByRole("button", { name: "Generate AI proposal" }),
   ).toBeDisabled();
+
+  // Return an analysis poll after the user has selected a historical snapshot.
+  const currentValue = await history
+    .locator("option")
+    .nth(0)
+    .getAttribute("value");
+  const selectedSession = await page
+    .getByRole("combobox", { name: "Saved reviews" })
+    .inputValue();
+  const captured = await (
+    await page.request.get(`/api/sessions/${selectedSession}`)
+  ).json();
+  let requests = 0;
+  let releasePoll!: () => void;
+  let pollStarted!: () => void;
+  const started = new Promise<void>((resolve) => {
+    pollStarted = resolve;
+  });
+  const release = new Promise<void>((resolve) => {
+    releasePoll = resolve;
+  });
+  await page.route(
+    (url) =>
+      url.pathname === `/api/sessions/${selectedSession}` &&
+      url.searchParams.get("snapshot") === currentValue,
+    async (route) => {
+      ++requests;
+      if (requests > 1) {
+        pollStarted();
+        await release;
+      }
+      await route.fulfill({
+        json: {
+          ...captured,
+          state: {
+            ...captured.state,
+            analysisStatus: requests === 1 ? "running" : "ready",
+          },
+        },
+      });
+    },
+  );
+  await history.selectOption(currentValue!);
+  await expect(
+    page.getByText("Previous snapshot · read only"),
+  ).not.toBeVisible();
+  await started;
+  await history.selectOption(oldValue!);
+  await expect(page.getByText("Previous snapshot · read only")).toBeVisible();
+  const pollResponse = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return (
+      url.pathname === `/api/sessions/${selectedSession}` &&
+      url.searchParams.get("snapshot") === currentValue
+    );
+  });
+  releasePoll();
+  await pollResponse;
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+  await expect(history).toHaveValue(oldValue!);
+  await expect(page.getByText("Previous snapshot · read only")).toBeVisible();
   expect(errors).toEqual([]);
 });
