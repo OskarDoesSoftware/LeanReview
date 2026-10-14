@@ -11,6 +11,12 @@ import { Store } from "../storage/store";
 import { CredentialVault } from "../credentials/vault";
 import { prepare, configKey, validateAnalysis } from "../review/analysis";
 import { infer } from "../llm/providers";
+import {
+  editorSchema,
+  editorPresets,
+  openEditor,
+  type EditorConfig,
+} from "./editor";
 export function createApp(
   store: Store,
   origin: string,
@@ -49,23 +55,19 @@ export function createApp(
         .find((s) => s.startsWith("leanreview="))
         ?.slice("leanreview=".length) ?? "";
     if (!safeEqual(cookie, browserSession))
-      return res
-        .status(401)
-        .json({
-          error:
-            "Open LeanReview using its startup link to establish a local session.",
-        });
+      return res.status(401).json({
+        error:
+          "Open LeanReview using its startup link to establish a local session.",
+      });
     next();
   });
   app.post("/api/session", (req, res) => {
     const candidate = z.object({ nonce: z.string() }).parse(req.body).nonce;
     if (Date.now() > bootstrapExpires || !safeEqual(candidate, nonce))
-      return res
-        .status(403)
-        .json({
-          error:
-            "Startup link expired or already used. Restart LeanReview for a new link.",
-        });
+      return res.status(403).json({
+        error:
+          "Startup link expired or already used. Restart LeanReview for a new link.",
+      });
     bootstrapExpires = 0;
     res.cookie("leanreview", browserSession, {
       httpOnly: true,
@@ -177,6 +179,31 @@ export function createApp(
     res.json(store.review(review.snapshot.sessionId));
   });
   app.get("/api/provider", (_req, res) => res.json(store.setting("provider")));
+  app.get("/api/editor", async (_req, res) =>
+    res.json({
+      config: store.setting("editor"),
+      presets: await editorPresets(),
+    }),
+  );
+  app.post("/api/editor", (req, res) => {
+    const config = editorSchema.parse(req.body);
+    store.setSetting("editor", config);
+    res.json(config);
+  });
+  app.post("/api/sessions/:id/open-editor", async (req, res) => {
+    const review = current(String(req.params.id), req.body);
+    const config = store.setting<EditorConfig>("editor");
+    if (!config) throw new Error("Configure a default editor first.");
+    const input = z
+      .object({
+        fileId: z.string(),
+        side: z.enum(["before", "after"]),
+        line: z.number().int().positive(),
+        column: z.number().int().positive().default(1),
+      })
+      .parse(req.body);
+    res.json(await openEditor(config, review.snapshot, input));
+  });
   app.post("/api/provider", async (req, res) => {
     const config = providerSchema.parse(req.body.config);
     const url = new URL(config.endpoint);
@@ -317,11 +344,9 @@ export function createApp(
       res: express.Response,
       _next: express.NextFunction,
     ) => {
-      res
-        .status(400)
-        .json({
-          error: error instanceof Error ? error.message : "Request failed.",
-        });
+      res.status(400).json({
+        error: error instanceof Error ? error.message : "Request failed.",
+      });
     },
   );
   return { app, nonce, abort: () => jobs.forEach((job) => job.abort()) };

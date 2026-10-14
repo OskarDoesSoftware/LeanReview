@@ -32,6 +32,8 @@ If machine-wide npm registry configuration is incompatible with public dependenc
 4. Preview and authorize the analysis manifest. Filenames and metadata for code-omitted files remain included and are shown in the manifest. No provider fallback or silent model download occurs.
 5. Inspect the proposed cohorts/layers and explicitly accept them. Rename cohorts, move files, and reorder layers as needed. AI findings are suggestions, not verified static results.
 6. Review split/unified diffs, mark files/layers reviewed, and click a gutter line number to save a local draft comment.
+   Marking a file reviewed advances to the next unreviewed file in the accepted reading order. Undoing reviewed status keeps your current file selected.
+   Clicking a code line offers a local draft and an external-editor action. Configure the default under Editor settings, or choose one when prompted on first use. Presets cover VS Code, IntelliJ IDEA and terminal-launched Neovim, with configurable executable/argument templates. Working files must match the snapshot before opening line coordinates; historical before-side selection opens the current file at its start rather than pretending old coordinates are current. No in-app source editing is enabled.
 7. Reopen sessions using Saved reviews. Refresh creates a new snapshot and preserves history, carries forward only unchanged-file progress, and flags changed-file drafts for reattachment. Previous snapshots are read-only in the UI.
 
 API keys are stored through the OS credential manager or explicitly in backend session memory. Stored keys are never returned to the frontend. Linux uses Secret Service explicitly, with no automatic kernel-keyring fallback. Session-only keys require re-entry after restart.

@@ -29,6 +29,8 @@ import type {
   SessionSummary,
 } from "../../packages/contracts/src/index";
 import "./style.css";
+import { nextUnreviewed } from "./lib/navigation";
+type EditorConfig = { name: string; executable: string; args: string[] };
 (globalThis as any).MonacoEnvironment = {
   getWorker: (_id: string, label: string) =>
     label === "typescript" || label === "javascript"
@@ -74,6 +76,18 @@ function App({ startupError }: { startupError?: string }) {
   const [settings, showSettings] = React.useState(false);
   const [config, setConfig] = React.useState(initialConfig);
   const [token, setToken] = React.useState("");
+  const [editorConfig, setEditorConfig] = React.useState<EditorConfig | null>(
+    null,
+  );
+  const [editorDraft, setEditorDraft] = React.useState<EditorConfig>({
+    name: "Custom editor",
+    executable: "",
+    args: ["{file}"],
+  });
+  const [editorArgs, setEditorArgs] = React.useState('["{file}"]');
+  const [editorPresets, setEditorPresets] = React.useState<EditorConfig[]>([]);
+  const [editorSettings, showEditorSettings] = React.useState(false);
+  const [openAfterConfigure, setOpenAfterConfigure] = React.useState(false);
   const [persist, setPersist] = React.useState(true);
   const [manifest, setManifest] = React.useState<Manifest | null>(null);
   const [comment, setComment] = React.useState("");
@@ -102,11 +116,27 @@ function App({ startupError }: { startupError?: string }) {
   };
   const loadSessions = async () => setSessions(await api("/sessions"));
   React.useEffect(() => {
+    if (!review) return;
+    setRoot(review.snapshot.root);
+    setMode(review.snapshot.comparison.mode);
+    setBase(review.snapshot.comparison.base);
+  }, [review?.snapshot.id]);
+  React.useEffect(() => {
     if (startupError) return;
     void run(async () => {
       await loadSessions();
       const saved = await api<ProviderConfig | null>("/provider");
       if (saved) setConfig(saved);
+      const editors = await api<{
+        config: EditorConfig | null;
+        presets: EditorConfig[];
+      }>("/editor");
+      setEditorConfig(editors.config);
+      setEditorPresets(editors.presets);
+      if (editors.config) {
+        setEditorDraft(editors.config);
+        setEditorArgs(JSON.stringify(editors.config.args));
+      }
     });
     const mq = matchMedia("(prefers-color-scheme: dark)");
     const change = () => setTheme(mq.matches ? "vs-dark" : "light");
@@ -159,6 +189,44 @@ function App({ startupError }: { startupError?: string }) {
     work(analysis);
     void mutate("grouping", { analysis });
   };
+  const pendingComparison =
+    review &&
+    (root !== review.snapshot.root ||
+      mode !== review.snapshot.comparison.mode ||
+      (mode === "branch" && base !== review.snapshot.comparison.base));
+  const openSelectedLine = () =>
+    run(async () => {
+      if (!review || !anchor) return;
+      if (!editorConfig) {
+        setOpenAfterConfigure(true);
+        showEditorSettings(true);
+        return;
+      }
+      await api(`/sessions/${review.snapshot.sessionId}/open-editor`, {
+        snapshotId: review.snapshot.id,
+        ...anchor,
+        column: 1,
+      });
+    });
+  const markFile = () =>
+    run(async () => {
+      if (!review || !file) return;
+      const marking = !reviewed.includes(file.id);
+      const next = await api<Review>(
+        `/sessions/${review.snapshot.sessionId}/progress`,
+        {
+          snapshotId: review.snapshot.id,
+          fileIds: [file.id],
+          reviewed: marking,
+        },
+      );
+      setReview(next);
+      if (marking) {
+        const nextId = nextUnreviewed(next, file.id);
+        if (nextId) setSelected(nextId);
+      }
+      await loadSessions();
+    });
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -180,6 +248,15 @@ function App({ startupError }: { startupError?: string }) {
           <Button variant="ghost" onClick={() => showSettings(true)}>
             <Settings size={16} />
             AI settings
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setOpenAfterConfigure(false);
+              showEditorSettings(true);
+            }}
+          >
+            Editor settings
           </Button>
         </div>
       </header>
@@ -225,7 +302,7 @@ function App({ startupError }: { startupError?: string }) {
             })
           }
         >
-          Open review
+          {pendingComparison ? "Open comparison" : "Open review"}
         </Button>
         <select
           aria-label="Saved reviews"
@@ -348,6 +425,13 @@ function App({ startupError }: { startupError?: string }) {
               </div>
             </div>
           </div>
+          {pendingComparison && (
+            <div className="proposal-banner" role="status">
+              The selection differs from this {review.snapshot.comparison.mode}{" "}
+              snapshot. Choose Open comparison to capture the selected changes;
+              Refresh keeps this snapshot’s comparison.
+            </div>
+          )}
           <div className="review-actions">
             <Button
               variant="outline"
@@ -612,6 +696,34 @@ function App({ startupError }: { startupError?: string }) {
                     </div>
                   </div>
                   <div className="editor-wrapper">
+                    {anchor && (
+                      <div className="diff-footer">
+                        <span className="small">
+                          {anchor.side} · line {anchor.line}
+                          {anchor.side === "before"
+                            ? " · external editor opens the working file at its start"
+                            : ""}
+                        </span>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setTab("Comments")}
+                          >
+                            Draft comment
+                          </Button>
+                          <Button
+                            size="sm"
+                            disabled={
+                              !active || busy || file.after.kind !== "text"
+                            }
+                            onClick={() => void openSelectedLine()}
+                          >
+                            Open {editorConfig?.name ?? "in editor"}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                     {[file.before.kind, file.after.kind].every(
                       (k) => k === "text" || k === "absent",
                     ) ? (
@@ -644,6 +756,11 @@ function App({ startupError }: { startupError?: string }) {
                           ] as const)
                             source.onMouseDown((event) => {
                               if (!active || !event.target.position) return;
+                              setAnchor({
+                                fileId: file.id,
+                                side,
+                                line: event.target.position.lineNumber,
+                              });
                               if (
                                 [
                                   monaco.editor.MouseTargetType
@@ -697,12 +814,7 @@ function App({ startupError }: { startupError?: string }) {
                       <Button
                         size="sm"
                         disabled={busy || !active}
-                        onClick={() =>
-                          void mutate("progress", {
-                            fileIds: [file.id],
-                            reviewed: !reviewed.includes(file.id),
-                          })
-                        }
+                        onClick={() => void markFile()}
                       >
                         <Check size={14} />
                         {reviewed.includes(file.id)
@@ -929,6 +1041,116 @@ function App({ startupError }: { startupError?: string }) {
             </aside>
           </main>
         </>
+      )}
+      {editorSettings && (
+        <div className="modal-backdrop">
+          <section
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="editor-title"
+          >
+            <h2 id="editor-title">Choose your default editor</h2>
+            <p className="small muted">
+              This opens your working file, not an editable copy of the review
+              snapshot. Use an executable path or a terminal launcher for
+              Neovim.
+            </p>
+            <label>
+              Preset
+              <select
+                aria-label="Editor preset"
+                value=""
+                onChange={(e) => {
+                  const preset = editorPresets[Number(e.target.value)];
+                  if (preset) {
+                    setEditorDraft(preset);
+                    setEditorArgs(JSON.stringify(preset.args));
+                  }
+                }}
+              >
+                <option value="" disabled>
+                  Select a preset…
+                </option>
+                {editorPresets.map((p, i) => (
+                  <option key={p.name} value={i}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Editor name
+              <input
+                value={editorDraft.name}
+                onChange={(e) =>
+                  setEditorDraft({ ...editorDraft, name: e.target.value })
+                }
+              />
+            </label>
+            <label>
+              Executable
+              <input
+                value={editorDraft.executable}
+                onChange={(e) =>
+                  setEditorDraft({ ...editorDraft, executable: e.target.value })
+                }
+                placeholder="Path to Code.exe, idea64.exe, or your terminal launcher"
+              />
+            </label>
+            <label>
+              Arguments as a JSON array
+              <input
+                value={editorArgs}
+                onChange={(e) => setEditorArgs(e.target.value)}
+              />
+            </label>
+            <p className="small muted">
+              Placeholders: {"{file}"}, {"{line}"}, {"{column}"}. Arguments are
+              passed directly, without a shell. On macOS, configure a terminal
+              launcher for Neovim rather than starting it without a terminal.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  showEditorSettings(false);
+                  setOpenAfterConfigure(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={busy || !editorDraft.executable}
+                onClick={() =>
+                  void run(async () => {
+                    const config = {
+                      ...editorDraft,
+                      args: JSON.parse(editorArgs),
+                    };
+                    const saved = await api<EditorConfig>("/editor", config);
+                    setEditorConfig(saved);
+                    showEditorSettings(false);
+                    if (openAfterConfigure && review && anchor)
+                      await api(
+                        `/sessions/${review.snapshot.sessionId}/open-editor`,
+                        {
+                          snapshotId: review.snapshot.id,
+                          ...anchor,
+                          column: 1,
+                        },
+                      );
+                    setOpenAfterConfigure(false);
+                  })
+                }
+              >
+                {openAfterConfigure
+                  ? "Save & open editor"
+                  : "Save default editor"}
+              </Button>
+            </div>
+          </section>
+        </div>
       )}
       {settings && (
         <div className="modal-backdrop">

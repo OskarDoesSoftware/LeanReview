@@ -11,7 +11,25 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   );
   await page.goto("/#bootstrap=browser-fixture-nonce");
   await page.getByRole("textbox", { name: "Repository root" }).fill(root);
-  await page.getByRole("button", { name: "Open review", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Comparison mode" })
+    .selectOption("staged");
+  await page.getByRole("button", { name: /Open (review|comparison)/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "identity-service" }),
+  ).toBeVisible();
+  const stagedSessions = await (await page.request.get("/api/sessions")).json();
+  await page.reload();
+  await page
+    .getByRole("combobox", { name: "Saved reviews" })
+    .selectOption(stagedSessions[0].id);
+  await expect(
+    page.getByRole("combobox", { name: "Comparison mode" }),
+  ).toHaveValue("staged");
+  await page
+    .getByRole("combobox", { name: "Comparison mode" })
+    .selectOption("all");
+  await page.getByRole("button", { name: /Open (review|comparison)/ }).click();
   await expect(
     page.getByRole("heading", { name: "identity-service" }),
   ).toBeVisible();
@@ -25,10 +43,21 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(page.locator(".progress-summary")).toContainText(
     "1 / 2 reviewed",
   );
+  await expect(page.locator(".file-heading strong")).toHaveText(
+    "src/auth/types.ts",
+  );
+  await page.getByRole("button", { name: /validatePassword.ts/ }).click();
   await page
     .locator(".monaco-diff-editor .editor.modified .line-numbers")
     .filter({ hasText: /^2$/ })
     .click();
+  await page
+    .getByRole("button", { name: "Open in editor", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "Choose your default editor" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Cancel", exact: true }).click();
   await page
     .getByRole("textbox", { name: "Draft comment" })
     .fill("Does this preserve existing password compatibility?");
