@@ -23,6 +23,17 @@ public class NativeCredentials implements CredentialVault.Persistent {
   }
 
   public void set(String account, String token) throws Exception {
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("linux")) {
+      try (var collection = new com.github.javakeyring.internal.freedesktop.SimpleCollection()) {
+        var attributes = Map.of("service", "LeanReview", "username", account);
+        var items = collection.getItems(attributes);
+        if (items == null) items = List.of();
+        if (items.size() > 1) throw new IllegalStateException("Ambiguous credential.");
+        if (items.isEmpty()) collection.createItem("LeanReview " + account, token, attributes);
+        else collection.updateItem(items.getFirst(), "LeanReview " + account, token, attributes);
+      }
+      return;
+    }
     if (!windows()) {
       try (var keyring = keyring()) {
         keyring.setPassword("LeanReview", account, token);
@@ -53,6 +64,20 @@ public class NativeCredentials implements CredentialVault.Persistent {
   }
 
   public String get(String account) throws Exception {
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("linux")) {
+      try (var collection = new com.github.javakeyring.internal.freedesktop.SimpleCollection()) {
+        var items = collection.getItems(Map.of("service", "LeanReview", "username", account));
+        if (items == null) items = List.of();
+        if (items.size() > 1) throw new IllegalStateException("Ambiguous credential.");
+        if (items.isEmpty()) return null;
+        char[] secret = collection.getSecret(items.getFirst());
+        try {
+          return new String(secret);
+        } finally {
+          Arrays.fill(secret, '\0');
+        }
+      }
+    }
     if (!windows()) {
       try (var keyring = keyring()) {
         return keyring.getPassword("LeanReview", account);

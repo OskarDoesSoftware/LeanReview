@@ -99,55 +99,61 @@ public class GitHubCli {
 
   public byte[] execute(List<String> args, JsonNode input) throws IOException {
     Process process = spawn(args);
-    var stdout =
-        CompletableFuture.supplyAsync(
-            () -> {
-              try {
-                return read(process.getInputStream(), 32 * 1024 * 1024);
-              } catch (IOException e) {
-                throw new CompletionException(e);
-              }
-            });
-    var stderr =
-        CompletableFuture.supplyAsync(
-            () -> {
-              try {
-                return read(process.getErrorStream(), 64 * 1024);
-              } catch (IOException ignored) {
-                return new byte[0];
-              }
-            });
-    try {
-      var writer =
-          CompletableFuture.runAsync(
+    // Blocking pipe readers must not starve stdin on small common pools.
+    try (var io = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()) {
+      var stdout =
+          CompletableFuture.supplyAsync(
               () -> {
-                try (var stdin = process.getOutputStream()) {
-                  if (input != null) stdin.write(json.writeValueAsBytes(input));
+                try {
+                  return read(process.getInputStream(), 32 * 1024 * 1024);
                 } catch (IOException e) {
                   throw new CompletionException(e);
                 }
-              });
-      writer.get(30, TimeUnit.SECONDS);
-      if (!process.waitFor(60, TimeUnit.SECONDS))
-        throw new IOException("GitHub request timed out. Check the connection and retry.");
-      byte[] result = stdout.get(5, TimeUnit.SECONDS);
-      if (process.exitValue() != 0) {
-        var match =
-            Pattern.compile("HTTP ([0-9]{3})")
-                .matcher(new String(stderr.get(5, TimeUnit.SECONDS), StandardCharsets.UTF_8));
-        int status = match.find() ? Integer.parseInt(match.group(1)) : 0;
-        throw new RequestFailure(status >= 400 && status < 500 && status != 408);
+              },
+              io);
+      var stderr =
+          CompletableFuture.supplyAsync(
+              () -> {
+                try {
+                  return read(process.getErrorStream(), 64 * 1024);
+                } catch (IOException ignored) {
+                  return new byte[0];
+                }
+              },
+              io);
+      try {
+        var writer =
+            CompletableFuture.runAsync(
+                () -> {
+                  try (var stdin = process.getOutputStream()) {
+                    if (input != null) stdin.write(json.writeValueAsBytes(input));
+                  } catch (IOException e) {
+                    throw new CompletionException(e);
+                  }
+                },
+                io);
+        writer.get(30, TimeUnit.SECONDS);
+        if (!process.waitFor(60, TimeUnit.SECONDS))
+          throw new IOException("GitHub request timed out. Check the connection and retry.");
+        byte[] result = stdout.get(5, TimeUnit.SECONDS);
+        if (process.exitValue() != 0) {
+          var match =
+              Pattern.compile("HTTP ([0-9]{3})")
+                  .matcher(new String(stderr.get(5, TimeUnit.SECONDS), StandardCharsets.UTF_8));
+          int status = match.find() ? Integer.parseInt(match.group(1)) : 0;
+          throw new RequestFailure(status >= 400 && status < 500 && status != 408);
+        }
+        return result;
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new IOException("GitHub request canceled.");
+      } catch (ExecutionException | TimeoutException e) {
+        throw new IOException("GitHub request failed or exceeded its limits.");
+      } finally {
+        terminate(process);
+        stdout.cancel(true);
+        stderr.cancel(true);
       }
-      return result;
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new IOException("GitHub request canceled.");
-    } catch (ExecutionException | TimeoutException e) {
-      throw new IOException("GitHub request failed or exceeded its limits.");
-    } finally {
-      terminate(process);
-      stdout.cancel(true);
-      stderr.cancel(true);
     }
   }
 

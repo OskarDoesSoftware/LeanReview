@@ -78,7 +78,8 @@ class EditorLaunchTest {
       long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(10);
       while (!Files.exists(output) && System.nanoTime() < deadline) Thread.sleep(20);
       assertThat(Files.readString(output))
-          .isEqualTo(root.resolve("file with spaces.ts") + "\n1\n3\nliteral;$(not-a-shell)");
+          .isEqualTo(
+              root.resolve("file with spaces.ts").toRealPath() + "\n1\n3\nliteral;$(not-a-shell)");
       Files.writeString(root.resolve("file with spaces.ts"), "changed");
       assertThatThrownBy(() -> editor.open(captured.path("sessionId").asText(), input))
           .hasMessageContaining("Working file differs");

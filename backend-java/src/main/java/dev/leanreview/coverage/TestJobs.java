@@ -74,8 +74,11 @@ public class TestJobs {
     this.metrics = metrics;
   }
 
-  private String key(String root, String format) {
-    return "coverage-test:" + CapturedArtifacts.digest(root) + ":" + format;
+  private String key(String root, String format) throws IOException {
+    return "coverage-test:"
+        + CapturedArtifacts.digest(Path.of(root).toRealPath().toString())
+        + ":"
+        + format;
   }
 
   public JsonNode config(String root, String format) throws IOException {

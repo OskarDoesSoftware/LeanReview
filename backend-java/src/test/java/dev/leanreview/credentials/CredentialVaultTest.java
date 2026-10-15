@@ -80,13 +80,31 @@ class CredentialVaultTest {
       assertThat(nativeStore.get(account)).isEqualTo(token);
       nativeStore.set(account, token + "-java");
       node(account, token + "-java", "check");
+    } catch (Exception | AssertionError failure) {
+      try {
+        node(account, token, "delete");
+      } catch (Exception | AssertionError cleanup) {
+        failure.addSuppressed(cleanup);
+      }
+      throw failure;
     } finally {
+      if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("linux")) {
+        try (var collection = new com.github.javakeyring.internal.freedesktop.SimpleCollection()) {
+          for (String item :
+              collection.getItems(Map.of("service", "LeanReview", "username", account)))
+            collection.deleteItem(item);
+        }
+      }
       var type =
           System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")
               ? com.github.javakeyring.KeyringStorageType.OSX_KEYCHAIN
               : com.github.javakeyring.KeyringStorageType.GNOME_KEYRING;
       try (var store = com.github.javakeyring.Keyring.create(type)) {
-        store.deletePassword("LeanReview", account);
+        try {
+          store.deletePassword("LeanReview", account);
+        } catch (com.github.javakeyring.PasswordAccessException absent) {
+          /* Node cleanup may already have removed it. */
+        }
       }
     }
   }
@@ -96,6 +114,7 @@ class CredentialVaultTest {
         "import {Entry} from '@napi-rs/keyring'; import fs from 'node:fs'; const"
             + " x=JSON.parse(fs.readFileSync(0,'utf8'));const e=new"
             + " Entry('LeanReview',x.account);if(x.action==='set')e.setPassword(x.token);else"
+            + " if(x.action==='delete')e.deletePassword();else"
             + " if(e.getPassword()!==x.token)process.exit(2);console.log('ok');";
     Process process =
         new ProcessBuilder("node", "--input-type=module", "-e", script)

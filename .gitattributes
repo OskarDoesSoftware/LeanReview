@@ -1,0 +1,3 @@
+* text=auto eol=lf
+# Content-addressed artifacts must retain their exact bytes on every platform.
+tests/fixtures/backend-compatibility/databases/** -text
