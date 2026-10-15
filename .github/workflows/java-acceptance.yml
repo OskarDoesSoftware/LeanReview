@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   acceptance:
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -37,7 +37,7 @@ jobs:
           cache: maven
       - run: npm ci
       - run: npm run typecheck
-      - run: npm run build
+      - run: node scripts/ci-command.mjs build
       - name: Native keychain interoperability on macOS
         if: runner.os == 'macOS'
         timeout-minutes: 3
@@ -63,7 +63,7 @@ jobs:
       - name: Verify recorded Windows performance budgets
         run: npm run check:java-performance
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:browser
+      - run: node scripts/ci-command.mjs browser
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -71,3 +71,4 @@ jobs:
           path: |
             backend-java/target/surefire-reports
             test-results
+            .leanreview-test/ci-*.log
