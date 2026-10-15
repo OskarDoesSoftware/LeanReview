@@ -141,7 +141,9 @@ public class LocalSnapshots {
   }
 
   public ObjectNode capture(Path root, JsonNode comparison, String sessionId) throws IOException {
-    ObjectNode first = captureFiles(root, comparison), second = captureFiles(root, comparison);
+    var immutableInventories = new HashMap<String, ObjectNode>();
+    ObjectNode first = captureFiles(root, comparison, immutableInventories),
+        second = captureFiles(root, comparison, immutableInventories);
     if (!first.equals(second))
       throw new IOException("Repository changed during capture. Retry when changes settle.");
     first.put("root", root.toString()).set("comparison", comparison.deepCopy());
@@ -152,7 +154,9 @@ public class LocalSnapshots {
         .put("complete", true);
   }
 
-  private ObjectNode captureFiles(Path root, JsonNode comparison) throws IOException {
+  private ObjectNode captureFiles(
+      Path root, JsonNode comparison, Map<String, ObjectNode> immutableInventories)
+      throws IOException {
     String mode = comparison.path("mode").asText(), head = null, base, target = null;
     if (!mode.equals("branch") && !git(root, "ls-files", "--unmerged", "-z").isEmpty())
       throw new IOException(
@@ -265,17 +269,23 @@ public class LocalSnapshots {
     result.set("files", files);
     result.put("head", head).put("base", base);
     ObjectNode context = result.putObject("graphContext");
-    context.set("before", inventory(root, base, mode.equals("unstaged")));
+    context.set("before", inventory(root, base, mode.equals("unstaged"), immutableInventories));
     context.set(
         "after",
         inventory(
             root,
             target != null ? target : head,
-            mode.equals("staged") || mode.equals("unstaged")));
+            mode.equals("staged") || mode.equals("unstaged"),
+            immutableInventories));
     return result;
   }
 
-  private ObjectNode inventory(Path root, String revision, boolean index) throws IOException {
+  private ObjectNode inventory(
+      Path root, String revision, boolean index, Map<String, ObjectNode> immutableInventories)
+      throws IOException {
+    // Commit objects are immutable. Mutable index reads still run in both stability passes.
+    if (!index && revision != null && immutableInventories.containsKey(revision))
+      return immutableInventories.get(revision);
     String raw =
         index
             ? git(root, "ls-files", "--stage", "-z")
@@ -298,6 +308,8 @@ public class LocalSnapshots {
             .put("mode", meta[0])
             .put("oid", meta[index ? 1 : 2]);
     }
-    return result.put("complete", count <= 100000);
+    result.put("complete", count <= 100000);
+    if (!index && revision != null) immutableInventories.put(revision, result);
+    return result;
   }
 }

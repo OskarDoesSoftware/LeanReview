@@ -28,7 +28,8 @@
     "build:java": "node scripts/java-launch.mjs --build --build-only",
     "start:java": "node scripts/java-launch.mjs",
     "dev:java": "node scripts/java-launch.mjs --dev",
-    "benchmark:java": "node --import tsx scripts/benchmark-java.ts"
+    "benchmark:java": "node --import tsx scripts/benchmark-java.ts",
+    "check:java-performance": "node --import tsx scripts/check-java-performance.ts"
   },
   "dependencies": {
     "@napi-rs/keyring": "2.1.1",

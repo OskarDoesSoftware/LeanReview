@@ -1,4 +1,5 @@
 import { dataset } from "./benchmark-backend";
+import { monitorTree } from "./process-tree-memory";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
@@ -27,6 +28,32 @@ const java = process.env.JAVA_HOME
     )
   : "java";
 const results: unknown[] = [];
+const jarFile = path.resolve(
+  process.env.LEANREVIEW_JAVA_BENCHMARK_JAR ||
+    "backend-java/target/leanreview-backend-0.1.0-SNAPSHOT.jar",
+);
+const helperFile = path.resolve("backend-java/helper/dist/index.js");
+const digestFile = async (file: string) =>
+  createHash("sha256")
+    .update(await fs.readFile(file))
+    .digest("hex");
+const source = {
+  commit: execFileSync("git", ["rev-parse", "HEAD"], {
+    encoding: "utf8",
+  }).trim(),
+  workingTree: execFileSync("git", ["status", "--short"], {
+    encoding: "utf8",
+  }).trim(),
+  jarSha256: await digestFile(jarFile),
+  helperSha256: await digestFile(helperFile),
+  benchmarkSha256: await digestFile("scripts/benchmark-java.ts"),
+  samplerSha256: await digestFile("scripts/process-tree-memory.ts"),
+  platformSamplerSha256: await digestFile(
+    process.platform === "win32"
+      ? "scripts/process-tree-memory.ps1"
+      : "scripts/process-tree-memory-unix.mjs",
+  ),
+};
 await fs.mkdir(".leanreview-test", { recursive: true });
 for (const kind of ["typescript", "java", "mixed"]) {
   const fixture = await dataset(kind, count),
@@ -48,20 +75,21 @@ for (const kind of ["typescript", "java", "mixed"]) {
       [
         "--enable-native-access=ALL-UNNAMED",
         "-jar",
-        path.resolve(
-          "backend-java/target/leanreview-backend-0.1.0-SNAPSHOT.jar",
-        ),
+        jarFile,
         "--spring.profiles.active=web",
         `--server.port=${port}`,
         `--leanreview.origin=${origin}`,
         `--leanreview.data-directory=${data}`,
         `--leanreview.analysis.node=${process.execPath}`,
-        `--leanreview.analysis.helper=${path.resolve("backend-java/helper/dist/index.js")}`,
+        `--leanreview.analysis.helper=${helperFile}`,
         "--logging.level.root=ERROR",
         "--spring.main.banner-mode=off",
       ],
       { windowsHide: true, stdio: ["ignore", "pipe", "pipe"] },
     );
+    if (!child.pid) throw new Error("Java benchmark process did not start.");
+    const memory = monitorTree(child.pid);
+    let memoryStopped = false;
     let output = "";
     child.stdout.on("data", (b) => {
       output += b;
@@ -194,9 +222,19 @@ for (const kind of ["typescript", "java", "mixed"]) {
         );
         peakJavaRssMiB = round(bytes / 1024 ** 2);
       }
-      runs.push({ repetition, startupMs, captureMs, peakJavaRssMiB, scans });
+      const processTreeMemory = await memory.stop();
+      memoryStopped = true;
+      runs.push({
+        repetition,
+        startupMs,
+        captureMs,
+        peakJavaRssMiB,
+        processTreeMemory,
+        scans,
+      });
       console.log(`${kind} Java repetition ${repetition}/${repeats} complete`);
     } finally {
+      if (!memoryStopped) await memory.stop().catch(() => {});
       if (process.platform === "win32" && child.pid)
         execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], {
           windowsHide: true,
@@ -207,9 +245,16 @@ for (const kind of ["typescript", "java", "mixed"]) {
   }
   results.push({ ...fixture.identity, runs });
 }
+if (
+  source.jarSha256 !== (await digestFile(jarFile)) ||
+  source.helperSha256 !== (await digestFile(helperFile))
+)
+  throw new Error(
+    "Benchmark artifacts changed during measurement; discard this run.",
+  );
 await fs.writeFile(
   process.env.LEANREVIEW_JAVA_BASELINE_OUTPUT ||
-    "docs/migration/java-baseline.json",
+    "docs/migration/java-process-tree-baseline.json",
   JSON.stringify(
     {
       measuredAt: new Date().toISOString(),
@@ -219,27 +264,10 @@ await fs.writeFile(
         cpu: os.cpus()[0]?.model,
         java: spawnSync(java, ["-version"], { encoding: "utf8" }).stderr.trim(),
       },
-      source: {
-        commit: execFileSync("git", ["rev-parse", "HEAD"], {
-          encoding: "utf8",
-        }).trim(),
-        workingTree: execFileSync("git", ["status", "--short"], {
-          encoding: "utf8",
-        }).trim(),
-        jarSha256: createHash("sha256")
-          .update(
-            await fs.readFile(
-              "backend-java/target/leanreview-backend-0.1.0-SNAPSHOT.jar",
-            ),
-          )
-          .digest("hex"),
-        helperSha256: createHash("sha256")
-          .update(await fs.readFile("backend-java/helper/dist/index.js"))
-          .digest("hex"),
-      },
+      source,
       methodology: {
         scope:
-          "Same deterministic generator and scan options as Node baseline. Run without concurrent tests/builds. Startup includes Spring/JPA/Tomcat. Capture includes HTTP roundtrip. Windows peak Java RSS excludes Git and Node parser helper; total memory acceptance remains separate.",
+          "Same deterministic generator and scan options as Node baseline. Run without concurrent tests/builds. Startup includes Spring/JPA/Tomcat. Capture includes HTTP roundtrip. Process-tree RSS samples sum the Java root and visible descendants, including the parser helper and Git, every 200ms plus enumeration time. Shared resident pages can be counted more than once; short-lived peaks between samples can be missed. The sampler and browser are excluded. Windows peakJavaRssMiB remains the JVM-only lifetime high-water mark.",
       },
       datasets: results,
     },

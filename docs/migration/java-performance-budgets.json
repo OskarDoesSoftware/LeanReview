@@ -1,0 +1,14 @@
+{
+  "agreedOn": "2026-10-15",
+  "scope": "Deterministic 1000-file TypeScript, Java, and mixed datasets, three fresh-process runs each on the measured Windows host. Every run must pass. These are migration acceptance ceilings, not a Java speedup claim or a cross-platform performance claim.",
+  "files": 1000,
+  "repetitions": 3,
+  "limits": {
+    "startupMs": 10000,
+    "captureMs": 10000,
+    "coldScanMs": 10000,
+    "warmScanMs": 3000,
+    "apiP95Ms": 100,
+    "processTreeRssMiB": 1536
+  }
+}
