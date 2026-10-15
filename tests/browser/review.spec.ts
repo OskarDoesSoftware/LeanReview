@@ -1,3 +1,4 @@
+import { verifyWelcome, verifyWorkspace } from "../ui-checks";
 import { test, expect } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -10,6 +11,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
     await readFile(".leanreview-test/browser-fixture.json", "utf8"),
   );
   await page.goto("/#bootstrap=browser-fixture-nonce");
+  await verifyWelcome(page);
   await page.getByRole("textbox", { name: "Repository root" }).fill(root);
   await page
     .getByRole("combobox", { name: "Comparison mode" })
@@ -51,6 +53,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
     page.getByText("2 CHANGED FILES", { exact: false }),
   ).toBeVisible();
   await expect(page.locator(".monaco-diff-editor")).toBeVisible();
+  await verifyWorkspace(page);
   await page
     .getByRole("button", { name: "Mark file reviewed", exact: true })
     .click();
@@ -81,7 +84,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
       exact: true,
     }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Explanation", exact: true }).click();
+  await page.getByRole("tab", { name: "Explanation", exact: true }).click();
   await page.getByRole("button", { name: "Generate AI proposal" }).click();
   await expect(
     page.getByRole("dialog", { name: "Confirm analysis input" }),
@@ -113,7 +116,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
     path: ".leanreview-test/review-workspace.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "CRAP", exact: true }).click();
+  await page.getByRole("tab", { name: "CRAP", exact: true }).click();
   await expect(page.locator(".crap-value")).toHaveText("Unavailable");
   await page
     .getByRole("button", { name: "Configure tests", exact: true })
@@ -188,7 +191,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(page.locator(".progress-summary")).toContainText(
     "0 / 2 reviewed",
   );
-  await page.getByRole("button", { name: "Comments", exact: false }).click();
+  await page.getByRole("tab", { name: "Comments", exact: false }).click();
   await expect(
     page.getByText("Needs reattachment", { exact: true }),
   ).toBeVisible();
@@ -292,6 +295,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(
     page.getByRole("dialog", { name: "Pinned graph source" }),
   ).toContainText("public class A");
+  await expect(graph.locator(".modal-backdrop")).toHaveCSS("position", "fixed");
   await page.getByRole("button", { name: "Close source" }).click();
   await graph.getByRole("button", { name: "Back to packages" }).click();
   await expect(graph.locator(".react-flow__node")).not.toHaveCount(0);
