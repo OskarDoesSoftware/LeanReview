@@ -18,7 +18,7 @@ export type PinnedInventory = {
 export type GraphNode = {
   id: string;
   label: string;
-  kind: "module" | "class" | "package" | "external" | "unresolved";
+  kind: "module" | "class" | "package" | "folder" | "external" | "unresolved";
   language: "ts/js" | "java";
   path?: string;
   packageId?: string;
@@ -64,8 +64,16 @@ export type ModuleGraph = {
   provenance: { typescript: string; java: string; configuration: string[] };
 };
 export type GraphRun = {
+  progress?: GraphProgress;
   status: "running" | "succeeded" | "failed" | "canceled" | "interrupted";
   startedAt: string;
   finishedAt?: string;
   error?: string;
+};
+export type GraphProgress = {
+  phase: "configuration" | "reading" | "parsing" | "resolving" | "saving";
+  completed: number;
+  total: number;
+  bytes: number;
+  path?: string;
 };

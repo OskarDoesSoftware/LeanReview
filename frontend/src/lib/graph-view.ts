@@ -13,6 +13,8 @@ export function graphView(
     javaPackage: string | null;
     collapseCycles: boolean;
     limit: number;
+    groupModules?: boolean;
+    folder?: string | null;
   },
 ) {
   const all = new Map(graph.nodes.map((n) => [n.id, n]));
@@ -22,6 +24,16 @@ export function graphView(
     for (const edge of graph.edges)
       if (selected.has(edge.source) && all.get(edge.source)?.changed)
         selected.add(edge.target);
+  if (options.folder) {
+    selected = new Set(
+      graph.nodes
+        .filter((n) => n.path?.startsWith(options.folder + "/"))
+        .map((n) => n.id),
+    );
+    const inside = new Set(selected);
+    for (const edge of graph.edges)
+      if (inside.has(edge.source)) selected.add(edge.target);
+  }
   for (const id of options.expanded) {
     selected.add(id);
     for (const edge of graph.edges)
@@ -33,6 +45,36 @@ export function graphView(
   const projection = new Map<string, string>(),
     groups = new Map<string, GraphNode>();
   for (const node of graph.nodes) {
+    if (options.groupModules && node.kind === "module" && node.path) {
+      const parts = node.path.split("/"),
+        inside = options.folder && node.path.startsWith(options.folder + "/");
+      const prefix = inside
+        ? options.folder +
+          "/" +
+          node.path.slice(options.folder!.length + 1).split("/")[0]
+        : parts.slice(0, Math.min(2, parts.length - 1)).join("/");
+      const directory =
+        inside && node.path.slice(options.folder!.length + 1).includes("/")
+          ? prefix
+          : inside
+            ? ""
+            : prefix;
+      if (directory) {
+        const id = `folder:${directory}`;
+        projection.set(node.id, id);
+        const group = groups.get(id);
+        if (group) group.changed ||= node.changed;
+        else
+          groups.set(id, {
+            id,
+            label: directory,
+            kind: "folder",
+            language: "ts/js",
+            changed: node.changed,
+          });
+        continue;
+      }
+    }
     const id =
       node.kind === "class" && node.packageId !== options.javaPackage
         ? node.packageId!
@@ -63,13 +105,20 @@ export function graphView(
     [...selected].map((id) => projection.get(id)!),
   );
   const query = options.query.toLowerCase();
+  const matchedGroups = new Set(
+    graph.nodes
+      .filter((n) => `${n.label} ${n.path ?? ""}`.toLowerCase().includes(query))
+      .map((n) => projection.get(n.id)),
+  );
   const matching = [...groups.values()]
     .filter(
       (n) =>
         selectedGroups.has(n.id) &&
         (options.showExternal ||
           !["external", "unresolved"].includes(n.kind)) &&
-        (!query || `${n.label} ${n.path ?? ""}`.toLowerCase().includes(query)),
+        (!query ||
+          matchedGroups.has(n.id) ||
+          `${n.label} ${n.path ?? ""}`.toLowerCase().includes(query)),
     )
     .sort(
       (a, b) =>

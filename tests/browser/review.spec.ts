@@ -14,7 +14,13 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await page
     .getByRole("combobox", { name: "Comparison mode" })
     .selectOption("staged");
+  const openStaged = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === "/api/sessions" &&
+      response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: /Open (review|comparison)/ }).click();
+  expect((await openStaged).ok()).toBe(true);
   await expect(
     page.getByRole("heading", { name: "identity-service" }),
   ).toBeVisible();
@@ -29,7 +35,15 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await page
     .getByRole("combobox", { name: "Comparison mode" })
     .selectOption("all");
+  const openAll = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === "/api/sessions" &&
+      response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: /Open (review|comparison)/ }).click();
+  const opened = await openAll;
+  expect(opened.ok()).toBe(true);
+  expect((await opened.json()).snapshot.comparison.mode).toBe("all");
   await expect(
     page.getByRole("heading", { name: "identity-service" }),
   ).toBeVisible();
@@ -162,9 +176,15 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
     path.join(root, "src/auth/validatePassword.ts"),
     "export const changedAgain = true;\n",
   );
+  const refreshed = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname.endsWith("/refresh") &&
+      response.request().method() === "POST",
+  );
   await page
     .getByRole("button", { name: "Refresh snapshot", exact: true })
     .click();
+  expect((await refreshed).ok()).toBe(true);
   await expect(page.locator(".progress-summary")).toContainText(
     "0 / 2 reviewed",
   );
@@ -254,6 +274,10 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
     .click();
   await expect(graph.getByRole("status")).toContainText("Source scan complete");
   await expect(graph.getByRole("status")).toContainText("2 cycles");
+  await expect(graph.getByLabel("Group TS/JS folders")).toBeChecked();
+  await expect(graph.locator(".graph-node-list button")).toHaveCount(5);
+  await expect(graph.locator(".react-flow__edge")).toHaveCount(0);
+  await graph.getByLabel("External / unresolved").check();
   await expect(
     graph.getByRole("button", {
       name: "javascript:alert(1) external",
@@ -271,10 +295,37 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await graph.getByRole("button", { name: "Back to packages" }).click();
   await expect(graph.locator(".react-flow__node")).not.toHaveCount(0);
   await expect(graph.getByText("ELK layout ready")).toBeVisible();
+  await expect
+    .poll(() =>
+      graph
+        .locator(".react-flow__viewport")
+        .evaluate((el) =>
+          Number(
+            getComputedStyle(el).transform.split(",")[0].replace("matrix(", ""),
+          ),
+        ),
+    )
+    .toBeGreaterThanOrEqual(0.8);
+  await expect(graph.locator(".graph-node-label strong").first()).toHaveCSS(
+    "font-size",
+    "15px",
+  );
+  await graph.getByRole("button", { name: "a package", exact: true }).click();
+  await expect(graph.locator(".react-flow__edge")).not.toHaveCount(0);
   await page.screenshot({ path: ".leanreview-test/module-graph.png" });
+  await graph
+    .getByRole("button", { name: "src/features folder", exact: true })
+    .click();
+  await graph.getByRole("button", { name: "Open folder", exact: true }).click();
+  await expect(
+    graph.getByRole("button", { name: "Back to folder overview" }),
+  ).toBeVisible();
+  await expect(graph.locator(".graph-node-list button")).toHaveCount(5);
+  await graph.getByRole("button", { name: "Back to folder overview" }).click();
   await graph
     .getByRole("button", { name: "Review graph", exact: true })
     .click();
+  await graph.getByLabel("Group TS/JS folders").uncheck();
   await expect(
     graph.getByRole("button", { name: "src/graph/entry.ts", exact: false }),
   ).not.toBeVisible();

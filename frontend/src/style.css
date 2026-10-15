@@ -1,4 +1,62 @@
 @import "tailwindcss";
+.graph-node-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  width: 100%;
+}
+.graph-node-label strong,
+.graph-node-label span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.graph-node-label strong {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+.graph-node-label span {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.graph-node-label small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.graph-scan-progress {
+  padding: 12px 18px;
+  display: grid;
+  grid-template-columns: 260px minmax(100px, 1fr);
+  align-items: center;
+  gap: 8px 16px;
+  background: var(--accent);
+  font-size: 12px;
+}
+.graph-scan-progress span {
+  grid-column: 1/-1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.graph-scan-progress progress {
+  width: 100%;
+  accent-color: var(--primary);
+}
+.graph-focus-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 58px;
+  padding: 8px 12px;
+  max-width: 80%;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+}
 .module-graph-overlay {
   position: fixed;
   inset: 16px;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   ReactFlow,
   Background,
@@ -9,6 +9,7 @@ import {
   type Edge,
   useNodesState,
   Position,
+  type ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import type { Review } from "../../../packages/contracts/src/index";
@@ -39,12 +40,16 @@ export function ModuleGraphViewer({
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const [query, setQuery] = useState(""),
-    [external, setExternal] = useState(true),
+    [external, setExternal] = useState(false),
     [typeOnly, setTypeOnly] = useState(true),
     [collapse, setCollapse] = useState(false),
     [javaPackage, setJavaPackage] = useState<string | null>(null),
     [expanded, setExpanded] = useState<string[]>([]),
     [selected, setSelected] = useState<string | null>(null);
+  const [groupModules, setGroupModules] = useState(true),
+    [folder, setFolder] = useState<string | null>(null),
+    [connections, setConnections] = useState<"selected" | "all">("selected");
+  const flow = useRef<ReactFlowInstance | null>(null);
   const [maxFiles, setMaxFiles] = useState(10000),
     [maxMiB, setMaxMiB] = useState(20),
     [limit, setLimit] = useState(200);
@@ -73,6 +78,7 @@ export function ModuleGraphViewer({
     setSource(null);
     setExpanded([]);
     setJavaPackage(null);
+    setFolder(null);
     setError("");
     const load = () =>
       void reload()
@@ -126,6 +132,8 @@ export function ModuleGraphViewer({
             javaPackage,
             collapseCycles: collapse,
             limit,
+            groupModules,
+            folder,
           })
         : null,
     [
@@ -138,6 +146,8 @@ export function ModuleGraphViewer({
       javaPackage,
       collapse,
       limit,
+      groupModules,
+      folder,
     ],
   );
   useEffect(() => {
@@ -146,20 +156,40 @@ export function ModuleGraphViewer({
       return;
     }
     setLayoutNote("Laying out modules…");
+    const members = new Map<string, number>();
+    for (const node of graph?.nodes ?? []) {
+      if (node.kind === "package") continue;
+      const group = display.projection.get(node.id)!;
+      members.set(group, (members.get(group) ?? 0) + 1);
+    }
     const initial: Node[] = display.nodes.map((node, index) => ({
       id: node.id,
-      data: { label: `${node.changed ? "● " : ""}${node.label}` },
+      data: {
+        label: (
+          <div className="graph-node-label">
+            <strong title={node.label}>{node.label.split("/").at(-1)}</strong>
+            <span title={node.label}>{node.label}</span>
+            <small>
+              {node.kind}
+              {node.changed ? " · changed" : ""}
+              {node.kind === "folder" || node.kind === "package"
+                ? ` · ${members.get(node.id) ?? 0} members`
+                : ""}
+            </small>
+          </div>
+        ),
+      },
       position: { x: (index % 4) * 300, y: Math.floor(index / 4) * 115 },
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
       style: {
-        width: 230,
-        minHeight: 70,
+        width: 260,
+        minHeight: 90,
         background: node.changed ? "var(--accent)" : "var(--background)",
         color: "var(--foreground)",
         border: `1px ${node.kind === "unresolved" ? "dashed" : "solid"} var(--border)`,
         borderRadius: 8,
-        fontSize: 12,
+        fontSize: 14,
       },
       ariaLabel: `${node.kind}: ${node.label}${node.changed ? ", changed" : ""}`,
     }));
@@ -186,8 +216,8 @@ export function ModuleGraphViewer({
         },
         children: display.nodes.map((node) => ({
           id: node.id,
-          width: 230,
-          height: 70,
+          width: 260,
+          height: 90,
         })),
         edges: display.edges.map((edge) => ({
           id: edge.id,
@@ -210,6 +240,16 @@ export function ModuleGraphViewer({
           })),
         );
         setLayoutNote("ELK layout ready");
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            if (live)
+              void flow.current?.fitView({
+                minZoom: 0.85,
+                maxZoom: 1,
+                padding: 0.2,
+              });
+          }),
+        );
       })
       .catch(() => {
         if (live)
@@ -229,19 +269,30 @@ export function ModuleGraphViewer({
   }, [display, setNodes]);
   const edges: Edge[] = useMemo(
     () =>
-      display?.edges.map((e) => ({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        label: e.label,
-        markerEnd: { type: MarkerType.ArrowClosed },
-        style: {
-          stroke: e.unresolved ? "#d97706" : "#6366f1",
-          strokeDasharray: e.typeOnly ? "5 4" : undefined,
-        },
-        data: { originalIds: e.originalIds },
-      })) ?? [],
-    [display],
+      display?.edges
+        .filter(
+          (e) =>
+            connections === "all" ||
+            e.source === selected ||
+            e.target === selected,
+        )
+        .map((e) => ({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          label:
+            selected && (e.source === selected || e.target === selected)
+              ? e.label
+              : undefined,
+          markerEnd: { type: MarkerType.ArrowClosed },
+          style: {
+            stroke: e.unresolved ? "#e09a33" : "var(--primary)",
+            strokeWidth: 2,
+            strokeDasharray: e.typeOnly ? "5 4" : undefined,
+          },
+          data: { originalIds: e.originalIds },
+        })) ?? [],
+    [display, selected, connections],
   );
   const action = async (work: () => Promise<void>) => {
     setBusy(true);
@@ -362,8 +413,35 @@ export function ModuleGraphViewer({
             Cancel scan
           </Button>
         )}
-        <span className="small">{view.run?.status ?? "Not scanned"}</span>
+        <span className="small">
+          {view.run?.status ?? "Not scanned"}
+          {view.run?.finishedAt
+            ? ` · ${((Date.parse(view.run.finishedAt) - Date.parse(view.run.startedAt)) / 1000).toFixed(1)}s`
+            : ""}
+        </span>
       </div>
+      {view.run?.status === "running" && (
+        <div className="graph-scan-progress" aria-live="polite">
+          <strong>
+            {view.run.progress?.phase ?? "Starting scan"} ·{" "}
+            {view.run.progress?.completed ?? 0} /{" "}
+            {view.run.progress?.total ?? "?"} ·{" "}
+            {Math.max(
+              0,
+              Math.round((Date.now() - Date.parse(view.run.startedAt)) / 1000),
+            )}
+            s
+          </strong>
+          <progress
+            aria-label="Graph scan progress"
+            max={Math.max(1, view.run.progress?.total ?? 1)}
+            value={view.run.progress?.completed ?? 0}
+          />
+          <span>
+            {view.run.progress?.path ?? "Preparing pinned source inventory"}
+          </span>
+        </div>
+      )}
       {(error || view.run?.error) && (
         <p className="graph-alert" role="alert">
           {error || view.run?.error}
@@ -393,6 +471,59 @@ export function ModuleGraphViewer({
             </span>
           </div>
           <div className="graph-toolbar">
+            <label>
+              <input
+                type="checkbox"
+                checked={groupModules}
+                onChange={(e) => {
+                  setGroupModules(e.target.checked);
+                  setFolder(null);
+                  setSelected(null);
+                }}
+              />
+              Group TS/JS folders
+            </label>
+            <label>
+              Connections
+              <select
+                aria-label="Graph connections"
+                value={connections}
+                onChange={(e) =>
+                  setConnections(e.target.value as typeof connections)
+                }
+              >
+                <option value="selected">Selected module</option>
+                <option value="all">All connections</option>
+              </select>
+            </label>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void flow.current?.zoomTo(1, { duration: 150 })}
+            >
+              Readable zoom
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() =>
+                void flow.current?.fitView({ minZoom: 0.1, maxZoom: 1 })
+              }
+            >
+              Fit overview
+            </Button>
+            {folder && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setFolder(null);
+                  setSelected(null);
+                }}
+              >
+                Back to folder overview
+              </Button>
+            )}
             <input
               aria-label="Filter modules"
               placeholder="Filter modules or packages"
@@ -439,14 +570,19 @@ export function ModuleGraphViewer({
               />
             </label>
             {javaPackage && (
-              <Button variant="outline" onClick={() => setJavaPackage(null)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setJavaPackage(null);
+                  setSelected(null);
+                }}
+              >
                 Back to packages
               </Button>
             )}
             <span className="small">
               {display?.nodes.length} / {display?.total} matching nodes shown ·{" "}
-              {display?.edges.length} / {display?.totalEdges} relationships
-              drawn
+              {edges.length} / {display?.totalEdges} relationships drawn
             </span>
           </div>
           <div className="graph-body">
@@ -454,9 +590,15 @@ export function ModuleGraphViewer({
               className="graph-canvas"
               aria-label="Interactive dependency diagram"
             >
-              <ReactFlow
-                nodes={nodes}
+              <ReactFlow<Node, Edge>
+                nodes={nodes.map((node) => ({
+                  ...node,
+                  selected: node.id === selected,
+                }))}
                 edges={edges}
+                onInit={(instance) => {
+                  flow.current = instance;
+                }}
                 onNodesChange={onNodesChange}
                 onNodeClick={(_, node) => {
                   setSelected(node.id);
@@ -467,15 +609,22 @@ export function ModuleGraphViewer({
                   setSource(null);
                 }}
                 fitView
-                minZoom={0.05}
+                fitViewOptions={{ minZoom: 0.85, maxZoom: 1, padding: 0.2 }}
+                minZoom={0.1}
                 colorMode="system"
                 nodesConnectable={false}
                 deleteKeyCode={null}
               >
                 <Background />
-                <Controls showInteractive={false} />
+                <Controls showInteractive={false} showFitView={false} />
                 <MiniMap />
               </ReactFlow>
+              {!selectedNode && (
+                <p className="graph-focus-hint">
+                  Select a folder or module to show its connections. Open
+                  folders to explore their files.
+                </p>
+              )}
               {layoutNote && <p className="graph-layout-note">{layoutNote}</p>}
             </section>
             <aside className="graph-inspector">
@@ -505,6 +654,31 @@ export function ModuleGraphViewer({
               {selectedNode && (
                 <section className="graph-selection">
                   <h3>{selectedNode.label}</h3>
+                  {selectedNode.kind === "folder" && (
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setFolder(selectedNode.label);
+                        setSelected(null);
+                      }}
+                    >
+                      Open folder
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      void flow.current?.fitView({
+                        nodes: [{ id: selectedNode.id }],
+                        minZoom: 1,
+                        maxZoom: 1,
+                        padding: 0.5,
+                      })
+                    }
+                  >
+                    Focus selected
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"

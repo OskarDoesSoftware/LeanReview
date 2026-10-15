@@ -83,16 +83,32 @@ export class GraphService {
       const sources: Record<string, string> = JSON.parse(
         previous?.sources ?? "{}",
       );
-      const graph = await scanGraph(snapshot, options, signal, {
-        ...source,
-        read: async (name) => {
-          const text = sources[name]
-            ? this.artifacts.read(sources[name])
-            : await source.read(name);
-          sources[name] = this.artifacts.write(text);
-          return text;
+      let progressAt = 0;
+      const graph = await scanGraph(
+        snapshot,
+        options,
+        signal,
+        {
+          ...source,
+          read: async (name, signal) => {
+            const text = sources[name]
+              ? this.artifacts.read(sources[name])
+              : await source.read(name, signal);
+            sources[name] = this.artifacts.write(text);
+            return text;
+          },
         },
-      });
+        (progress) => {
+          const phaseChanged = run.progress?.phase !== progress.phase;
+          run.progress = progress;
+          if (phaseChanged || Date.now() - progressAt >= 150) {
+            progressAt = Date.now();
+            this.store.db
+              .prepare("UPDATE graphs SET run=? WHERE snapshot_id=? AND side=?")
+              .run(JSON.stringify(run), snapshot.id, options.side);
+          }
+        },
+      );
       if (signal.aborted) throw new Error("Graph scan canceled.");
       const artifact = this.artifacts.write(JSON.stringify(graph));
       run.status = "succeeded";

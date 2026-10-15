@@ -11,6 +11,7 @@ import { GraphService } from "../backend/src/graph/service";
 import { captureSnapshot } from "../backend/src/git/local";
 import { Store } from "../backend/src/storage/store";
 import Database from "better-sqlite3";
+import { GitBlobReader } from "../backend/src/git/blob-reader";
 import { graphView } from "../frontend/src/lib/graph-view";
 import type { Snapshot } from "../packages/contracts/src/index";
 import type { GraphOptions } from "../packages/contracts/src/graph";
@@ -51,6 +52,39 @@ function memory(files: Record<string, string>, complete = true): GraphSource {
   };
 }
 describe("source dependency adapters", () => {
+  it("groups a 43-module repository into readable folders and retains drill-down and search", async () => {
+    const files: Record<string, string> = {};
+    for (let i = 0; i < 43; i++)
+      files[`src/area${i % 4}/feature${i}.ts`] = `export const n${i}=${i};`;
+    const graph = await scanGraph(
+      snapshot(),
+      options,
+      undefined,
+      memory(files),
+    );
+    const opts = {
+      scope: "repository" as const,
+      query: "",
+      showExternal: false,
+      showTypeOnly: true,
+      expanded: [],
+      javaPackage: null,
+      collapseCycles: false,
+      limit: 200,
+      groupModules: true,
+    };
+    const grouped = graphView(graph, opts);
+    expect(grouped.nodes).toHaveLength(4);
+    expect(grouped.nodes.every((n) => n.kind === "folder")).toBe(true);
+    expect(grouped.projection.size).toBe(43);
+    expect(graph.nodes).toHaveLength(43);
+    const opened = graphView(graph, { ...opts, folder: "src/area0" });
+    expect(opened.nodes).toHaveLength(11);
+    expect(opened.nodes.every((n) => n.kind === "module")).toBe(true);
+    expect(
+      graphView(graph, { ...opts, query: "feature42" }).nodes[0].label,
+    ).toBe("src/area2");
+  });
   it("resolves captured workspace exports and arbitrary relative config inheritance without evaluating config", async () => {
     const graph = await scanGraph(
       snapshot(),
@@ -300,6 +334,14 @@ describe("source dependency adapters", () => {
     expect(graph.edges.length).toBeGreaterThan(2000);
   });
 });
+async function pinnedText(s: Snapshot, side: "before" | "after", file: string) {
+  const source = localGraphSource(s, side);
+  try {
+    return await source.read(file);
+  } finally {
+    await source.close?.();
+  }
+}
 async function temp() {
   await mkdir(".leanreview-test", { recursive: true });
   return mkdtemp(path.resolve(".leanreview-test/graph-"));
@@ -330,6 +372,84 @@ async function wait(service: GraphService, s: Snapshot) {
   throw new Error("Graph fixture timed out");
 }
 describe("pinned graph capture and persistence", () => {
+  it("scans 20 pinned files with a single Git batch process and reports progress", async () => {
+    const { root, git } = await repository();
+    for (let i = 0; i < 20; i++)
+      await writeFile(
+        path.join(root, `more${i}.ts`),
+        `export const value${i}=${i};`,
+      );
+    git("add", ".");
+    git("commit", "-m", "more files");
+    const s = await captureSnapshot(
+      root,
+      { mode: "branch", base: "main" },
+      "batch-regression",
+    );
+    const trace = path.join(await temp(), "git-trace.json");
+    const previous = process.env.GIT_TRACE2_EVENT;
+    process.env.GIT_TRACE2_EVENT = trace;
+    const phases: string[] = [];
+    try {
+      const graph = await scanGraph(s, options, undefined, undefined, (p) =>
+        phases.push(p.phase),
+      );
+      expect(graph.coverage.scanned).toBe(22);
+    } finally {
+      if (previous === undefined) delete process.env.GIT_TRACE2_EVENT;
+      else process.env.GIT_TRACE2_EVENT = previous;
+    }
+    const starts = (await readFile(trace, "utf8"))
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line))
+      .filter(
+        (event) => event.event === "start" && event.argv.includes("cat-file"),
+      );
+    expect(starts).toHaveLength(1);
+    expect(phases).toEqual(
+      expect.arrayContaining(["reading", "parsing", "saving"]),
+    );
+  });
+  it("keeps the Git batch protocol aligned after oversized, empty, binary and missing blobs", async () => {
+    const { root, git } = await repository();
+    await writeFile(path.join(root, "empty.ts"), "");
+    await writeFile(
+      path.join(root, "binary.ts"),
+      Buffer.from([0, 10, 255, 10]),
+    );
+    await writeFile(
+      path.join(root, "large.ts"),
+      "x".repeat(2 * 1024 * 1024 + 1),
+    );
+    git("add", ".");
+    git("commit", "-m", "blob boundaries");
+    const oid = (name: string) =>
+      git("rev-parse", `HEAD:${name}`).toString().trim();
+    const reader = new GitBlobReader(root);
+    try {
+      await expect(reader.read(oid("large.ts"))).rejects.toThrow("2 MiB");
+      expect(await reader.read(oid("empty.ts"))).toEqual(Buffer.alloc(0));
+      expect(await reader.read(oid("binary.ts"))).toEqual(
+        Buffer.from([0, 10, 255, 10]),
+      );
+      await expect(reader.read("0".repeat(40))).rejects.toThrow("missing");
+      expect((await reader.read(oid("a.ts"))).toString()).toBe('import "./b";');
+      await expect(reader.read("../outside")).rejects.toThrow("identity");
+    } finally {
+      await reader.close();
+    }
+    const controller = new AbortController(),
+      canceled = new GitBlobReader(root, controller.signal),
+      pending = canceled.read(oid("a.ts"));
+    await Promise.resolve();
+    controller.abort();
+    try {
+      await expect(pending).rejects.toThrow(/closed|canceled/i);
+    } finally {
+      await canceled.close();
+    }
+  });
   it("backs up a v2 database and preserves snapshots and settings during graph migration", async () => {
     const directory = await temp(),
       store = new Store(directory),
@@ -375,13 +495,9 @@ describe("pinned graph capture and persistence", () => {
     await writeFile(path.join(root, "a.ts"), "malicious later source");
     await writeFile(path.join(root, "b.ts"), "later");
     git("add", ".");
-    expect(await localGraphSource(staged, "after").read("a.ts")).toBe(
-      'import "./c";',
-    );
-    expect(await localGraphSource(unstaged, "before").read("a.ts")).toBe(
-      'import "./c";',
-    );
-    expect(await localGraphSource(unstaged, "after").read("b.ts")).toBe(
+    expect(await pinnedText(staged, "after", "a.ts")).toBe('import "./c";');
+    expect(await pinnedText(unstaged, "before", "a.ts")).toBe('import "./c";');
+    expect(await pinnedText(unstaged, "after", "b.ts")).toBe(
       "export const b=1;",
     );
     const before = await scanGraph(staged, { ...options, side: "before" }),

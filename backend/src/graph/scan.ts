@@ -74,6 +74,24 @@ export async function scanGraph(
   options: GraphOptions,
   signal?: AbortSignal,
   source: GraphSource = localGraphSource(snapshot, options.side),
+  progress?: (
+    value: import("../../../packages/contracts/src/graph").GraphProgress,
+  ) => void,
+): Promise<ModuleGraph> {
+  try {
+    return await collectGraph(snapshot, options, signal, source, progress);
+  } finally {
+    await source.close?.();
+  }
+}
+async function collectGraph(
+  snapshot: Snapshot,
+  options: GraphOptions,
+  signal: AbortSignal | undefined,
+  source: GraphSource,
+  progress?: (
+    value: import("../../../packages/contracts/src/graph").GraphProgress,
+  ) => void,
 ): Promise<ModuleGraph> {
   const files = new Map<string, string>(),
     nodes = new Map<string, GraphNode>(),
@@ -135,6 +153,13 @@ export async function scanGraph(
     ),
     seenConfig = new Set<string>();
   for (const name of configQueue) {
+    progress?.({
+      phase: "configuration",
+      completed: seenConfig.size,
+      total: configQueue.length,
+      bytes: configBytes,
+      path: name,
+    });
     if (seenConfig.has(name)) continue;
     seenConfig.add(name);
     if (configuration.length >= 500 || configBytes > 2 * 1024 * 1024) {
@@ -145,7 +170,7 @@ export async function scanGraph(
     }
     await checkpoint();
     try {
-      const text = await source.read(name);
+      const text = await source.read(name, signal);
       configBytes += Buffer.byteLength(text);
       if (configBytes > 2 * 1024 * 1024)
         throw new Error("Configuration byte cap");
@@ -170,6 +195,13 @@ export async function scanGraph(
   let attempts = 0,
     byteCap = false;
   for (const name of eligible) {
+    progress?.({
+      phase: "reading",
+      completed: attempts,
+      total: Math.min(eligible.length, options.maxFiles),
+      bytes,
+      path: name,
+    });
     if (attempts >= options.maxFiles) {
       omissions.push({ path: name, reason: "Source file scan cap reached" });
       continue;
@@ -181,7 +213,7 @@ export async function scanGraph(
     await checkpoint();
     attempts++;
     try {
-      const text = await source.read(name),
+      const text = await source.read(name, signal),
         size = Buffer.byteLength(text);
       if (bytes + size > options.maxBytes) {
         byteCap = true;
@@ -233,6 +265,13 @@ export async function scanGraph(
   for (const name of eligible) {
     const text = files.get(name);
     if (text === undefined) continue;
+    progress?.({
+      phase: "parsing",
+      completed: scanned + parserFailures,
+      total: files.size - configuration.length,
+      bytes,
+      path: name,
+    });
     await checkpoint();
     try {
       if (name.endsWith(".java"))
@@ -271,6 +310,16 @@ export async function scanGraph(
     }
   }
   for (const { node, dep } of pending) {
+    if (edges.length % 100 === 0) {
+      await checkpoint();
+      progress?.({
+        phase: "resolving",
+        completed: edges.length,
+        total: pending.length,
+        bytes,
+        path: node.path,
+      });
+    }
     const target = !dep.dynamic
       ? resolveTs(node.path!, dep.specifier)
       : undefined;
@@ -379,6 +428,12 @@ export async function scanGraph(
       nodeValues.map((n) => n.id),
       edges.filter((e) => e.status === "resolved"),
     );
+  progress?.({
+    phase: "saving",
+    completed: scanned,
+    total: eligible.length,
+    bytes,
+  });
   return {
     version: 1,
     snapshotId: snapshot.id,

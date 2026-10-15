@@ -41,6 +41,16 @@ await writeFile(
   path.join(root, "src/main/java/b/B.java"),
   "package b; public class B { a.A dependency; }",
 );
+for (let i = 0; i < 40; i++) {
+  const folder = path.join(root, "src/features", `area${Math.floor(i / 8)}`);
+  await mkdir(folder, { recursive: true });
+  const imports =
+    i < 39 ? `import '../area${Math.floor((i + 1) / 8)}/feature${i + 1}';` : "";
+  await writeFile(
+    path.join(folder, `feature${i}.ts`),
+    `${imports}export const value${i}=${i};`,
+  );
+}
 git("add", ".");
 git("commit", "-m", "initial");
 await writeFile(
