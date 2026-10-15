@@ -85,9 +85,9 @@ public class GitHubFeedback {
           graphql(
                   "query($owner:String!,$repo:String!,$number:Int!,$cursor:String){"
                       + " repository(owner:$owner,name:$repo){pullRequest(number:$number){reviewThreads(first:100,after:$cursor){nodes{id"
-                      + " isResolved isOutdated path line comments(first:100){nodes{databaseId body"
-                      + " author{login}} pageInfo{hasNextPage endCursor}}} pageInfo{hasNextPage"
-                      + " endCursor}}}}}",
+                      + " isResolved isOutdated path line"
+                      + " comments(first:100){nodes{databaseId:fullDatabaseId body author{login}}"
+                      + " pageInfo{hasNextPage endCursor}}} pageInfo{hasNextPage endCursor}}}}}",
                   vars)
               .path("repository")
               .path("pullRequest")
@@ -109,7 +109,7 @@ public class GitHubFeedback {
           JsonNode more =
               graphql(
                       "query($id:ID!,$cursor:String!){node(id:$id){... on"
-                          + " PullRequestReviewThread{comments(first:100,after:$cursor){nodes{databaseId"
+                          + " PullRequestReviewThread{comments(first:100,after:$cursor){nodes{databaseId:fullDatabaseId"
                           + " body author{login}} pageInfo{hasNextPage endCursor}}}}}",
                       next)
                   .path("node")
@@ -163,13 +163,21 @@ public class GitHubFeedback {
   public ObjectNode replyDraft(String id, JsonNode body) throws IOException {
     String expected = WireInput.text(body, "snapshotId"),
         text = WireInput.text(body, "text", 1, 10000, true);
-    long reply = body.path("replyTo").asLong();
+    JsonNode identifier = body.path("replyTo");
+    String reply = identifier.asText();
+    if ((!identifier.isIntegralNumber() && !identifier.isTextual())
+        || !reply.matches("[1-9][0-9]{0,18}"))
+      throw new IllegalArgumentException("Invalid reply target.");
+    try {
+      Long.parseLong(reply);
+    } catch (NumberFormatException invalid) {
+      throw new IllegalArgumentException("Invalid reply target.");
+    }
     boolean found = false;
     for (JsonNode thread : discussions(id).path("threads"))
       for (JsonNode comment : thread.path("comments"))
-        if (comment.path("databaseId").asLong() == reply) found = true;
-    if (!found || reply <= 0)
-      throw new IllegalArgumentException("Reply target is not in this pull request.");
+        if (comment.path("databaseId").asText().equals(reply)) found = true;
+    if (!found) throw new IllegalArgumentException("Reply target is not in this pull request.");
     return reviews.updateCurrentState(
         id,
         expected,
@@ -226,7 +234,8 @@ public class GitHubFeedback {
       boolean found = false;
       for (JsonNode thread : discussions(id).path("threads"))
         for (JsonNode comment : thread.path("comments"))
-          if (comment.path("databaseId").equals(draft.path("replyTo"))) found = true;
+          if (comment.path("databaseId").asText().equals(draft.path("replyTo").asText()))
+            found = true;
       if (!found) throw new IllegalArgumentException("The reply target is no longer available.");
       return reviews.updateCurrentState(
           id,
@@ -425,7 +434,7 @@ public class GitHubFeedback {
         if (comment.path("body").asText().equals(expectedBody)
             && comment.path("user").path("login").equals(record.path("actor"))
             && (draft.has("replyTo")
-                ? comment.path("in_reply_to_id").equals(draft.path("replyTo"))
+                ? comment.path("in_reply_to_id").asText().equals(draft.path("replyTo").asText())
                 : comment.path("path").equals(draft.path("path")))
             && seen.add(draft.path("id").asText())) confirmed.add(draft.path("id"));
       }

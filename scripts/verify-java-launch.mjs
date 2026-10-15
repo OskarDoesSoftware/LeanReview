@@ -1,12 +1,17 @@
 import { fork } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, mkdtemp } from "node:fs/promises";
+import { mkdir, mkdtemp, cp, readFile } from "node:fs/promises";
+import { DatabaseSync } from "node:sqlite";
+import { restoreData } from "./data-backup.mjs";
 import path from "node:path";
 import { createServer } from "node:net";
 import assert from "node:assert/strict";
 
 await mkdir(path.resolve(".leanreview-test"), { recursive: true });
 const data = await mkdtemp(path.resolve(".leanreview-test/launch-acceptance-"));
+await cp("tests/fixtures/backend-compatibility/databases/v3", data, {
+  recursive: true,
+});
 const reservation = createServer();
 await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
 const port = reservation.address().port;
@@ -16,8 +21,8 @@ const launcher = fork("scripts/java-launch.mjs", [], {
   stdio: ["ignore", "pipe", "pipe", "ipc"],
   env: {
     ...process.env,
-    LEANREVIEW_JAVA_PORT: String(port),
-    LEANREVIEW_JAVA_DATA_DIR: data,
+    LEANREVIEW_PORT: String(port),
+    LEANREVIEW_DATA_DIR: data,
     LEANREVIEW_NO_OPEN: "1",
   },
 });
@@ -50,6 +55,10 @@ try {
     headers: { cookie },
   });
   assert.equal((await capabilities.json()).backend, "java");
+  const saved = await fetch(origin + "/api/sessions/session-fixture", {
+    headers: { cookie },
+  });
+  assert.equal((await saved.json()).snapshot.id, "snapshot-current");
   launcher.send("shutdown");
   const result = await Promise.race([
     exited,
@@ -62,12 +71,30 @@ try {
   ]);
   assert.equal(result[0], 0);
   await assert.rejects(fetch(origin, { signal: AbortSignal.timeout(1000) }));
+  const marker = JSON.parse(
+    await readFile(path.join(data, "java-cutover.json"), "utf8"),
+  );
+  assert.equal(marker.version, 1);
+  const restored = data + "-restored";
+  await restoreData(marker.backup, restored);
+  const recovered = new DatabaseSync(path.join(restored, "leanreview.sqlite"), {
+    readOnly: true,
+  });
+  try {
+    const state = recovered
+      .prepare("SELECT state FROM snapshots WHERE id='snapshot-current'")
+      .get().state;
+    assert.equal(JSON.parse(state).analysisStatus, "running");
+  } finally {
+    recovered.close();
+  }
   console.log(
     JSON.stringify({
       passed: true,
       startupMs,
       shutdown: "owned process stopped",
       dataIsolation: true,
+      preJavaBackupRestored: true,
     }),
   );
 } finally {

@@ -14,7 +14,14 @@ public final class DatabaseOwner implements AutoCloseable {
   private final FileLock lock;
 
   public DatabaseOwner(Path directory) throws IOException {
-    Files.createDirectories(directory);
+    try {
+      Files.createDirectories(
+          directory,
+          java.nio.file.attribute.PosixFilePermissions.asFileAttribute(
+              java.nio.file.attribute.PosixFilePermissions.fromString("rwx------")));
+    } catch (UnsupportedOperationException unsupported) {
+      Files.createDirectories(directory);
+    }
     channel =
         FileChannel.open(
             directory.resolve("leanreview.lock"),

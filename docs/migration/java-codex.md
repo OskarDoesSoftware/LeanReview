@@ -1,6 +1,6 @@
 # Codex subscription analysis in Java
 
-Issue [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36) ports the Codex app-server adapter to the opt-in Spring backend. The default launcher still uses Node. Packaging and live platform acceptance remain separate migration gates.
+Issue [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36) ports the Codex app-server adapter to Spring. Java is now the default backend after platform/performance acceptance and cutover. This document records the adapter verification performed during that migration.
 
 ## Credentials and input
 

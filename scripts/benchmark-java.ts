@@ -1,4 +1,4 @@
-import { dataset } from "./benchmark-backend";
+import { dataset } from "./benchmark-dataset";
 import { monitorTree } from "./process-tree-memory";
 import fs from "node:fs/promises";
 import path from "node:path";

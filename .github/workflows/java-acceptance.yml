@@ -13,9 +13,12 @@ on:
         ".github/workflows/java-acceptance.yml",
       ]
   pull_request:
+concurrency:
+  group: java-acceptance-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   acceptance:
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -34,7 +37,7 @@ jobs:
           cache: maven
       - run: npm ci
       - run: npm run typecheck
-      - run: npm run build:java
+      - run: node scripts/ci-command.mjs build
       - name: Native keychain interoperability on macOS
         if: runner.os == 'macOS'
         timeout-minutes: 3
@@ -56,11 +59,11 @@ jobs:
           sudo apt-get install -y gnome-keyring libsecret-1-0 dbus-x11
           dbus-run-session -- sh -c 'printf "%s" fixture-password | gnome-keyring-daemon --unlock --components=secrets; LEANREVIEW_KEYRING_ACCEPTANCE=1 sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test'
       - run: node scripts/verify-java-launch.mjs
-      - run: npx vitest run tests/data-backup.test.ts tests/process-tree-memory.test.ts tests/java-performance.test.ts
+      - run: npm run test:unit
       - name: Verify recorded Windows performance budgets
         run: npm run check:java-performance
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test --config playwright.java.config.ts
+      - run: node scripts/ci-command.mjs browser
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -68,3 +71,4 @@ jobs:
           path: |
             backend-java/target/surefire-reports
             test-results
+            .leanreview-test/ci-*.log

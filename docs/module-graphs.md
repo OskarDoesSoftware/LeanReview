@@ -44,7 +44,7 @@ Current execution evidence is Windows x64. Cross-platform release acceptance and
 
 On the development Windows machine, a 20-file/810-byte pinned fixture took 13,262 ms with two Git processes per file. The batch reader took 293 ms for the same scan. A separate probe measured 11,226 ms for old source reads versus 16 ms for parsing/resolution from memory. Replaying the reported 43-file/295,530-byte snapshot took 711 ms for extraction and 799 ms including isolated cache/SQLite persistence, with identical dependency evidence. These are local measurements, not platform-wide performance guarantees.
 
-`npm run benchmark:graph` recreates/reuses the isolated 20-file fixture and checks a two-second scan budget. The regular tests use Git's structured trace to verify one batch process for a multi-file cold scan, and cover empty/binary/oversized/missing objects plus cancellation. Browser verification uses a 46-source-file fixture and checks grouping, folder drill-down, minimum readable zoom, label size, focused edges, Java navigation, and safe labels.
+The retired Node `benchmark:graph` command measured the isolated 20-file fixture. Current source-scan measurements use `npm run benchmark:java`, with fixed dataset identities and process-tree memory accounting. Java tests cover pinned Git capture and reads, parser/source failures, cancellation, coverage, and frozen HTTP behavior. The Java browser harness renders the retained graph and coverage components against the authenticated Java server.
 
 ## Large projects
 

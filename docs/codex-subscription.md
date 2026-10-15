@@ -28,7 +28,7 @@ Allowance is shared with other Codex sessions on the account. LeanReview checks 
 
 There is no automatic switch to API billing, another model, or another provider, and LeanReview does not purchase or redeem credits. Account-level Codex billing and credit policies still apply within Codex itself. LeanReview does not replace those policies.
 
-Both the default Node backend and the opt-in Java backend support this adapter. The original migration compatibility fixtures remain frozen. See [Java Codex analysis](migration/java-codex.md) for Java verification and the live platform acceptance still required before switching runtimes.
+The default Java backend supports this adapter. The original migration compatibility fixtures remain frozen. See [Java Codex analysis](migration/java-codex.md) for verification and [launch and recovery](migration/java-launch-acceptance.md) for the completed platform gate and cutover.
 
 ## Verification
 

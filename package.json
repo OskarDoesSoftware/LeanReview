@@ -9,44 +9,31 @@
   },
   "workspaces": [
     "frontend",
-    "backend",
     "packages/contracts"
   ],
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "build": "vite build --config frontend/vite.config.ts && tsup backend/src/index.ts --format esm --out-dir backend/dist --platform node --external better-sqlite3 --external @napi-rs/keyring --external web-tree-sitter",
+    "dev": "node scripts/java-launch.mjs --dev --build",
+    "build": "node scripts/java-launch.mjs --build --build-only",
     "build:analysis-helper": "node scripts/build-analysis-helper.mjs",
-    "start": "node backend/dist/index.js",
+    "start": "node scripts/java-launch.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && node scripts/java-launch.mjs --test-only",
     "test:prepare-java": "node scripts/prepare-java-fixture.mjs",
     "test:browser": "playwright test",
-    "benchmark:graph": "node --import tsx scripts/benchmark-graph.mjs",
-    "compatibility:freeze": "node --import tsx scripts/freeze-backend-compatibility.ts --write",
-    "test:compatibility": "vitest run tests/backend-compatibility.test.ts",
-    "benchmark:backend": "node --import tsx scripts/benchmark-backend.ts",
-    "build:java": "node scripts/java-launch.mjs --build --build-only",
-    "start:java": "node scripts/java-launch.mjs",
-    "dev:java": "node scripts/java-launch.mjs --dev",
     "benchmark:java": "node --import tsx scripts/benchmark-java.ts",
-    "check:java-performance": "node --import tsx scripts/check-java-performance.ts"
+    "check:java-performance": "node --import tsx scripts/check-java-performance.ts",
+    "test:unit": "vitest run"
   },
   "dependencies": {
-    "@napi-rs/keyring": "2.1.1",
     "@radix-ui/react-dialog": "1.3.1",
     "@radix-ui/react-slot": "1.5.0",
     "@radix-ui/react-tabs": "1.2.1",
     "@xyflow/react": "12.12.0",
-    "better-sqlite3": "13.0.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
-    "diff": "9.0.0",
     "elkjs": "0.12.0",
-    "express": "5.3.0",
-    "fast-xml-parser": "5.11.2",
     "lucide-react": "1.57.0",
     "monaco-editor": "0.57.0",
-    "open": "11.0.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "tailwind-merge": "3.7.0",
@@ -62,8 +49,6 @@
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "@tailwindcss/vite": "4.3.3",
-    "@types/better-sqlite3": "9.6.0",
-    "@types/express": "5.0.6",
     "@types/node": "26.6.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
@@ -76,6 +61,7 @@
     "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vite": "8.3.4",
-    "vitest": "5.0.4"
+    "vitest": "5.0.4",
+    "@napi-rs/keyring": "2.1.1"
   }
 }

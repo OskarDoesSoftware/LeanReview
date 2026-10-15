@@ -21,7 +21,13 @@ const state = fs.existsSync(file)
       resolved: false,
     };
 const save = () => fs.writeFileSync(file, JSON.stringify(state));
-const out = (value) => process.stdout.write(JSON.stringify(value));
+const out = (value) =>
+  process.stdout.write(
+    JSON.stringify(value).replace(
+      /"in_reply_to_id":"(\d+)"/g,
+      '"in_reply_to_id":$1',
+    ),
+  );
 if (args[0] === "auth") {
   if (args[1] === "status")
     out({
@@ -43,10 +49,15 @@ if (args[0] === "auth") {
     /^(repos\/|repositories\/|user\/|graphql)/.test(v),
   );
   const url = new URL(endpoint, "https://api.github.com/");
+  const page = Number(url.searchParams.get("page") || 1);
   let body = "";
   if (args.includes("--input"))
     for await (const chunk of process.stdin) body += chunk;
   const input = body ? JSON.parse(body) : null;
+  if (state.denyPulls && url.pathname === "/repos/example/repo/pulls") {
+    process.stderr.write("gh: Forbidden (HTTP 403)\n");
+    process.exit(1);
+  }
   const head = state.newHead ? "d".repeat(40) : "a".repeat(40);
   const pull = {
     number: 7,
@@ -87,7 +98,7 @@ if (args[0] === "auth") {
                     comments: {
                       nodes: [
                         {
-                          databaseId: 11,
+                          databaseId: "5000000000000000011",
                           body: "Can you explain this rule?",
                           author: { login: "author" },
                         },
@@ -102,16 +113,34 @@ if (args[0] === "auth") {
           },
         },
       });
-  } else if (url.pathname === "/user/teams") out([]);
+  } else if (url.pathname === "/user/teams")
+    out(
+      !state.paginate
+        ? []
+        : page === 1
+          ? Array.from({ length: 100 }, (_, i) => ({ id: 1000 + i }))
+          : page === 2
+            ? [{ id: 99 }]
+            : [],
+    );
   else if (url.pathname === "/user/repos")
-    out([
-      {
-        id: 42,
-        full_name: "example/repo",
-        private: true,
-        owner: { login: "example" },
-      },
-    ]);
+    out(
+      state.paginate && page === 1
+        ? Array.from({ length: 100 }, (_, i) => ({
+            id: 1000 + i,
+            full_name: `example/archive${i}`,
+            private: false,
+            owner: { login: "example" },
+          }))
+        : [
+            {
+              id: 42,
+              full_name: "example/repo",
+              private: true,
+              owner: { login: "example" },
+            },
+          ],
+    );
   else if (url.pathname === "/repositories/42")
     out({
       id: 42,
@@ -119,8 +148,29 @@ if (args[0] === "auth") {
       private: true,
       owner: { login: "example" },
     });
-  else if (url.pathname === "/repos/example/repo/pulls") out([pull]);
-  else if (url.pathname === "/repos/example/repo/pulls/7") out(pull);
+  else if (url.pathname === "/repos/example/repo/pulls")
+    out(
+      !state.paginate
+        ? [pull]
+        : page === 1
+          ? Array.from({ length: 100 }, (_, i) => ({
+              ...pull,
+              number: 100 + i,
+              requested_reviewers: [],
+              requested_teams: [],
+            }))
+          : page === 2
+            ? [
+                {
+                  ...pull,
+                  requested_reviewers: [],
+                  requested_teams: [{ id: 99 }],
+                },
+              ]
+            : [],
+    );
+  else if (/^\/repos\/example\/repo\/pulls\/[78]$/.test(url.pathname))
+    out({ ...pull, number: Number(url.pathname.split("/").at(-1)) });
   else if (url.pathname.includes("/compare/"))
     out({ merge_base_commit: { sha: "c".repeat(40) } });
   else if (url.pathname.endsWith("/files"))
@@ -199,14 +249,19 @@ if (args[0] === "auth") {
       else out(state.reviews.at(-1));
     }
   } else if (url.pathname.endsWith("/replies")) {
+    if (state.failReply) {
+      process.stderr.write("gh: Validation Failed (HTTP 422)\n");
+      process.exit(1);
+    }
     state.comments.push({
       id: 200,
       body: input.body,
       user: { login: "reviewer" },
-      in_reply_to_id: Number(url.pathname.split("/").at(-2)),
+      in_reply_to_id: url.pathname.split("/").at(-2),
     });
     save();
-    out(state.comments.at(-1));
+    if (state.failReplyUncertain) process.exitCode = 1;
+    else out(state.comments.at(-1));
   } else if (url.pathname.endsWith("/comments"))
     out(url.pathname.includes("/issues/") ? [] : state.comments);
   else {

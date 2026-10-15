@@ -1,5 +1,7 @@
 # Backend compatibility baseline
 
+This is historical evidence from the retired Node backend. The commands below belong to the pre-cutover revision `77df360`. Current verification uses `npm test`, `npm run build`, and `npm run test:browser` against Java. Frozen fixture files remain unchanged and are replayed by the Java suite and helper parity test. Node capture/regeneration tools were retired with Express; use the historical revision in a separate checkout if a deliberate baseline comparison is needed.
+
 This freezes the Node backend before the Java migration in [the baseline ticket](https://github.com/OskarDoesSoftware/LeanReview/issues/22). It adds no Java implementation and changes no application behavior. All fixtures contain synthetic source, identifiers, comments, and settings. No user database, private repository, OS credential store, or external model is read.
 
 ## Reproduce

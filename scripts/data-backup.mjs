@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import Database from "better-sqlite3";
+import { DatabaseSync, backup } from "node:sqlite";
 import { pathToFileURL } from "node:url";
 
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -14,12 +14,11 @@ export async function backupData(source, destination) {
       "Choose a backup directory outside the application data directory.",
     );
   await fs.mkdir(destination, { recursive: false, mode: 0o700 });
-  const db = new Database(path.join(source, "leanreview.sqlite"), {
-    readonly: true,
-    fileMustExist: true,
+  const db = new DatabaseSync(path.join(source, "leanreview.sqlite"), {
+    readOnly: true,
   });
   try {
-    await db.backup(path.join(destination, "leanreview.sqlite"));
+    await backup(db, path.join(destination, "leanreview.sqlite"));
   } finally {
     db.close();
   }
@@ -44,11 +43,11 @@ export async function backupData(source, destination) {
   files["leanreview.sqlite"] = digest(
     await fs.readFile(path.join(destination, "leanreview.sqlite")),
   );
-  const check = new Database(path.join(destination, "leanreview.sqlite"), {
-    readonly: true,
+  const check = new DatabaseSync(path.join(destination, "leanreview.sqlite"), {
+    readOnly: true,
   });
   try {
-    if (check.pragma("integrity_check", { simple: true }) !== "ok")
+    if (check.prepare("PRAGMA integrity_check").get().integrity_check !== "ok")
       throw new Error("Backup integrity check failed.");
     // All encoded content references must be included in the paired backup.
     for (const row of check.prepare("SELECT data FROM snapshots").iterate()) {
