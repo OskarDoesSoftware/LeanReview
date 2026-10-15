@@ -74,11 +74,14 @@ public class TestJobs {
     this.metrics = metrics;
   }
 
-  private String key(String root, String format) throws IOException {
-    return "coverage-test:"
-        + CapturedArtifacts.digest(Path.of(root).toRealPath().toString())
-        + ":"
-        + format;
+  private String key(String root, String format) {
+    String identity = root;
+    try {
+      identity = Path.of(root).toRealPath().toString();
+    } catch (IOException unavailable) {
+      // Saved reviews remain readable when their original checkout is unavailable.
+    }
+    return "coverage-test:" + CapturedArtifacts.digest(identity) + ":" + format;
   }
 
   public JsonNode config(String root, String format) throws IOException {
