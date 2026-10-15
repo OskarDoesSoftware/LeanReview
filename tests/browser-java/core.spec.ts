@@ -7,6 +7,9 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    window.open = () => null;
+  });
   const { root, link, providerOrigin } = JSON.parse(
     await readFile(".leanreview-test/java-browser-fixture.json", "utf8"),
   );
@@ -75,18 +78,71 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
   await page
     .getByRole("button", { name: "Authorize & analyze", exact: true })
     .click();
-  await expect(
-    page.getByText("Analysis proposal ready", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Accept proposal", exact: true })
-    .click();
+
   await expect(
     page.getByRole("heading", { name: "AI fixture", exact: true, level: 3 }),
   ).toBeVisible();
   await expect(page.locator(".progress-summary")).toContainText(
     "1 / 2 reviewed",
   );
+  await page.getByRole("button", { name: /^(Settings|AI settings)$/, exact: true }).click();
+  const settings = page.getByRole("dialog", {
+    name: /^(Settings|AI settings|AI provider settings)$/,
+  });
+  await settings
+    .getByRole("combobox", { name: "Provider", exact: true })
+    .selectOption("codex");
+  await expect(
+    settings.getByText("Not signed in", { exact: true }),
+  ).toBeVisible();
+  await expect(settings.getByRole("textbox", { name: "API key" })).toHaveCount(
+    0,
+  );
+  await settings
+    .getByRole("button", { name: "Sign in with ChatGPT", exact: true })
+    .click();
+  await expect(
+    settings.getByRole("link", { name: "Continue sign-in in your browser" }),
+  ).toBeVisible();
+  await settings.getByRole("button", { name: "Cancel sign-in" }).click();
+  await expect(
+    settings.getByText("Not signed in", { exact: true }),
+  ).toBeVisible();
+  await settings
+    .getByRole("button", { name: "Sign in with ChatGPT", exact: true })
+    .click();
+  await expect(settings.getByRole("status")).toContainText(
+    "Connected as reviewer@example.invalid",
+    { timeout: 10000 },
+  );
+  await expect(
+    settings.getByRole("combobox", { name: "Model", exact: true }),
+  ).toHaveValue("fixture-codex");
+  await settings.getByRole("button", { name: "Save configuration" }).click();
+  await page
+    .getByRole("button", { name: "Generate AI proposal", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "Confirm analysis input" }),
+  ).toContainText("fixture-codex");
+  await page
+    .getByRole("button", { name: "Authorize & analyze", exact: true })
+    .click();
+
+  await expect(
+    page.getByRole("heading", { name: "Feature", exact: true, level: 3 }),
+  ).toBeVisible();
+  await expect(page.locator(".progress-summary")).toContainText(
+    "1 / 2 reviewed",
+  );
+  await page.getByRole("button", { name: /^(Settings|AI settings)$/, exact: true }).click();
+  await settings
+    .getByRole("button", { name: "Sign out of LeanReview" })
+    .click();
+  await expect(
+    settings.getByText("Not signed in", { exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
   const grouping = await page.request.post(
     `/api/sessions/${session}/grouping`,
     {

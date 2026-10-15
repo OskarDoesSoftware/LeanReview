@@ -104,11 +104,27 @@ public class ReviewAnalysis implements AutoCloseable {
               state.put("analysisStatus", "running");
               state.remove("analysisError");
               state.set("manifest", prepared.manifest());
+              ObjectNode progress =
+                  state
+                      .putObject("analysisProgress")
+                      .put("startedAt", System.currentTimeMillis())
+                      .put("updatedAt", System.currentTimeMillis())
+                      .put("phase", "preparing")
+                      .put("completedBatches", 0)
+                      .put("totalBatches", prepared.batches().size())
+                      .put("completedFiles", 0)
+                      .put("totalFiles", review.path("snapshot").path("files").size())
+                      .putNull("estimatedRemainingMs");
+              progress.putArray("currentFiles");
             });
       }
-      String token = settings.token(config); // OS lookup occurs without a database transaction.
+      boolean subscription = config.path("provider").asText().equals("codex");
+      String token =
+          subscription
+              ? null
+              : settings.token(config); // OS lookup occurs without a database transaction.
       check(owned);
-      if (!config.path("provider").asText().equals("ollama") && token == null)
+      if (!subscription && !config.path("provider").asText().equals("ollama") && token == null)
         throw new IllegalArgumentException(
             "The API key is unavailable. Enter it in provider settings.");
       ObjectNode response = reviews.review(sessionId, null);
@@ -129,10 +145,24 @@ public class ReviewAnalysis implements AutoCloseable {
     try {
       ObjectNode combined = json.createObjectNode();
       ArrayNode cohorts = combined.putArray("cohorts"), findings = combined.putArray("findings");
+      int completedBatches = 0, completedFiles = 0;
+      long elapsed = 0;
       for (ObjectNode batch : prepared.batches()) {
         check(owned);
-        JsonNode result = provider.infer(config, token, batch, owned.cancellation);
+        long started = System.currentTimeMillis();
+        ArrayNode paths = json.createArrayNode();
+        batch.path("files").forEach(file -> paths.add(file.path("path").asText()));
+        progress(
+            owned, json.createObjectNode().put("phase", "connecting").set("currentFiles", paths));
+        JsonNode result =
+            provider.infer(
+                config,
+                token,
+                batch,
+                owned.cancellation,
+                phase -> progress(owned, json.createObjectNode().put("phase", phase)));
         check(owned);
+        progress(owned, json.createObjectNode().put("phase", "validating"));
         var ids = new java.util.HashSet<String>();
         batch.path("files").forEach(file -> ids.add(file.path("id").asText()));
         ObjectNode subset = json.createObjectNode();
@@ -148,7 +178,22 @@ public class ReviewAnalysis implements AutoCloseable {
         JsonNode valid = validation.validateAnalysis(result, subset);
         valid.path("cohorts").forEach(cohorts::add);
         valid.path("findings").forEach(findings::add);
+        completedBatches++;
+        completedFiles += batch.path("files").size();
+        elapsed += Math.max(1, System.currentTimeMillis() - started);
+        ObjectNode update =
+            json.createObjectNode()
+                .put("completedBatches", completedBatches)
+                .put("completedFiles", completedFiles);
+        update.putArray("currentFiles");
+        int remaining = prepared.batches().size() - completedBatches;
+        if (remaining == 0) update.putNull("estimatedRemainingMs");
+        else
+          update.put(
+              "estimatedRemainingMs", Math.round((double) elapsed / completedBatches * remaining));
+        progress(owned, update);
       }
+      progress(owned, json.createObjectNode().put("phase", "combining"));
       JsonNode proposal = validation.validateAnalysis(combined, owned.review.path("snapshot"));
       synchronized (gate) {
         check(owned);
@@ -179,6 +224,35 @@ public class ReviewAnalysis implements AutoCloseable {
           "Provider configuration or snapshot changed. Preview and authorize again.");
   }
 
+  private void progress(Job owned, ObjectNode update) {
+    synchronized (gate) {
+      if (job != owned || owned.cancellation.canceled()) return;
+      try {
+        check(owned);
+        reviews.updateCurrentState(
+            owned.sessionId,
+            owned.snapshotId,
+            state -> {
+              if (!state.path("analysisStatus").asText().equals("running")
+                  || !state.path("analysisProgress").isObject()) return;
+              ObjectNode progress = (ObjectNode) state.path("analysisProgress");
+              long now = System.currentTimeMillis();
+              if (progress.path("estimatedRemainingMs").isNumber())
+                progress.put(
+                    "estimatedRemainingMs",
+                    Math.max(
+                        0,
+                        progress.path("estimatedRemainingMs").asLong()
+                            - (now - progress.path("updatedAt").asLong())));
+              progress.setAll(update);
+              progress.put("updatedAt", now);
+            });
+      } catch (IOException error) {
+        throw new java.io.UncheckedIOException(error);
+      }
+    }
+  }
+
   private void fail(Job owned, Exception failure) {
     // Never persist arbitrary parser/provider exception text, which can contain source or secrets.
     String candidate = failure.getMessage();
@@ -202,7 +276,8 @@ public class ReviewAnalysis implements AutoCloseable {
             "Finding line is outside the captured file.");
     String message =
         candidate != null
-                && (publicMessages.contains(candidate)
+                && (failure instanceof dev.leanreview.codex.CodexFailure
+                    || publicMessages.contains(candidate)
                     || candidate.matches(
                         "Provider returned HTTP [0-9]{3}\\. Check configuration or retry; the"
                             + " accepted review was preserved\\."))

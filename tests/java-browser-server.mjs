@@ -99,6 +99,7 @@ const child = spawn(
     `--leanreview.frontend-directory=${path.resolve("frontend/dist")}`,
     `--leanreview.analysis.helper=${path.resolve("backend-java/helper/dist/index.js")}`,
     `--leanreview.analysis.node=${process.execPath}`,
+    `--leanreview.codex.command=${JSON.stringify([process.execPath,path.resolve("tests/fixtures/java-codex-app-server.mjs"),"browser-login",path.join(directory,"codex-protocol.jsonl")])}`,
     "--logging.level.root=ERROR",
     "--spring.main.banner-mode=off",
   ],

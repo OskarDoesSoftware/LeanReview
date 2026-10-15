@@ -2,6 +2,7 @@ import { expect, it } from "vitest";
 import fs from "node:fs/promises";
 import path from "node:path";
 import Database from "better-sqlite3";
+import { z } from "zod";
 import { Store } from "../backend/src/storage/store";
 import { CapturedArtifacts } from "../backend/src/storage/artifacts";
 import { hash } from "../backend/src/git/local";
@@ -28,11 +29,23 @@ it("matches the frozen fixture manifest including SQLite files and every cache b
     ).toBe(file.sha256);
 });
 it("preserves frozen HTTP requests, response bodies, status codes, and session protection", async () => {
-  expect(await captureHttp()).toEqual(await fixture("http.json"));
+  // Codex is an additive extension; retain the original migration baseline.
+  const requestPath = z.object({ request: z.object({ path: z.string() }) });
+  expect(
+    (await captureHttp()).filter(
+      (record) => !requestPath.parse(record).request.path.includes("/codex/"),
+    ),
+  ).toEqual(await fixture("http.json"));
 });
 it("preserves route inventory and input validation schemas", async () => {
-  expect(await routeInventory()).toEqual(await fixture("routes.json"));
-  expect(jsonSchemas()).toEqual(await fixture("schemas.json"));
+  expect(
+    (await routeInventory()).filter(
+      (route) => !route.path.startsWith("/api/codex/"),
+    ),
+  ).toEqual(await fixture("routes.json"));
+  const schemas = await fixture("schemas.json");
+  schemas.providerSchema.properties.provider.enum.push("codex");
+  expect(jsonSchemas()).toEqual(schemas);
 });
 it("preserves TypeScript resolution, Java extraction, and complexity outputs", async () => {
   expect(await parserFixtures()).toEqual(await fixture("parsers.json"));

@@ -2,7 +2,7 @@ import { verifyWelcome, verifyWorkspace } from "../ui-checks";
 import { test, expect } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-test("review a captured Git diff, accept AI proposal, persist progress, and refresh safely", async ({
+test("review a captured Git diff, apply AI grouping automatically, persist progress, and refresh safely", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -97,12 +97,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
     page.getByRole("dialog", { name: "Confirm analysis input" }),
   ).toContainText("fixture-model");
   await page.getByRole("button", { name: "Authorize & analyze" }).click();
-  await expect(
-    page.getByText("Analysis proposal ready", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Accept proposal", exact: true })
-    .click();
+
   await expect(page.locator(".cohort-sidebar")).toContainText("Authentication");
   await expect(page.locator(".progress-summary")).toContainText(
     "1 / 2 reviewed",

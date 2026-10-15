@@ -1,0 +1,2455 @@
+[
+  {
+    "input": {
+      "files": [
+        {
+          "id": "file-0"
+        }
+      ]
+    },
+    "value": {
+      "fileAssignments": {
+        "file-0": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 0
+        }
+      },
+      "findings": []
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "fileAssignments": {
+          "type": "object",
+          "properties": {
+            "file-0": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "file-0"
+          ],
+          "additionalProperties": false
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileId": {
+                "type": "string",
+                "enum": [
+                  "file-0"
+                ]
+              },
+              "line": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "exclusiveMinimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "bug",
+                  "security",
+                  "performance",
+                  "improvement"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "fileId",
+              "line",
+              "kind",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "fileAssignments",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "parsed": {
+      "cohorts": [
+        {
+          "name": "Feature 0",
+          "explanation": "Related changes",
+          "layers": [
+            {
+              "name": "Step 0",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-0"
+              ]
+            }
+          ]
+        }
+      ],
+      "findings": []
+    }
+  },
+  {
+    "input": {
+      "files": [
+        {
+          "id": "file-0"
+        },
+        {
+          "id": "file-1"
+        }
+      ]
+    },
+    "value": {
+      "fileAssignments": {
+        "file-0": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 1
+        },
+        "file-1": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 0
+        }
+      },
+      "findings": []
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "fileAssignments": {
+          "type": "object",
+          "properties": {
+            "file-0": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-1": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "file-0",
+            "file-1"
+          ],
+          "additionalProperties": false
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileId": {
+                "type": "string",
+                "enum": [
+                  "file-0",
+                  "file-1"
+                ]
+              },
+              "line": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "exclusiveMinimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "bug",
+                  "security",
+                  "performance",
+                  "improvement"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "fileId",
+              "line",
+              "kind",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "fileAssignments",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "parsed": {
+      "cohorts": [
+        {
+          "name": "Feature 1",
+          "explanation": "Related changes",
+          "layers": [
+            {
+              "name": "Step 1",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-1"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Feature 0",
+          "explanation": "Related changes",
+          "layers": [
+            {
+              "name": "Step 0",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-0"
+              ]
+            }
+          ]
+        }
+      ],
+      "findings": []
+    }
+  },
+  {
+    "input": {
+      "files": [
+        {
+          "id": "file-0"
+        },
+        {
+          "id": "file-1"
+        },
+        {
+          "id": "file-2"
+        },
+        {
+          "id": "file-3"
+        },
+        {
+          "id": "file-4"
+        },
+        {
+          "id": "file-5"
+        },
+        {
+          "id": "file-6"
+        },
+        {
+          "id": "file-7"
+        },
+        {
+          "id": "file-8"
+        },
+        {
+          "id": "file-9"
+        },
+        {
+          "id": "file-10"
+        },
+        {
+          "id": "file-11"
+        },
+        {
+          "id": "file-12"
+        },
+        {
+          "id": "file-13"
+        },
+        {
+          "id": "file-14"
+        },
+        {
+          "id": "file-15"
+        },
+        {
+          "id": "file-16"
+        },
+        {
+          "id": "file-17"
+        },
+        {
+          "id": "file-18"
+        },
+        {
+          "id": "file-19"
+        },
+        {
+          "id": "file-20"
+        },
+        {
+          "id": "file-21"
+        },
+        {
+          "id": "file-22"
+        },
+        {
+          "id": "file-23"
+        },
+        {
+          "id": "file-24"
+        },
+        {
+          "id": "file-25"
+        },
+        {
+          "id": "file-26"
+        },
+        {
+          "id": "file-27"
+        },
+        {
+          "id": "file-28"
+        },
+        {
+          "id": "file-29"
+        },
+        {
+          "id": "file-30"
+        },
+        {
+          "id": "file-31"
+        },
+        {
+          "id": "file-32"
+        },
+        {
+          "id": "file-33"
+        },
+        {
+          "id": "file-34"
+        },
+        {
+          "id": "file-35"
+        },
+        {
+          "id": "file-36"
+        },
+        {
+          "id": "file-37"
+        },
+        {
+          "id": "file-38"
+        },
+        {
+          "id": "file-39"
+        },
+        {
+          "id": "file-40"
+        },
+        {
+          "id": "file-41"
+        },
+        {
+          "id": "file-42"
+        },
+        {
+          "id": "file-43"
+        },
+        {
+          "id": "file-44"
+        },
+        {
+          "id": "file-45"
+        },
+        {
+          "id": "file-46"
+        },
+        {
+          "id": "file-47"
+        },
+        {
+          "id": "file-48"
+        }
+      ]
+    },
+    "value": {
+      "fileAssignments": {
+        "file-0": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 48
+        },
+        "file-1": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 47
+        },
+        "file-2": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 46
+        },
+        "file-3": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 45
+        },
+        "file-4": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 44
+        },
+        "file-5": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 43
+        },
+        "file-6": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 42
+        },
+        "file-7": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 41
+        },
+        "file-8": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 40
+        },
+        "file-9": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 39
+        },
+        "file-10": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 38
+        },
+        "file-11": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 37
+        },
+        "file-12": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 36
+        },
+        "file-13": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 35
+        },
+        "file-14": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 34
+        },
+        "file-15": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 33
+        },
+        "file-16": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 32
+        },
+        "file-17": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 31
+        },
+        "file-18": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 30
+        },
+        "file-19": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 29
+        },
+        "file-20": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 28
+        },
+        "file-21": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 27
+        },
+        "file-22": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 26
+        },
+        "file-23": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 25
+        },
+        "file-24": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 24
+        },
+        "file-25": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 23
+        },
+        "file-26": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 22
+        },
+        "file-27": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 21
+        },
+        "file-28": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 20
+        },
+        "file-29": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 19
+        },
+        "file-30": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 18
+        },
+        "file-31": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 17
+        },
+        "file-32": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 16
+        },
+        "file-33": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 15
+        },
+        "file-34": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 14
+        },
+        "file-35": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 13
+        },
+        "file-36": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 12
+        },
+        "file-37": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 11
+        },
+        "file-38": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 10
+        },
+        "file-39": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 9
+        },
+        "file-40": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 8
+        },
+        "file-41": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 7
+        },
+        "file-42": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 6
+        },
+        "file-43": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 5
+        },
+        "file-44": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 4
+        },
+        "file-45": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 3
+        },
+        "file-46": {
+          "cohortName": "Feature 1",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 2
+        },
+        "file-47": {
+          "cohortName": "Feature 2",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 1",
+          "layerExplanation": "Read this part",
+          "readingOrder": 1
+        },
+        "file-48": {
+          "cohortName": "Feature 0",
+          "cohortExplanation": "Related changes",
+          "layerName": "Step 0",
+          "layerExplanation": "Read this part",
+          "readingOrder": 0
+        }
+      },
+      "findings": []
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "fileAssignments": {
+          "type": "object",
+          "properties": {
+            "file-0": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-1": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-2": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-3": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-4": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-5": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-6": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-7": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-8": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-9": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-10": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-11": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-12": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-13": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-14": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-15": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-16": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-17": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-18": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-19": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-20": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-21": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-22": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-23": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-24": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-25": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-26": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-27": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-28": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-29": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-30": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-31": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-32": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-33": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-34": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-35": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-36": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-37": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-38": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-39": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-40": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-41": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-42": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-43": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-44": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-45": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-46": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-47": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            },
+            "file-48": {
+              "type": "object",
+              "properties": {
+                "cohortName": {
+                  "type": "string"
+                },
+                "cohortExplanation": {
+                  "type": "string"
+                },
+                "layerName": {
+                  "type": "string"
+                },
+                "layerExplanation": {
+                  "type": "string"
+                },
+                "readingOrder": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "cohortName",
+                "cohortExplanation",
+                "layerName",
+                "layerExplanation",
+                "readingOrder"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "file-0",
+            "file-1",
+            "file-2",
+            "file-3",
+            "file-4",
+            "file-5",
+            "file-6",
+            "file-7",
+            "file-8",
+            "file-9",
+            "file-10",
+            "file-11",
+            "file-12",
+            "file-13",
+            "file-14",
+            "file-15",
+            "file-16",
+            "file-17",
+            "file-18",
+            "file-19",
+            "file-20",
+            "file-21",
+            "file-22",
+            "file-23",
+            "file-24",
+            "file-25",
+            "file-26",
+            "file-27",
+            "file-28",
+            "file-29",
+            "file-30",
+            "file-31",
+            "file-32",
+            "file-33",
+            "file-34",
+            "file-35",
+            "file-36",
+            "file-37",
+            "file-38",
+            "file-39",
+            "file-40",
+            "file-41",
+            "file-42",
+            "file-43",
+            "file-44",
+            "file-45",
+            "file-46",
+            "file-47",
+            "file-48"
+          ],
+          "additionalProperties": false
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileId": {
+                "type": "string",
+                "enum": [
+                  "file-0",
+                  "file-1",
+                  "file-2",
+                  "file-3",
+                  "file-4",
+                  "file-5",
+                  "file-6",
+                  "file-7",
+                  "file-8",
+                  "file-9",
+                  "file-10",
+                  "file-11",
+                  "file-12",
+                  "file-13",
+                  "file-14",
+                  "file-15",
+                  "file-16",
+                  "file-17",
+                  "file-18",
+                  "file-19",
+                  "file-20",
+                  "file-21",
+                  "file-22",
+                  "file-23",
+                  "file-24",
+                  "file-25",
+                  "file-26",
+                  "file-27",
+                  "file-28",
+                  "file-29",
+                  "file-30",
+                  "file-31",
+                  "file-32",
+                  "file-33",
+                  "file-34",
+                  "file-35",
+                  "file-36",
+                  "file-37",
+                  "file-38",
+                  "file-39",
+                  "file-40",
+                  "file-41",
+                  "file-42",
+                  "file-43",
+                  "file-44",
+                  "file-45",
+                  "file-46",
+                  "file-47",
+                  "file-48"
+                ]
+              },
+              "line": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "exclusiveMinimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "bug",
+                  "security",
+                  "performance",
+                  "improvement"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "fileId",
+              "line",
+              "kind",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "fileAssignments",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "parsed": {
+      "cohorts": [
+        {
+          "name": "Feature 0",
+          "explanation": "Related changes",
+          "layers": [
+            {
+              "name": "Step 0",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-48",
+                "file-42",
+                "file-36",
+                "file-30",
+                "file-24",
+                "file-18",
+                "file-12",
+                "file-6",
+                "file-0"
+              ]
+            },
+            {
+              "name": "Step 1",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-45",
+                "file-39",
+                "file-33",
+                "file-27",
+                "file-21",
+                "file-15",
+                "file-9",
+                "file-3"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Feature 2",
+          "explanation": "Related changes",
+          "layers": [
+            {
+              "name": "Step 1",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-47",
+                "file-41",
+                "file-35",
+                "file-29",
+                "file-23",
+                "file-17",
+                "file-11",
+                "file-5"
+              ]
+            },
+            {
+              "name": "Step 0",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-44",
+                "file-38",
+                "file-32",
+                "file-26",
+                "file-20",
+                "file-14",
+                "file-8",
+                "file-2"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Feature 1",
+          "explanation": "Related changes",
+          "layers": [
+            {
+              "name": "Step 0",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-46",
+                "file-40",
+                "file-34",
+                "file-28",
+                "file-22",
+                "file-16",
+                "file-10",
+                "file-4"
+              ]
+            },
+            {
+              "name": "Step 1",
+              "explanation": "Read this part",
+              "fileIds": [
+                "file-43",
+                "file-37",
+                "file-31",
+                "file-25",
+                "file-19",
+                "file-13",
+                "file-7",
+                "file-1"
+              ]
+            }
+          ]
+        }
+      ],
+      "findings": []
+    }
+  }
+]

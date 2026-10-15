@@ -28,9 +28,9 @@ If machine-wide npm registry configuration is incompatible with public dependenc
 
 1. Enter the absolute root of a local Git repository and choose all uncommitted, unstaged/untracked, staged, or merge-base branch comparison.
 2. Open the review to capture a fixed snapshot. Ungrouped diff inspection works without AI.
-3. Configure Ollama, OpenAI API, or Anthropic API in AI settings. Choose a compatible model and its context/output limits. For offline Ollama use an already installed local model and disable Ollama cloud features. A localhost URL alone does not establish offline inference.
+3. Configure Codex with your ChatGPT subscription, Ollama, OpenAI API, or Anthropic API in AI settings. Codex requires an installed CLI; sign in with ChatGPT, choose a model, and save. See [subscription setup](docs/codex-subscription.md). Choose a compatible model and its context/output limits. For offline Ollama use an already installed local model and disable Ollama cloud features. A localhost URL alone does not establish offline inference.
 4. Preview and authorize the analysis manifest. Filenames and metadata for code-omitted files remain included and are shown in the manifest. No provider fallback or silent model download occurs.
-5. Inspect the proposed cohorts/layers and explicitly accept them. Rename cohorts, move files, and reorder layers as needed. AI findings are suggestions, not verified static results.
+5. Completed analysis opens directly in its cohort grouping. Rename cohorts, move files, and reorder layers as needed. AI findings are suggestions, not verified static results.
 6. Review split/unified diffs, mark files/layers reviewed, and click a gutter line number to save a local draft comment.
    Marking a file reviewed advances to the next unreviewed file in the accepted reading order. Undoing reviewed status keeps your current file selected.
    Clicking a code line offers a local draft and an external-editor action. Configure the default under Editor settings, or choose one when prompted on first use. Presets cover VS Code, IntelliJ IDEA and terminal-launched Neovim, with configurable executable/argument templates. Working files must match the snapshot before opening line coordinates; historical before-side selection opens the current file at its start rather than pretending old coordinates are current. No in-app source editing is enabled.
@@ -50,7 +50,7 @@ npm exec -- playwright install chromium
 npm run test:browser
 ```
 
-Integration tests create isolated fixture repositories/databases under ignored `.leanreview-test/`. Browser verification runs the built UI with a **fixture LLM response server**, not real inference. It exercises actual Git capture, AI input authorization/result validation, Monaco, draft comments, progress, reload, explicit proposal acceptance, refresh, and read-only history. It does not establish model grouping quality or cloud API account access.
+Integration tests create isolated fixture repositories/databases under ignored `.leanreview-test/`. Browser verification runs the built UI with a **fixture LLM response server**, not real inference. It exercises actual Git capture, AI input authorization/result validation, Monaco, draft comments, progress, reload, automatic grouping, refresh, and read-only history. It does not establish model grouping quality or cloud API account access.
 
 The Java backend migration uses [frozen compatibility fixtures and baseline measurements](docs/migration/backend-compatibility.md). Run `npm run test:compatibility` to verify the current backend and `npm run benchmark:backend` to reproduce the synthetic performance baseline.
 

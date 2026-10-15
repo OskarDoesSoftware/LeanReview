@@ -33,6 +33,7 @@ public class ProviderSettings {
   }
 
   public String token(JsonNode config) throws IOException {
+    if (config.path("provider").asText().equals("codex")) return null;
     String key = key(config);
     return vault.get(key, storage.setting("credential-mode:" + key).asText().equals("os"));
   }
@@ -43,6 +44,9 @@ public class ProviderSettings {
     if (!body.path("persist").isBoolean())
       throw WireInput.invalid("boolean", body.path("persist"), "persist");
     String token = body.has("token") ? WireInput.text(body, "token", 0, 10000, false) : "";
+    if (config.path("provider").asText().equals("codex") && !token.isEmpty())
+      throw new IllegalArgumentException(
+          "Codex subscription mode does not accept API keys. Sign in with ChatGPT.");
     if (!token.isEmpty()) {
       boolean persist = body.path("persist").asBoolean();
       String key = key(config);
@@ -58,12 +62,10 @@ public class ProviderSettings {
 
   public ObjectNode validate(JsonNode input) {
     WireInput.object(input);
-    if (input.path("provider").asText().equals("codex"))
-      throw new IllegalArgumentException(
-          "Codex subscription analysis is not available in the Java backend yet.");
-    String provider = WireInput.choice(input, "provider", "ollama", "openai", "anthropic");
+    String provider = WireInput.choice(input, "provider", "ollama", "openai", "anthropic", "codex");
     String endpoint = WireInput.text(input, "endpoint"),
         model = WireInput.text(input, "model", 1, 200, false);
+    if (provider.equals("codex")) endpoint = "https://chatgpt.com/codex";
     int context = bounded(input, "contextWindow", 1024, 2000000),
         output = bounded(input, "maxOutput", 256, 128000);
     boolean local = false;

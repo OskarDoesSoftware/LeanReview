@@ -77,12 +77,31 @@ export type ReviewState = {
   analysisStatus:
     "idle" | "running" | "ready" | "failed" | "canceled" | "interrupted";
   analysisError?: string;
+  analysisProgress?: AnalysisProgress;
   manifest?: Manifest;
 };
 export type Review = {
   snapshot: Snapshot;
   state: ReviewState;
   history: { id: string; capturedAt: string }[];
+};
+export type AnalysisPhase =
+  | "preparing"
+  | "connecting"
+  | "checking-account"
+  | "analyzing"
+  | "validating"
+  | "combining";
+export type AnalysisProgress = {
+  startedAt: number;
+  updatedAt: number;
+  phase: AnalysisPhase;
+  completedBatches: number;
+  totalBatches: number;
+  completedFiles: number;
+  totalFiles: number;
+  currentFiles: string[];
+  estimatedRemainingMs: number | null;
 };
 export type SessionSummary = {
   id: string;
@@ -91,7 +110,7 @@ export type SessionSummary = {
   updatedAt: string;
 };
 export const providerSchema = z.object({
-  provider: z.enum(["ollama", "openai", "anthropic"]),
+  provider: z.enum(["ollama", "openai", "anthropic", "codex"]),
   endpoint: z.string().url(),
   model: z.string().min(1).max(200),
   contextWindow: z.number().int().min(1024).max(2000000),

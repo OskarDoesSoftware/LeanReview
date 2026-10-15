@@ -27,7 +27,7 @@ Java supports Ollama, OpenAI Responses, and Anthropic Messages through the exist
 
 Session-only keys live in backend memory. Persistent keys use Windows Credential Manager through JNA, macOS Keychain through java-keyring, or explicitly Linux Secret Service through java-keyring. There is no plaintext or automatic session-storage fallback. The API never returns keys. Windows read/write interoperability with the existing Node binding is verified using a temporary credential; macOS/Linux interoperability still needs platform acceptance. If lookup is unavailable, re-enter the key in settings and explicitly choose its storage mode.
 
-The Node Codex subscription feature is tracked separately for Java in [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36), which blocks final platform acceptance. Java currently rejects that provider explicitly. See `docs/migration/java-review-analysis.md` for the evidence and scope limits.
+Java supports the Codex subscription provider through the installed CLI app-server in [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36). See [Java Codex analysis](../docs/migration/java-codex.md) for credential ownership, protocol limits, synthetic verification, and remaining live platform acceptance. Java remains opt-in.
 
 ## Toolchain
 

@@ -32,7 +32,7 @@ The human's recorded completion state for files and layers in a review snapshot.
 A locally saved comment associated with a specific file and line in a review snapshot, awaiting explicit publication.
 
 **Review analysis**:
-An explicitly authorized examination of a review snapshot that proposes cohorts, layers, and findings for the human to accept.
+An explicitly authorized examination of a review snapshot that produces editable cohorts, layers, and suggested findings for the human's review.
 
 **Captured artifact**:
 Immutable text associated with a review snapshot, such as captured source, a diff, or a coverage report.

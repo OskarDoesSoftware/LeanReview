@@ -1,4 +1,8 @@
 import express from "express";
+import path from "node:path";
+import { CodexRpc } from "../llm/codex-rpc";
+import { CodexProvider } from "../llm/codex";
+import { infer, analysisInstructions } from "../llm/providers";
 import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import {
@@ -22,12 +26,20 @@ export function createApp(
   store: Store,
   origin: string,
   nonce = randomBytes(32).toString("hex"),
+  codex = new CodexProvider(new CodexRpc(path.join(store.directory, "codex"))),
 ) {
   const app = express();
   const vault = new CredentialVault();
   const browserSession = randomBytes(32).toString("hex");
   let bootstrapExpires = Date.now() + 5 * 60 * 1000;
-  const analysis = new ReviewAnalysis(store, vault);
+  const analysis = new ReviewAnalysis(
+    store,
+    vault,
+    (config, token, input, signal, onProgress) =>
+      config.provider === "codex"
+        ? codex.infer(config, input, analysisInstructions, signal, onProgress)
+        : infer(config, token, input, signal, onProgress),
+  );
   const safeEqual = (a: string, b: string) => {
     const left = Buffer.from(a);
     const right = Buffer.from(b);
@@ -180,6 +192,20 @@ export function createApp(
     res.json(store.review(review.snapshot.sessionId));
   });
   app.get("/api/provider", (_req, res) => res.json(store.setting("provider")));
+  app.get("/api/codex/status", async (_req, res) =>
+    res.json(await codex.status()),
+  );
+  app.post("/api/codex/login", async (_req, res) =>
+    res.json(await codex.login()),
+  );
+  app.post("/api/codex/cancel-login", async (_req, res) => {
+    await codex.cancelLogin();
+    res.json({ ok: true });
+  });
+  app.post("/api/codex/logout", async (_req, res) => {
+    await codex.logout();
+    res.json({ ok: true });
+  });
   app.get("/api/editor", async (_req, res) =>
     res.json({
       config: store.setting("editor"),
@@ -207,6 +233,13 @@ export function createApp(
   });
   app.post("/api/provider", async (req, res) => {
     const config = providerSchema.parse(req.body.config);
+    if (config.provider === "codex") {
+      if (req.body.token)
+        throw new Error(
+          "Codex subscription mode does not accept API keys. Sign in with ChatGPT.",
+        );
+      config.endpoint = "https://chatgpt.com/codex";
+    }
     const url = new URL(config.endpoint);
     if (
       url.username ||
@@ -284,6 +317,7 @@ export function createApp(
         coverageRunner.shutdown(),
         graphs.shutdown(),
       ]);
+      codex.close();
     },
   };
 }

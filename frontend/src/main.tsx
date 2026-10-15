@@ -41,6 +41,9 @@ import { useReviewNavigation } from "./lib/use-review-navigation";
 import { api } from "./lib/api";
 import { CoveragePanel } from "./components/coverage-panel";
 import { ModuleGraphViewer } from "./components/module-graph";
+import { CodexSettings } from "./components/codex-settings";
+import { AnalysisLoading } from "./components/analysis-loading";
+import { useAutoGrouping } from "./lib/use-auto-grouping";
 type EditorConfig = { name: string; executable: string; args: string[] };
 (globalThis as any).MonacoEnvironment = {
   getWorker: (_id: string, label: string) =>
@@ -95,6 +98,7 @@ function App({ startupError }: { startupError?: string }) {
     navigating,
     navigation,
   } = useReviewNavigation(reportNavigationError);
+  useAutoGrouping(review, navigating, navigation, reportNavigationError);
   const setSelected = (id: string) => {
     pendingChange.current = null;
     navigation.selectFile(id);
@@ -493,7 +497,7 @@ function App({ startupError }: { startupError?: string }) {
               }
             >
               <Sparkles size={15} />
-              Generate AI proposal
+              {review.state.analysisStatus === "running" ? "Analysis in progress…" : "Generate AI proposal"}
             </Button>
             <Button
               variant="ghost"
@@ -557,55 +561,23 @@ function App({ startupError }: { startupError?: string }) {
               </Badge>
             )}
           </div>
-          {review.state.proposal && (
-            <div className="proposal-banner">
-              <div>
-                <strong>Analysis proposal ready</strong>
-                <p>
-                  {review.state.proposal.cohorts.length} cohorts ·{" "}
-                  {review.state.proposal.cohorts.reduce(
-                    (n, c) => n + c.layers.length,
-                    0,
-                  )}{" "}
-                  layers · {review.state.proposal.findings.length} AI findings.
-                  Accepting replaces the grouping, not your reviewed status.
-                </p>
-                <details>
-                  <summary>Preview proposed cohorts and layers</summary>
-                  {review.state.proposal.cohorts.map((c, i) => (
-                    <div key={i}>
-                      <strong>{c.name}</strong>
-                      <p>{c.explanation}</p>
-                      {c.layers.map((l, j) => (
-                        <p key={j}>
-                          {j + 1}. {l.name} ·{" "}
-                          {l.fileIds
-                            .map(
-                              (id) =>
-                                review.snapshot.files.find((f) => f.id === id)
-                                  ?.path,
-                            )
-                            .join(", ")}
-                          <br />
-                          {l.explanation}
-                        </p>
-                      ))}
-                    </div>
-                  ))}
-                </details>
-              </div>
-              <Button
-                disabled={!active || busy}
-                onClick={() =>
-                  void mutate("grouping", {
-                    analysis: review.state.proposal,
-                    acceptProposal: true,
-                  })
-                }
-              >
-                Accept proposal
-              </Button>
-            </div>
+          {review.state.analysisStatus === "running" && (
+            <AnalysisLoading
+              key={review.snapshot.id}
+              provider={
+                (review.state.manifest?.config.provider ?? config.provider) ===
+                "codex"
+                  ? "Codex"
+                  : (review.state.manifest?.config.provider ?? config.provider)
+              }
+              fileCount={review.snapshot.files.length}
+              progress={review.state.analysisProgress}
+              onCancel={async () => {
+                await api(`/sessions/${review.snapshot.sessionId}/cancel`, {
+                  snapshotId: review.snapshot.id,
+                });
+              }}
+            />
           )}
           <main className="workspace">
             <aside className="cohort-sidebar">
@@ -1005,7 +977,7 @@ function App({ startupError }: { startupError?: string }) {
                       <h2>{selectedLayer?.name ?? "Review this file"}</h2>
                       <p>
                         {selectedLayer?.explanation ??
-                          "Generate and accept an AI proposal to organize these changes into cohorts and layers. Ungrouped review is available now."}
+                          "Generate an AI grouping to organize these changes into cohorts and layers. Ungrouped review is available now."}
                       </p>
                       {selectedLayer && (
                         <Badge variant="secondary" className="badge">
@@ -1313,131 +1285,159 @@ function App({ startupError }: { startupError?: string }) {
               <X size={16} />
             </Button>
           </div>
-          <p className="small muted">
-            Repository content is sent only after you confirm an analysis
-            manifest.
-          </p>
-          <label>
-            Provider
-            <NativeSelect
-              value={config.provider}
-              onChange={(e) => {
-                const provider = e.target.value as ProviderConfig["provider"];
-                setConfig({
-                  ...config,
-                  provider,
-                  model: "",
-                  localOnly: provider === "ollama",
-                  endpoint:
-                    provider === "ollama"
-                      ? "http://127.0.0.1:11434"
-                      : provider === "openai"
-                        ? "https://api.openai.com/v1"
-                        : "https://api.anthropic.com/v1",
-                });
-              }}
-            >
-              {["ollama", "openai", "anthropic"].map((p) => (
-                <option key={p}>{p}</option>
-              ))}
-            </NativeSelect>
-          </label>
-          <label>
-            Endpoint
-            <Input
-              value={config.endpoint}
-              onChange={(e) =>
-                setConfig({ ...config, endpoint: e.target.value })
-              }
-            />
-          </label>
-          <label>
-            Model
-            <Input
-              value={config.model}
-              onChange={(e) => setConfig({ ...config, model: e.target.value })}
-              placeholder="An installed or API-accessible structured-output model"
-            />
-          </label>
-          <div className="two-fields">
-            <label>
-              Context window
-              <Input
-                type="number"
-                value={config.contextWindow}
-                onChange={(e) =>
-                  setConfig({
-                    ...config,
-                    contextWindow: Number(e.target.value),
+              <p className="small muted">
+                Repository content is sent only after you confirm an analysis
+                manifest.
+              </p>
+              <label>
+                Provider
+                <NativeSelect
+                  value={config.provider}
+                  onChange={(e) => {
+                    const provider = e.target
+                      .value as ProviderConfig["provider"];
+                    setToken("");
+                    setConfig({
+                      ...config,
+                      provider,
+                      model: "",
+                      localOnly: provider === "ollama",
+                      endpoint:
+                        provider === "ollama"
+                          ? "http://127.0.0.1:11434"
+                          : provider === "codex"
+                            ? "https://chatgpt.com/codex"
+                            : provider === "openai"
+                              ? "https://api.openai.com/v1"
+                              : "https://api.anthropic.com/v1",
+                    });
+                  }}
+                >
+                  {["codex", "ollama", "openai", "anthropic"].map((p) => (
+                    <option key={p} value={p}>
+                      {p === "codex" ? "Codex · ChatGPT subscription" : p}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </label>
+              {config.provider === "codex" && (
+                <CodexSettings
+                  model={config.model}
+                  onModel={(model) =>
+                    setConfig((current) => ({ ...current, model }))
+                  }
+                />
+              )}
+              {config.provider !== "codex" && (
+                <>
+                  <label>
+                    Endpoint
+                    <Input
+                      value={config.endpoint}
+                      onChange={(e) =>
+                        setConfig({ ...config, endpoint: e.target.value })
+                      }
+                    />
+                  </label>
+                  <label>
+                    Model
+                    <Input
+                      value={config.model}
+                      onChange={(e) =>
+                        setConfig({ ...config, model: e.target.value })
+                      }
+                      placeholder="An installed or API-accessible structured-output model"
+                    />
+                  </label>
+                </>
+              )}
+              <div className="two-fields">
+                <label>
+                  Context window
+                  <Input
+                    type="number"
+                    value={config.contextWindow}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        contextWindow: Number(e.target.value),
+                      })
+                    }
+                  />
+                </label>
+                <label>
+                  Output reservation
+                  <Input
+                    type="number"
+                    value={config.maxOutput}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        maxOutput: Number(e.target.value),
+                      })
+                    }
+                  />
+                </label>
+              </div>
+              {config.provider === "ollama" && (
+                <label className="checkbox-label">
+                  <Input
+                    type="checkbox"
+                    checked={config.localOnly}
+                    onChange={(e) =>
+                      setConfig({ ...config, localOnly: e.target.checked })
+                    }
+                  />
+                  I use a local model with Ollama cloud features disabled
+                </label>
+              )}
+              {config.provider !== "ollama" && config.provider !== "codex" && (
+                <>
+                  <label>
+                    API key
+                    <Input
+                      type="password"
+                      autoComplete="off"
+                      value={token}
+                      onChange={(e) => setToken(e.target.value)}
+                      placeholder="Enter a new key; stored keys are never returned"
+                    />
+                  </label>
+                  <label className="checkbox-label">
+                    <Input
+                      type="checkbox"
+                      checked={persist}
+                      onChange={(e) => setPersist(e.target.checked)}
+                    />
+                    Store using the OS credential manager
+                  </label>
+                  <p className="small muted">
+                    Uncheck for session-only storage. Cloud retention depends on
+                    your provider and account; this app cannot grant zero
+                    retention.
+                  </p>
+                </>
+              )}
+              <Button
+                disabled={busy || !config.model}
+                onClick={() =>
+                  void run(async () => {
+                    await api("/provider", {
+                      config,
+                      token:
+                        config.provider === "codex"
+                          ? undefined
+                          : token || undefined,
+                      persist,
+                    });
+                    setToken("");
+                    showSettings(false);
                   })
                 }
-              />
-            </label>
-            <label>
-              Output reservation
-              <Input
-                type="number"
-                value={config.maxOutput}
-                onChange={(e) =>
-                  setConfig({ ...config, maxOutput: Number(e.target.value) })
-                }
-              />
-            </label>
-          </div>
-          {config.provider === "ollama" && (
-            <label className="checkbox-label">
-              <Input
-                type="checkbox"
-                checked={config.localOnly}
-                onChange={(e) =>
-                  setConfig({ ...config, localOnly: e.target.checked })
-                }
-              />
-              I use a local model with Ollama cloud features disabled
-            </label>
-          )}
-          {config.provider !== "ollama" && (
-            <>
-              <label>
-                API key
-                <Input
-                  type="password"
-                  autoComplete="off"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  placeholder="Enter a new key; stored keys are never returned"
-                />
-              </label>
-              <label className="checkbox-label">
-                <Input
-                  type="checkbox"
-                  checked={persist}
-                  onChange={(e) => setPersist(e.target.checked)}
-                />
-                Store using the OS credential manager
-              </label>
-              <p className="small muted">
-                Uncheck for session-only storage. Cloud retention depends on
-                your provider and account; this app cannot grant zero retention.
-              </p>
-            </>
-          )}
-          <Button
-            disabled={busy || !config.model}
-            onClick={() =>
-              void run(async () => {
-                await api("/provider", {
-                  config,
-                  token: token || undefined,
-                  persist,
-                });
-                setToken("");
-                showSettings(false);
-              })
-            }
-          >
-            Save configuration
-          </Button>
+              >
+                Save configuration
+              </Button>
+
         </ReviewDialog>
       )}
       {manifest && (

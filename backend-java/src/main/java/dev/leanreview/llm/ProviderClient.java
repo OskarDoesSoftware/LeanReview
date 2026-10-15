@@ -23,6 +23,7 @@ public class ProviderClient implements ProviderInference, AutoCloseable {
           + " execution. For findings without verified after-side line coordinates use null.";
   private final ObjectMapper json;
   private final JsonNode schema;
+  private dev.leanreview.codex.CodexProvider codex;
   private final HttpClient client =
       HttpClient.newBuilder()
           .connectTimeout(Duration.ofSeconds(20))
@@ -37,9 +38,22 @@ public class ProviderClient implements ProviderInference, AutoCloseable {
     }
   }
 
+  @org.springframework.beans.factory.annotation.Autowired
+  public ProviderClient(ObjectMapper json, dev.leanreview.codex.CodexProvider codex)
+      throws java.io.IOException {
+    this(json);
+    this.codex = codex;
+  }
+
   public JsonNode infer(JsonNode config, String token, JsonNode input, Cancellation cancellation)
       throws Exception {
     cancellation.check();
+    if (config.path("provider").asText().equals("codex")) {
+      if (codex == null)
+        throw new IllegalArgumentException(
+            "Codex subscription analysis requires the local app-server connection.");
+      return codex.infer(config, input, cancellation);
+    }
     String provider = config.path("provider").asText(),
         endpoint = config.path("endpoint").asText().replaceFirst("/$", "");
     ObjectNode payload = json.createObjectNode().put("model", config.path("model").asText());
@@ -160,6 +174,19 @@ public class ProviderClient implements ProviderInference, AutoCloseable {
     } finally {
       if (!response.isDone()) response.cancel(true);
     }
+  }
+
+  @Override
+  public JsonNode infer(
+      JsonNode config,
+      String token,
+      JsonNode input,
+      Cancellation cancellation,
+      java.util.function.Consumer<String> progress)
+      throws Exception {
+    if (config.path("provider").asText().equals("codex") && codex != null)
+      return codex.infer(config, input, cancellation, progress);
+    return infer(config, token, input, cancellation);
   }
 
   public void close() {

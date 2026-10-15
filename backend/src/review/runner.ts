@@ -3,6 +3,7 @@ import {
   providerSchema,
   type Analysis,
   type Review,
+  type AnalysisProgress,
 } from "../../../packages/contracts/src/index";
 import { Store } from "../storage/store";
 import { CredentialVault } from "../credentials/vault";
@@ -75,38 +76,78 @@ export class ReviewAnalysis {
       review.state.analysisStatus = "running";
       review.state.analysisError = undefined;
       review.state.manifest = prepared.manifest;
+      review.state.analysisProgress = {
+        startedAt: Date.now(),
+        updatedAt: Date.now(),
+        phase: "preparing",
+        completedBatches: 0,
+        totalBatches: prepared.batches.length,
+        completedFiles: 0,
+        totalFiles: review.snapshot.files.length,
+        currentFiles: [],
+        estimatedRemainingMs: null,
+      };
       this.store.saveState(review.snapshot.id, review.state);
-      const token = await this.vault.get(
-        configKey(config),
-        this.store.setting(`credential-mode:${configKey(config)}`) === "os",
-      );
+      const token =
+        config.provider === "codex"
+          ? null
+          : await this.vault.get(
+              configKey(config),
+              this.store.setting(`credential-mode:${configKey(config)}`) ===
+                "os",
+            );
       this.check(job);
       if (this.manifest(sessionId).id !== input.manifestId)
         throw new Error(
           "Provider configuration or snapshot changed. Preview and authorize again.",
         );
-      if (config.provider !== "ollama" && !token)
+      if (config.provider !== "ollama" && config.provider !== "codex" && !token)
         throw new Error(
           "The API key is unavailable. Enter it in provider settings.",
         );
       const response = this.store.review(sessionId);
       void this.execute(job, async () => {
         const results: Analysis[] = [];
+        const durations: number[] = [];
+        let completedFiles = 0;
         for (const batch of prepared.batches) {
           this.check(job);
+          const batchStartedAt = Date.now();
+          this.progress(job, {
+            phase: "connecting",
+            currentFiles: batch.files.map((file) => file.path),
+          });
           const result = await this.provider(
             config,
             token,
             batch,
             job.controller.signal,
+            (phase) => this.progress(job, { phase }),
           );
           this.check(job);
+          this.progress(job, { phase: "validating" });
           const ids = new Set(batch.files.map((file) => file.id));
           validateAnalysis(result, {
             files: review.snapshot.files.filter((file) => ids.has(file.id)),
           });
           results.push(result);
+          durations.push(Math.max(1, Date.now() - batchStartedAt));
+          completedFiles += batch.files.length;
+          const remaining = prepared.batches.length - results.length;
+          this.progress(job, {
+            completedBatches: results.length,
+            completedFiles,
+            currentFiles: [],
+            estimatedRemainingMs: remaining
+              ? Math.round(
+                  (durations.reduce((sum, duration) => sum + duration, 0) /
+                    durations.length) *
+                    remaining,
+                )
+              : null,
+          });
         }
+        this.progress(job, { phase: "combining", currentFiles: [] });
         const proposal = validateAnalysis(
           {
             cohorts: results.flatMap((result) => result.cohorts),
@@ -155,6 +196,34 @@ export class ReviewAnalysis {
       this.store.setting<z.infer<typeof providerSchema>>("provider");
     if (!config) throw new Error("Configure an LLM provider first.");
     return config;
+  }
+
+  private progress(job: Job, update: Partial<AnalysisProgress>) {
+    if (this.job !== job || job.controller.signal.aborted) return;
+    const latest = this.store.review(
+      job.review.snapshot.sessionId,
+      job.review.snapshot.id,
+    );
+    if (
+      latest.state.analysisStatus !== "running" ||
+      !latest.state.analysisProgress
+    )
+      return;
+    const previous = latest.state.analysisProgress;
+    const remaining =
+      previous.estimatedRemainingMs === null
+        ? null
+        : Math.max(
+            0,
+            previous.estimatedRemainingMs - (Date.now() - previous.updatedAt),
+          );
+    latest.state.analysisProgress = {
+      ...previous,
+      estimatedRemainingMs: remaining,
+      ...update,
+      updatedAt: Date.now(),
+    };
+    this.store.saveState(job.review.snapshot.id, latest.state);
   }
 
   private check(job: Job) {

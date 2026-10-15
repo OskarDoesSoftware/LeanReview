@@ -43,7 +43,11 @@ class ProviderSettingsTest {
         .hasMessageContaining("Local-only mode requires");
     assertThatThrownBy(() -> settings.validate(config().put("maxOutput", 8192)))
         .hasMessage("Output reservation must be smaller than the context window.");
-    assertThatThrownBy(() -> settings.validate(config().put("provider", "codex")))
-        .hasMessageContaining("not available in the Java backend yet");
+    assertThat(
+            settings
+                .validate(config().put("provider", "codex").put("localOnly", false))
+                .path("endpoint")
+                .asText())
+        .isEqualTo("https://chatgpt.com/codex");
   }
 }

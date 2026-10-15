@@ -158,15 +158,19 @@ public class AnalysisHelper {
   }
 
   public static void kill(Process process) {
-    process
-        .descendants()
-        .forEach(
-            child -> {
-              child.destroyForcibly();
-            });
+    long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+    List<ProcessHandle> descendants = process.descendants().toList();
+    descendants.forEach(ProcessHandle::destroyForcibly);
     process.destroyForcibly();
     try {
-      process.waitFor(5, TimeUnit.SECONDS);
+      process.waitFor(Math.max(1, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+      for (ProcessHandle child : descendants) {
+        try {
+          child.onExit().get(Math.max(1, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+        } catch (ExecutionException | TimeoutException ignored) {
+          // Keep the total shutdown wait bounded even if an OS process cannot exit.
+        }
+      }
     } catch (InterruptedException error) {
       Thread.currentThread().interrupt();
     }

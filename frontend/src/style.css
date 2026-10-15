@@ -1085,3 +1085,109 @@ button:disabled {
   padding: 7px 10px;
   min-width: 0;
 }
+
+.analysis-loading-track.is-determinate > div {
+  animation: none;
+  transition: width 0.25s ease;
+}
+.analysis-batch-details {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  margin-top: 8px;
+}
+.analysis-batch-details summary {
+  cursor: pointer;
+}
+.analysis-batch-details ul {
+  max-height: 140px;
+  overflow-y: auto;
+  margin: 8px 0;
+  padding-left: 20px;
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: reduce) {
+  .analysis-loading-track.is-determinate > div {
+    transition: none;
+  }
+}
+.analysis-loading {
+  margin: 0 24px 20px;
+  padding: 18px 20px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--muted);
+  overflow: hidden;
+}
+.analysis-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+}
+.analysis-loading-content > div {
+  flex: 1;
+  min-width: 0;
+}
+.analysis-loading-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+.analysis-loading-description {
+  color: var(--muted-foreground);
+  font-size: 13px;
+  margin: 3px 0;
+}
+.analysis-loading-elapsed {
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.analysis-loading-spinner {
+  flex-shrink: 0;
+  animation: analysis-spin 1s linear infinite;
+}
+.analysis-loading-track {
+  height: 3px;
+  background: var(--border);
+  margin: 0 -20px;
+  overflow: hidden;
+}
+.analysis-loading-track > div {
+  height: 100%;
+  width: 35%;
+  background: var(--foreground);
+  animation: analysis-sweep 1.8s ease-in-out infinite;
+}
+@keyframes analysis-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes analysis-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(390%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analysis-loading-spinner,
+  .analysis-loading-track > div {
+    animation: none;
+  }
+}
+@media (max-width: 720px) {
+  .analysis-loading {
+    margin: 0 12px 16px;
+  }
+  .analysis-loading-content {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .analysis-loading-content > div {
+    flex-basis: calc(100% - 40px);
+  }
+}
