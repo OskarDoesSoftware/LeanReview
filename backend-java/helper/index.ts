@@ -1,9 +1,6 @@
-import {
-  typescriptDependencies,
-  typescriptResolver,
-} from "../../backend/src/graph/typescript";
-import { javaClasses } from "../../backend/src/graph/java";
-import { functionUnits } from "../../backend/src/coverage/typescript";
+import { typescriptDependencies, typescriptResolver } from "./src/dependencies";
+import { javaClasses } from "./src/java";
+import { functionUnits } from "./src/complexity";
 import ts from "typescript-ast";
 import path from "node:path";
 

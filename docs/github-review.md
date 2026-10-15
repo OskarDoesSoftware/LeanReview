@@ -1,6 +1,6 @@
 # GitHub review workflow
 
-The GitHub workflow is implemented in the opt-in Java backend. Local Git remains available without a GitHub account. Azure DevOps remains deferred per issue [30](https://github.com/OskarDoesSoftware/LeanReview/issues/30).
+The GitHub workflow is implemented in the default Java backend. Local Git remains available without a GitHub account. Azure DevOps remains deferred per issue [30](https://github.com/OskarDoesSoftware/LeanReview/issues/30).
 
 Choose a repository before selecting its open pull requests or local changes. Search connected repositories or recent local folders, browse for a folder, and link a local folder to a stable GitHub repository identity. The picker remembers its last tab per GitHub repository. Open PRs can be filtered to your own requests or requests awaiting your review, including team requests.
 

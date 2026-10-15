@@ -1,23 +1,24 @@
 # Java backend migration
 
-This module implements storage (#23), the local API and review flow (#24), credentials and review analysis (#25), and graphs, coverage, and explicit tests (#26). The application launcher still uses the Node backend. Java HTTP startup remains opt-in while platform acceptance and cutover continue. Root-level build/start/development commands and recovery tooling are described in [Java launch and acceptance](../docs/migration/java-launch-acceptance.md). The [GitHub review workflow](../docs/github-review.md) is available in this preview.
+This module is the default application backend. It implements storage (#23), the local API and review flow (#24), credentials and review analysis (#25), graphs, coverage, and explicit tests (#26), plus the GitHub review workflow. Standard commands are `npm run build`, `npm start`, and `npm run dev` at the repository root. See [launch and recovery](../docs/migration/java-launch-acceptance.md) for first-start backup, supported platforms, and rollback.
 
-## Try the React UI with Java
+## Run the application
 
-Run `npm run build` and `npm run build:analysis-helper` from the repository root. In this directory, set `JAVA_HOME` to JDK 25, ensure Node 24 is available, then run:
+Set `JAVA_HOME` to JDK 25, ensure Node 24 and Git are available, then run from the repository root:
 
 ```powershell
-.\mvnw.cmd verify
-java --enable-native-access=ALL-UNNAMED -jar target/leanreview-backend-0.1.0-SNAPSHOT.jar --spring.profiles.active=web --server.port=4324 --leanreview.origin=http://127.0.0.1:4324 --leanreview.data-directory=../.leanreview-test/java-manual
+npm ci
+npm run build
+npm start
 ```
 
 Open the startup link printed by Java. It expires after five minutes and works once; the browser then uses an HttpOnly cookie for that launch. The server always binds to loopback. Host and Origin checks protect API requests, mutations require the configured origin, and responses use `no-store`. JSON bodies are capped at 1 MiB, with a separate 20 MiB coverage-import limit.
 
-Use an isolated data directory. To test existing reviews, stop the original backend and copy its database and entire cache together into that directory first. Do not let Node and Java write the same database concurrently. Java's ownership lock only coordinates Java processes.
+The launcher uses the original platform `LeanReview` data directory and creates a verified paired backup before first Java use of existing data. For an isolated run, set `LEANREVIEW_DATA_DIR` to a separate absolute path. Stop any previous backend first. Java's ownership lock coordinates Java processes only. See the linked recovery guide before rollback.
 
 The web profile serves the built frontend from `../frontend/dist`; override `--leanreview.frontend-directory` with an absolute directory when launching elsewhere. Git capture runs outside database transactions, uses argument-only subprocesses with time/output bounds, and rejects a capture when consecutive reads disagree. Refresh checks the current snapshot again in its write transaction. Progress, manual grouping, draft comments, historical snapshots, and editor settings retain the existing JSON format.
 
-After `verify` and both builds, run `npx playwright test --config playwright.java.config.ts` from the repository root. It starts an isolated Java server on port 4324 and uses temporary fixture data and a local fixture provider. The main UI test covers migrated/new reviews, manifest authorization, inference, proposal acceptance, manual edits, refresh, and history. An isolated harness exercises the retained graph/coverage components, including confirmed fixture commands, while those controls are parked in the primary UI. It does not call live models.
+After `npm run build`, run `npm run test:browser` from the repository root. It starts an isolated Java server on port 4324 and uses temporary fixture data and a local fixture provider. The main UI test covers migrated/new reviews, manifest authorization, inference, proposal acceptance, manual edits, refresh, and history. An isolated harness exercises the retained graph/coverage components, including confirmed fixture commands, while those controls are parked in the primary UI. It does not call live models.
 
 See [Java graphs, coverage, and explicit tests](../docs/migration/java-graph-coverage.md) for the bounded parser helper, temporary Tree-sitter Java boundary, pinned-source behavior, and process lifecycle. The helper uses captured input; ordinary scans never execute repository scripts.
 
@@ -27,7 +28,7 @@ Java supports Ollama, OpenAI Responses, and Anthropic Messages through the exist
 
 Session-only keys live in backend memory. Persistent keys use Windows Credential Manager through JNA, macOS Keychain through java-keyring, or explicitly Linux Secret Service through java-keyring. There is no plaintext or automatic session-storage fallback. The API never returns keys. Windows read/write interoperability with the existing Node binding is verified using a temporary credential; macOS/Linux interoperability still needs platform acceptance. If lookup is unavailable, re-enter the key in settings and explicitly choose its storage mode.
 
-Java supports the Codex subscription provider through the installed CLI app-server in [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36). See [Java Codex analysis](../docs/migration/java-codex.md) for credential ownership, protocol limits, synthetic verification, and remaining live platform acceptance. Java remains opt-in.
+Java supports the Codex subscription provider through the installed CLI app-server in [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36). See [Java Codex analysis](../docs/migration/java-codex.md) for credential ownership, protocol limits, and verification.
 
 ## Toolchain
 

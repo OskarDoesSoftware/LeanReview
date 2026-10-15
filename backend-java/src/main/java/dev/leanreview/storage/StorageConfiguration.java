@@ -19,8 +19,8 @@ public class StorageConfiguration {
   private static Path directory(String configured) {
     if (configured.isBlank())
       throw new IllegalArgumentException(
-          "Set LEANREVIEW_JAVA_DATA_DIR to an isolated data directory. The Java backend is not the"
-              + " default application yet.");
+          "Set leanreview.data-directory, or use npm start to select the application data"
+              + " directory.");
     return Path.of(configured).toAbsolutePath().normalize();
   }
 
@@ -32,7 +32,9 @@ public class StorageConfiguration {
 
   @Bean(destroyMethod = "close")
   HikariDataSource dataSource(
-      DatabaseOwner owner, @Value("${leanreview.data-directory}") String configured)
+      DatabaseOwner owner,
+      @Value("${leanreview.data-directory}") String configured,
+      @Value("${leanreview.cutover-backup:false}") boolean cutoverBackup)
       throws SQLException, IOException {
     Path directory = directory(configured);
     SQLiteConfig sqlite = new SQLiteConfig();
@@ -42,7 +44,10 @@ public class StorageConfiguration {
     SQLiteDataSource source = new SQLiteDataSource(sqlite);
     source.setUrl("jdbc:sqlite:" + directory.resolve("leanreview.sqlite"));
     try (var connection = source.getConnection()) {
+      Path backup = cutoverBackup ? CutoverBackup.prepare(connection, directory) : null;
       SchemaMigrations.migrate(connection, directory);
+      if (cutoverBackup) CutoverBackup.complete(directory, backup);
+      if (backup != null) System.out.println("Pre-Java rollback backup: " + backup);
     }
     HikariConfig pool = new HikariConfig();
     pool.setDataSource(source);

@@ -4,14 +4,14 @@ A local-first human code review workspace focused on AI-assisted cohorts, ordere
 
 ## Run
 
-Install Node **24.21.0** (see `.nvmrc`) and Git, then:
+Install Node **24.21.0** (see `.nvmrc`), Git, and JDK **25**. Set `JAVA_HOME` to the JDK, then:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-One command starts the Vite UI and Express backend and opens the browser with a single-use authorization link. The UI is at `http://127.0.0.1:5173`; opening that address in a fresh browser without the startup link does not authorize access. Restart the application for a new link. Reloading an authorized browser retains its per-launch session.
+One command builds the application, starts Vite and the Java/Spring Boot backend, and opens the browser with a single-use authorization link. The UI is at `http://127.0.0.1:5173`; opening that address in a fresh browser without the startup link does not authorize access. Restart the application for a new link. Reloading an authorized browser retains its per-launch session.
 
 For built startup:
 
@@ -20,7 +20,7 @@ npm run build
 npm start
 ```
 
-The built application serves the UI at `http://127.0.0.1:4318`. Monaco and its workers are bundled locally; there is no editor CDN dependency. `npm` scripts use the pinned workspace Node executable when installed. Installation itself should use Node 24 to avoid engine warnings. Native SQLite/keyring dependencies must install successfully on your platform.
+The built application serves the UI at `http://127.0.0.1:4318`. Monaco and its workers are bundled locally; there is no editor CDN dependency. `npm` scripts use the pinned workspace Node executable when installed. Installation itself should use Node 24 to avoid engine warnings. Java owns SQLite and credential storage. Node remains required for frontend tooling, the launcher, and the bounded parser helper.
 
 If machine-wide npm registry configuration is incompatible with public dependencies, supply your own isolated npm configuration or use `--registry=https://registry.npmjs.org`. LeanReview does not modify global npm credentials.
 
@@ -56,9 +56,7 @@ npm run test:browser
 
 Integration tests create isolated fixture repositories/databases under ignored `.leanreview-test/`. Browser verification runs the built UI with a **fixture LLM response server**, not real inference. It exercises actual Git capture, AI input authorization/result validation, Monaco, cohort editing, progress, reload, explicit proposal acceptance, refresh, and read-only history. It does not establish model grouping quality or cloud API account access.
 
-The Java backend migration uses [frozen compatibility fixtures and baseline measurements](docs/migration/backend-compatibility.md). Run `npm run test:compatibility` to verify the current backend and `npm run benchmark:backend` to reproduce the synthetic performance baseline.
-
-The [Java persistence foundation](backend-java/README.md) now validates the existing SQLite databases through Spring Data JPA. Its README records the pinned toolchain, isolated test command, migration behavior, and recovery limits. The default launcher remains the Node backend until the later migration acceptance gates pass.
+Java is the default backend. The [launch and recovery guide](docs/migration/java-launch-acceptance.md) explains first-start backup, rollback, and platform acceptance. Frozen migration fixtures remain under `tests/fixtures/backend-compatibility`; Maven replays them against Java, and helper tests verify parser parity. `npm test` runs the frontend/helper tests and Java tests; `npm run build` also runs Maven verification before packaging.
 
 ## Deferred features
 
@@ -68,18 +66,14 @@ The graph viewer, CRAP/coverage meter, and comment controls are removed from the
 
 This is the **core Phase 1 vertical slice**, not the completed Phase 1 contract or MVP. It supports local comparisons and human review progress, three foreground LLM HTTP adapters plus a Codex subscription adapter, bounded sequential batches, explicit proposal acceptance, immediate SQLite progress, immutable source caching, refresh/history, and protected loopback access.
 
-Remaining Phase 1 work includes richer related-file context/dependency evidence and cross-batch semantic reconciliation, transient retry policy, full backup/restore and cache deletion, and broad quality/platform acceptance. Snapshot capture currently rejects unsupported/conflicted/submodule changes rather than silently showing a complete result. Content over 2 MiB or non-UTF-8/binary/symlink files is metadata-only. Byte-based token estimates are deliberately conservative, not exact token counts.
+Remaining Phase 1 work includes richer related-file context/dependency evidence and cross-batch semantic reconciliation, transient retry policy, cache deletion and broader model-quality acceptance. Snapshot capture currently rejects unsupported/conflicted/submodule changes rather than silently showing a complete result. Content over 2 MiB or non-UTF-8/binary/symlink files is metadata-only. Byte-based token estimates are deliberately conservative, not exact token counts.
 
-GitHub and Azure DevOps repository/PR adapters and tested publication are later phases. Remote publishing and PR verdicts are not wired into this slice. Live Ollama/cloud model quality and macOS/Linux acceptance still need verification. The MVP requires all three sources and the remaining features in the [approved contract](https://github.com/OskarDoesSoftware/LeanReview/issues/10).
+The Java backend includes the [GitHub repository and PR workflow](docs/github-review.md), with fixture-tested publication and reconciliation. Live GitHub acceptance remains read-only at the user's request. Azure DevOps is deferred from the MVP. Live model quality remains separate from adapter and platform acceptance.
 
 ## Structure
 
-- `backend/src/api`: protected Express routes and per-launch session handshake.
-- `backend/src/git`: argument-based Git capture and selected-root containment.
-- `backend/src/review`: analysis manifests and semantic validation.
-- `backend/src/llm`: Ollama/OpenAI/Anthropic structured-result adapters.
-- `backend/src/credentials`: OS/session credential storage.
-- `backend/src/storage`: SQLite migration, progress/state and content cache.
+- `backend-java/src/main/java/dev/leanreview`: Spring API, Git capture, review analysis, credentials, storage, graphs, coverage, and GitHub adapters.
+- `backend-java/helper`: TS/JS extraction, resolution and complexity, plus the transitional Java grammar adapter. It accepts captured text over a bounded protocol and has no HTTP server.
 - `frontend/src`: selected review workspace and local Monaco lifecycle.
 - `packages/contracts`: shared normalized types and Zod schemas.
 
@@ -95,4 +89,4 @@ LeanReview is licensed under the GNU Affero General Public License version 3 onl
 
 Accepted cohorts show why their files belong together, the purpose of each reading layer, and a Start/Continue review action for the first unreviewed file in the suggested order. Snapshot refresh keeps surviving file assignments and places new files under "New files to organize". Carried grouping is labelled for reconsideration, and AI findings carry forward only for unchanged files. Generate a new proposal when the changes need regrouping.
 
-The Java preview now has root-level `build:java`, `start:java`, and `dev:java` commands, paired backup/restore tooling, and a platform acceptance workflow. See [Java launch and acceptance](docs/migration/java-launch-acceptance.md). The Java repository picker supports the [GitHub PR review workflow](docs/github-review.md). Java remains opt-in until platform and live-provider acceptance is complete.
+The standard `build`, `start`, and `dev` commands use Java, with paired backup/restore tooling and platform acceptance CI. See [Java launch and acceptance](docs/migration/java-launch-acceptance.md). Live GitHub publication acceptance remains tracked separately in #30.

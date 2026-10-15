@@ -1,6 +1,7 @@
 import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
+import { createServer } from "node:net";
+import { dataDirectory } from "./launch-paths.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -77,14 +78,7 @@ function run(command, args, options = {}) {
   });
   if (result.error || result.status !== 0) process.exit(result.status || 1);
 }
-if (build) {
-  run(process.execPath, [
-    "node_modules/vite/bin/vite.js",
-    "build",
-    "--config",
-    "frontend/vite.config.ts",
-  ]);
-  run(process.execPath, ["scripts/build-analysis-helper.mjs"]);
+function maven(goal) {
   // cmd is required for the Maven wrapper on Windows. All arguments are fixed.
   if (windows)
     run(process.env.ComSpec || "cmd.exe", [
@@ -93,9 +87,24 @@ if (build) {
       "backend-java\\mvnw.cmd",
       "-f",
       "backend-java/pom.xml",
-      "verify",
+      goal,
     ]);
-  else run("sh", ["backend-java/mvnw", "-f", "backend-java/pom.xml", "verify"]);
+  else run("sh", ["backend-java/mvnw", "-f", "backend-java/pom.xml", goal]);
+}
+if (process.argv.includes("--test-only")) {
+  run(process.execPath, ["scripts/build-analysis-helper.mjs"]);
+  maven("test");
+  process.exit(0);
+}
+if (build) {
+  run(process.execPath, [
+    "node_modules/vite/bin/vite.js",
+    "build",
+    "--config",
+    "frontend/vite.config.ts",
+  ]);
+  run(process.execPath, ["scripts/build-analysis-helper.mjs"]);
+  maven("verify");
 }
 const jar = path.join(
   root,
@@ -106,26 +115,31 @@ if (
   !fs.existsSync("backend-java/helper/dist/index.js") ||
   !fs.existsSync("frontend/dist/index.html")
 )
-  throw new Error("Run npm run build:java first.");
+  throw new Error("Run npm run build first.");
 if (process.argv.includes("--build-only")) process.exit(0);
-const data = path.resolve(
-  process.env.LEANREVIEW_JAVA_DATA_DIR ||
-    path.join(
-      process.platform === "win32"
-        ? process.env.LOCALAPPDATA || os.homedir()
-        : process.platform === "darwin"
-          ? path.join(os.homedir(), "Library/Application Support")
-          : process.env.XDG_DATA_HOME ||
-            path.join(os.homedir(), ".local/share"),
-      "LeanReview-JavaPreview",
-    ),
+const data = dataDirectory();
+const port = Number(
+  process.env.LEANREVIEW_PORT || process.env.LEANREVIEW_JAVA_PORT || 4318,
 );
-const port = Number(process.env.LEANREVIEW_JAVA_PORT || 4318);
 if (!Number.isInteger(port) || port < 1024 || port > 65535)
   throw new Error("Invalid Java loopback port.");
 if (dev && port !== 4318)
   throw new Error("Development proxy requires port 4318.");
 const origin = dev ? "http://127.0.0.1:5173" : "http://127.0.0.1:" + port;
+// Check before Java opens the database, so a running legacy server cannot be
+// mistaken for a successful Java launch on the same port.
+const reservation = createServer();
+try {
+  await new Promise((resolve, reject) => {
+    reservation.once("error", reject);
+    reservation.listen(port, "127.0.0.1", resolve);
+  });
+} catch {
+  throw new Error(
+    `Port ${port} is in use. Stop the previous LeanReview process before starting Java.`,
+  );
+}
+await new Promise((resolve) => reservation.close(resolve));
 if (dev)
   start(process.execPath, [
     "node_modules/vite/bin/vite.js",
@@ -141,6 +155,7 @@ start(java, [
   "--server.port=" + port,
   `--leanreview.origin=${origin}`,
   `--leanreview.data-directory=${data}`,
+  "--leanreview.cutover-backup=true",
   `--leanreview.frontend-directory=${path.join(root, "frontend/dist")}`,
   `--leanreview.analysis.helper=${path.join(root, "backend-java/helper/dist/index.js")}`,
   `--leanreview.analysis.node=${process.execPath}`,

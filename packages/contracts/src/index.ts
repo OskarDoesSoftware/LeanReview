@@ -1,4 +1,5 @@
 import { z } from "zod";
+export { editorSchema, type EditorConfig } from "./editor";
 export const comparisonSchema = z.object({
   mode: z.enum(["unstaged", "staged", "all", "branch"]),
   base: z.string().min(1).max(200).default("main"),

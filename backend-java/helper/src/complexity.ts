@@ -1,5 +1,6 @@
 import ts from "typescript-ast";
-import { hash } from "../git/local";
+import { createHash } from "node:crypto";
+const hash = (text: string) => createHash("sha256").update(text).digest("hex");
 export type FunctionUnit = {
   id: string;
   name: string;

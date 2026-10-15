@@ -1,6 +1,6 @@
 import Parser from "web-tree-sitter";
 import { createRequire } from "node:module";
-import type { Dependency } from "./typescript";
+import type { Dependency } from "./dependencies";
 const require = createRequire(import.meta.url);
 let language: Promise<Parser.Language> | undefined;
 export type JavaClass = {
