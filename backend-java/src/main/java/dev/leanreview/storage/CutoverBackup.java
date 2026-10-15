@@ -36,6 +36,8 @@ final class CutoverBackup {
     try (var statement = connection.createStatement();
         var rows = statement.executeQuery("PRAGMA user_version")) {
       if (!rows.next() || rows.getInt(1) == 0) return null;
+      if (rows.getInt(1) > SchemaMigrations.CURRENT_VERSION)
+        throw new SQLException("Database is newer than this application; use the newer version.");
     }
     Path destination = directory.resolve("backups").resolve("pre-java-" + UUID.randomUUID());
     Files.createDirectories(destination.resolve("cache"));

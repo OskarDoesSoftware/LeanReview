@@ -15,6 +15,17 @@ class CutoverBackupTest {
   @TempDir Path temporary;
   private final ObjectMapper json = new ObjectMapper();
 
+  @Test
+  void newUnixDataDirectoriesKeepTheLegacyOwnerOnlyPermissions() throws Exception {
+    org.junit.jupiter.api.Assumptions.assumeTrue(
+        java.nio.file.FileSystems.getDefault().supportedFileAttributeViews().contains("posix"));
+    Path data = temporary.resolve("private-data");
+    try (var owner = new DatabaseOwner(data)) {
+      assertThat(Files.getPosixFilePermissions(data))
+          .isEqualTo(java.nio.file.attribute.PosixFilePermissions.fromString("rwx------"));
+    }
+  }
+
   private Path copy() throws Exception {
     Path source = Path.of("../tests/fixtures/backend-compatibility/databases/v3");
     Path data = temporary.resolve("data");
@@ -26,6 +37,20 @@ class CutoverBackupTest {
       }
     }
     return data;
+  }
+
+  @Test
+  void unknownNewerSchemasAreRejectedBeforeCutoverBackup() throws Exception {
+    Path data = copy();
+    try (var connection =
+            DriverManager.getConnection("jdbc:sqlite:" + data.resolve("leanreview.sqlite"));
+        var statement = connection.createStatement()) {
+      statement.execute("PRAGMA user_version=4");
+    }
+    assertThatThrownBy(() -> start(data))
+        .hasStackTraceContaining("Database is newer than this application");
+    assertThat(Files.exists(data.resolve("java-cutover.json"))).isFalse();
+    assertThat(Files.exists(data.resolve("backups"))).isFalse();
   }
 
   private org.springframework.context.ConfigurableApplicationContext start(Path data) {
