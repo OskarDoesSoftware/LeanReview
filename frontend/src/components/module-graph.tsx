@@ -312,6 +312,15 @@ export function ModuleGraphViewer({
           .map(([id]) => id)
       : [];
   const selectedNode = display?.nodes.find((n) => n.id === selected);
+  const expandNode = (id: string) => {
+    const node = display?.nodes.find((n) => n.id === id);
+    if (node?.kind === "folder") setFolder(id.slice("folder:".length));
+    else if (node?.kind === "package" && node.language === "java")
+      setJavaPackage(id);
+    else return;
+    setSelected(null);
+    setSource(null);
+  };
   const evidence =
     graph?.edges.filter(
       (e) => originalIds.includes(e.source) || originalIds.includes(e.target),
@@ -600,6 +609,8 @@ export function ModuleGraphViewer({
                   flow.current = instance;
                 }}
                 onNodesChange={onNodesChange}
+                zoomOnDoubleClick={false}
+                onNodeDoubleClick={(_, node) => expandNode(node.id)}
                 onNodeClick={(_, node) => {
                   setSelected(node.id);
                   setSource(null);
@@ -621,8 +632,9 @@ export function ModuleGraphViewer({
               </ReactFlow>
               {!selectedNode && (
                 <p className="graph-focus-hint">
-                  Arrows show dependencies between folders. Open a folder to
-                  explore its files; select a node to inspect source evidence.
+                  Arrows show dependencies between folders. Double-click a
+                  folder to explore its files; select a node to inspect source
+                  evidence.
                 </p>
               )}
               {layoutNote && <p className="graph-layout-note">{layoutNote}</p>}
@@ -638,6 +650,7 @@ export function ModuleGraphViewer({
                   <button
                     className={selected === node.id ? "selected" : ""}
                     key={node.id}
+                    onDoubleClick={() => expandNode(node.id)}
                     onClick={() => {
                       setSelected(node.id);
                       setSource(null);
@@ -657,10 +670,7 @@ export function ModuleGraphViewer({
                   {selectedNode.kind === "folder" && (
                     <Button
                       size="sm"
-                      onClick={() => {
-                        setFolder(selectedNode.id.slice("folder:".length));
-                        setSelected(null);
-                      }}
+                      onClick={() => expandNode(selectedNode.id)}
                     >
                       Open folder
                     </Button>

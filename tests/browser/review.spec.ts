@@ -315,9 +315,8 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(graph.locator(".react-flow__edge")).not.toHaveCount(0);
   await page.screenshot({ path: ".leanreview-test/module-graph.png" });
   await graph
-    .getByRole("button", { name: "src/features folder", exact: true })
-    .click();
-  await graph.getByRole("button", { name: "Open folder", exact: true }).click();
+    .getByRole("group", { name: "folder: src/features", exact: true })
+    .dblclick();
   await expect(
     graph.getByRole("button", { name: "Back to folder overview" }),
   ).toBeVisible();

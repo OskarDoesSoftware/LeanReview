@@ -1,0 +1,3 @@
+# Migrate the backend to Java and Spring Boot while retaining React
+
+The user chose Java, Spring Boot, Spring Data JPA, and SQLite because this is the stack they are most comfortable building and maintaining; React remains the frontend. This supersedes the Node/Express and prepared-SQL-only technology defaults in issues [5](https://github.com/OskarDoesSoftware/LeanReview/issues/5) and [10](https://github.com/OskarDoesSoftware/LeanReview/issues/10), while preserving their product, privacy, recovery, and platform contracts. Implementation follows the staged [migration plan](https://github.com/OskarDoesSoftware/LeanReview/issues/21), with existing API/storage compatibility and a temporary Node analysis helper; no performance gain or completed migration is implied.
