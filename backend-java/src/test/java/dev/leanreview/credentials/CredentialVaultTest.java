@@ -76,6 +76,19 @@ class CredentialVaultTest {
     String token = "synthetic-platform-credential";
     var nativeStore = new NativeCredentials();
     try {
+      String fixtureKeychain = System.getenv("LEANREVIEW_TEST_KEYCHAIN");
+      if (fixtureKeychain != null
+          && System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")) {
+        // Only the disposable CI credential grants access to these fixture executables.
+        Process permission = new ProcessBuilder(
+            "/usr/bin/security", "add-generic-password", "-a", account, "-s", "LeanReview",
+            "-w", token, "-T", "/usr/bin/security", "-T",
+            ProcessHandle.current().info().command().orElseThrow(), "-T",
+            dev.leanreview.analysis.AnalysisHelper.executable("node"), fixtureKeychain)
+            .redirectErrorStream(true).start();
+        assertThat(permission.waitFor(10, TimeUnit.SECONDS)).isTrue();
+        assertThat(permission.exitValue()).isZero();
+      }
       node(account, token, "set");
       assertThat(nativeStore.get(account)).isEqualTo(token);
       nativeStore.set(account, token + "-java");

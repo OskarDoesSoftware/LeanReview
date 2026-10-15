@@ -15,6 +15,7 @@ on:
   pull_request:
 jobs:
   acceptance:
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -36,11 +37,20 @@ jobs:
       - run: npm run build:java
       - name: Native keychain interoperability on macOS
         if: runner.os == 'macOS'
-        run: sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test
+        timeout-minutes: 3
+        run: |
+          original=$(security default-keychain -d user | tr -d '"')
+          keychain="$RUNNER_TEMP/leanreview-fixture.keychain-db"
+          trap 'security default-keychain -d user -s "$original"; security delete-keychain "$keychain"' EXIT
+          security create-keychain -p fixture-only "$keychain"
+          security default-keychain -d user -s "$keychain"
+          security unlock-keychain -p fixture-only "$keychain"
+          LEANREVIEW_TEST_KEYCHAIN="$keychain" sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test
         env:
           LEANREVIEW_KEYRING_ACCEPTANCE: "1"
       - name: Secret Service interoperability on Linux
         if: runner.os == 'Linux'
+        timeout-minutes: 3
         run: |
           sudo apt-get update
           sudo apt-get install -y gnome-keyring libsecret-1-0 dbus-x11
