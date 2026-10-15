@@ -127,7 +127,8 @@ class CodexProviderTest {
                   .asText())
           .isEqualTo("file-1");
       JsonNode launch = f.messages().getFirst();
-      assertThat(launch.path("cwd").asText()).isEqualTo(f.rpc.workspace().toRealPath().toString());
+      assertThat(Path.of(launch.path("cwd").asText()).toRealPath())
+          .isEqualTo(f.rpc.workspace().toRealPath());
       assertThat(launch.path("env").size()).isEqualTo(1);
       assertThat(launch.path("env").path("CODEX_HOME").asText()).isEqualTo(f.rpc.home().toString());
       assertThat(launch.path("args").toString())
