@@ -152,7 +152,10 @@ export function createApp(
       req.body.analysis,
       review.snapshot,
     );
-    if (req.body.acceptProposal) review.state.proposal = null;
+    if (req.body.acceptProposal) {
+      review.state.proposal = null;
+      delete review.state.groupingCarriedForward;
+    }
     store.saveState(review.snapshot.id, review.state);
     res.json(store.review(review.snapshot.sessionId));
   });

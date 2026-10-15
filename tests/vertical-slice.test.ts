@@ -163,6 +163,13 @@ describe("SQLite persistence and refresh", () => {
     );
     store.create(first);
     const state = store.review("review").state;
+    state.accepted = result(first.files.map((f) => f.id));
+    state.accepted.findings = first.files.map((f) => ({
+      fileId: f.id,
+      line: 1,
+      kind: "bug" as const,
+      message: "Check behavior",
+    }));
     state.reviewed = first.files.map((f) => f.id);
     state.drafts = [
       {
@@ -183,8 +190,29 @@ describe("SQLite persistence and refresh", () => {
     await writeFile(path.join(root, "a.ts"), "a3\n");
     const next = await captureSnapshot(root, first.comparison, "review");
     const refreshed = store.refresh(next);
+    expect(refreshed.state.accepted?.cohorts).toEqual(state.accepted?.cohorts);
     expect(refreshed.state.reviewed).toEqual([first.files[1].id]);
     expect(refreshed.state.drafts[0].needsReattachment).toBe(true);
+    expect(refreshed.state.groupingCarriedForward).toBe(true);
+    expect(refreshed.state.accepted?.findings.map((f) => f.fileId)).toEqual([
+      first.files[1].id,
+    ]);
+    const third = structuredClone(next);
+    third.id = "refresh-new-and-removed";
+    third.files = [
+      next.files[1],
+      { ...next.files[0], id: "new-id", path: "new.ts" },
+    ];
+    const regrouped = store.refresh(third);
+    expect(regrouped.state.accepted?.cohorts[0].layers[0].fileIds).toEqual([
+      first.files[1].id,
+    ]);
+    expect(regrouped.state.accepted?.cohorts[1].name).toBe(
+      "New files to organize",
+    );
+    expect(regrouped.state.accepted?.cohorts[1].layers[0].fileIds).toEqual([
+      "new-id",
+    ]);
     expect(store.review("review", first.id).snapshot.files[0].after).toEqual({
       kind: "text",
       text: "a2\n",

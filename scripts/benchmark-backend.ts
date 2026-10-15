@@ -129,7 +129,7 @@ async function worker(root: string) {
   }
 }
 
-async function dataset(kind: string, count: number) {
+export async function dataset(kind: string, count: number) {
   const root = await fs.mkdtemp(
     path.resolve(`.leanreview-test/baseline-${kind}-`),
   );
@@ -230,94 +230,96 @@ async function run(root: string) {
   }
 }
 
-if (process.argv[2] === "--worker") await worker(process.argv[3]);
-else {
-  if (Number(process.versions.node.split(".")[0]) !== 24)
-    throw new Error(
-      "Use npm run benchmark:backend with the pinned Node 24 runtime",
+if (path.resolve(process.argv[1] ?? "") === script) {
+  if (process.argv[2] === "--worker") await worker(process.argv[3]);
+  else {
+    if (Number(process.versions.node.split(".")[0]) !== 24)
+      throw new Error(
+        "Use npm run benchmark:backend with the pinned Node 24 runtime",
+      );
+    await fs.mkdir(".leanreview-test", { recursive: true });
+    const count = Number(process.env.LEANREVIEW_BASELINE_FILES ?? 1000);
+    const repeats = Number(process.env.LEANREVIEW_BASELINE_REPEATS ?? 3);
+    if (
+      !Number.isInteger(count) ||
+      count < 2 ||
+      count % 2 ||
+      count > 10000 ||
+      !Number.isInteger(repeats) ||
+      repeats < 1 ||
+      repeats > 10
+    )
+      throw new Error("Use an even file count 2..10000 and 1..10 repeats");
+    const tracked = execFileSync("git", [
+      "ls-files",
+      "backend/src",
+      "packages/contracts/src",
+      "package-lock.json",
+      "scripts/benchmark-backend.ts",
+    ])
+      .toString()
+      .trim()
+      .split(/\r?\n/)
+      .filter(Boolean);
+    if (!tracked.includes("scripts/benchmark-backend.ts"))
+      tracked.push("scripts/benchmark-backend.ts");
+    const inputs = await Promise.all(
+      tracked.map(async (name) => ({
+        path: name,
+        sha256: hash(await fs.readFile(name)),
+      })),
     );
-  await fs.mkdir(".leanreview-test", { recursive: true });
-  const count = Number(process.env.LEANREVIEW_BASELINE_FILES ?? 1000);
-  const repeats = Number(process.env.LEANREVIEW_BASELINE_REPEATS ?? 3);
-  if (
-    !Number.isInteger(count) ||
-    count < 2 ||
-    count % 2 ||
-    count > 10000 ||
-    !Number.isInteger(repeats) ||
-    repeats < 1 ||
-    repeats > 10
-  )
-    throw new Error("Use an even file count 2..10000 and 1..10 repeats");
-  const tracked = execFileSync("git", [
-    "ls-files",
-    "backend/src",
-    "packages/contracts/src",
-    "package-lock.json",
-    "scripts/benchmark-backend.ts",
-  ])
-    .toString()
-    .trim()
-    .split(/\r?\n/)
-    .filter(Boolean);
-  if (!tracked.includes("scripts/benchmark-backend.ts"))
-    tracked.push("scripts/benchmark-backend.ts");
-  const inputs = await Promise.all(
-    tracked.map(async (name) => ({
-      path: name,
-      sha256: hash(await fs.readFile(name)),
-    })),
-  );
-  const result = {
-    measuredAt: new Date().toISOString(),
-    environment: {
-      node: process.version,
-      platform: process.platform,
-      architecture: process.arch,
-      osRelease: os.release(),
-      cpu: os.cpus()[0]?.model,
-      logicalCpus: os.cpus().length,
-      totalMemoryMiB: round(os.totalmem() / 1024 ** 2),
-      git: execFileSync("git", ["--version"]).toString().trim(),
-    },
-    baseline: {
-      commit: execFileSync("git", ["rev-parse", "HEAD"]).toString().trim(),
-      backendInputSha256: hash(JSON.stringify(inputs)),
-      inputs,
-      workingTree: execFileSync("git", ["status", "--short"])
-        .toString()
-        .trim()
-        .split(/\r?\n/),
-      options,
-    },
-    methodology: {
-      startup:
-        "Fresh Node process to loopback HTTP listening, including tsx/imports/Store/createApp; excludes browser and production asset loading",
-      cold: "Empty application artifact cache in a fresh process; OS page cache is not flushed",
-      warm: "Second GraphService scan with persisted source cache in the same process",
-      peakMemory:
-        "Process lifetime high-water RSS of backend worker including Node/tsx, excluding Git child processes; warm is cumulative",
-      responsiveness:
-        "Sequential authenticated GET /api/provider requests with 10ms gaps during scan; elapsed includes polling and final sampler completion",
-      scope:
-        "Deterministic synthetic TS/Java/mixed repositories, not production repository or LLM/network benchmarks",
-    },
-    datasets: [] as unknown[],
-  };
-  for (const kind of ["typescript", "java", "mixed"]) {
-    const data = await dataset(kind, count);
-    const runs = [];
-    for (let repetition = 1; repetition <= repeats; repetition++) {
-      runs.push({ repetition, ...(await run(data.root)) });
-      console.log(`${kind}: repetition ${repetition}/${repeats} complete`);
+    const result = {
+      measuredAt: new Date().toISOString(),
+      environment: {
+        node: process.version,
+        platform: process.platform,
+        architecture: process.arch,
+        osRelease: os.release(),
+        cpu: os.cpus()[0]?.model,
+        logicalCpus: os.cpus().length,
+        totalMemoryMiB: round(os.totalmem() / 1024 ** 2),
+        git: execFileSync("git", ["--version"]).toString().trim(),
+      },
+      baseline: {
+        commit: execFileSync("git", ["rev-parse", "HEAD"]).toString().trim(),
+        backendInputSha256: hash(JSON.stringify(inputs)),
+        inputs,
+        workingTree: execFileSync("git", ["status", "--short"])
+          .toString()
+          .trim()
+          .split(/\r?\n/),
+        options,
+      },
+      methodology: {
+        startup:
+          "Fresh Node process to loopback HTTP listening, including tsx/imports/Store/createApp; excludes browser and production asset loading",
+        cold: "Empty application artifact cache in a fresh process; OS page cache is not flushed",
+        warm: "Second GraphService scan with persisted source cache in the same process",
+        peakMemory:
+          "Process lifetime high-water RSS of backend worker including Node/tsx, excluding Git child processes; warm is cumulative",
+        responsiveness:
+          "Sequential authenticated GET /api/provider requests with 10ms gaps during scan; elapsed includes polling and final sampler completion",
+        scope:
+          "Deterministic synthetic TS/Java/mixed repositories, not production repository or LLM/network benchmarks",
+      },
+      datasets: [] as unknown[],
+    };
+    for (const kind of ["typescript", "java", "mixed"]) {
+      const data = await dataset(kind, count);
+      const runs = [];
+      for (let repetition = 1; repetition <= repeats; repetition++) {
+        runs.push({ repetition, ...(await run(data.root)) });
+        console.log(`${kind}: repetition ${repetition}/${repeats} complete`);
+      }
+      result.datasets.push({ ...data.identity, runs });
     }
-    result.datasets.push({ ...data.identity, runs });
+    const output = path.resolve(
+      process.env.LEANREVIEW_BASELINE_OUTPUT ??
+        "docs/migration/backend-baseline.json",
+    );
+    await fs.mkdir(path.dirname(output), { recursive: true });
+    await fs.writeFile(output, JSON.stringify(result, null, 2) + "\n");
+    console.log(`Baseline saved to ${output}`);
   }
-  const output = path.resolve(
-    process.env.LEANREVIEW_BASELINE_OUTPUT ??
-      "docs/migration/backend-baseline.json",
-  );
-  await fs.mkdir(path.dirname(output), { recursive: true });
-  await fs.writeFile(output, JSON.stringify(result, null, 2) + "\n");
-  console.log(`Baseline saved to ${output}`);
 }

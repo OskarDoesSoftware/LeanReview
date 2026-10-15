@@ -70,6 +70,34 @@ class ReviewStateTest {
     }
   }
 
+  @Test
+  void refreshRetainsCohortsAndSeparatesNewFiles() throws Exception {
+    try (var context = start()) {
+      var store = context.getBean(ReviewStore.class);
+      var snapshots = context.getBean(CoreSnapshots.class);
+      var json = new com.fasterxml.jackson.databind.ObjectMapper();
+      var grouping = json.createObjectNode();
+      var cohort = grouping.putArray("cohorts").addObject();
+      cohort.put("name", "Authentication").put("explanation", "Shared login behavior");
+      var layer = cohort.putArray("layers").addObject();
+      layer.put("name", "Implementation").put("explanation", "Check validation first");
+      layer.putArray("fileIds").add("file-java");
+      grouping.putArray("findings").addObject().put("fileId", "file-java").put("line", 1).put("kind", "bug").put("message", "Check validation");
+      store.updateCurrentState("session-fixture", "snapshot-current", state -> state.set("accepted", grouping));
+      var next = ((com.fasterxml.jackson.databind.node.ObjectNode) store.review("session-fixture", null).path("snapshot")).deepCopy();
+      next.put("id", "refreshed-cohorts");
+      var files = (com.fasterxml.jackson.databind.node.ArrayNode) next.path("files");
+      var added = files.get(0).deepCopy();
+      ((com.fasterxml.jackson.databind.node.ObjectNode) added).put("id", "new-file").put("path", "new.java");
+      files.add(added);
+      var state = snapshots.refresh("session-fixture", "snapshot-current", next).path("state");
+      assertThat(state.path("accepted").path("cohorts").get(0)).isEqualTo(cohort);
+      assertThat(state.path("accepted").path("cohorts").get(1).path("name").asText()).isEqualTo("New files to organize");
+      assertThat(state.path("groupingCarriedForward").asBoolean()).isTrue();
+      assertThat(store.review("session-fixture", "snapshot-current").path("state").path("accepted")).isEqualTo(grouping);
+    }
+  }
+
   private ConfigurableApplicationContext start() throws Exception {
     Path source = Path.of("../tests/fixtures/backend-compatibility/databases/v3");
     try (var paths = Files.walk(source)) {

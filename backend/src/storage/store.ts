@@ -238,6 +238,44 @@ export class Store {
         .map((f) => f.id),
     );
     const state = emptyState();
+    if (previous.state.accepted && snapshot.files.length) {
+      const ids = new Set(snapshot.files.map((f) => f.id));
+      const accepted = structuredClone(previous.state.accepted);
+      accepted.cohorts = accepted.cohorts
+        .map((c) => ({
+          ...c,
+          layers: c.layers
+            .map((l) => ({
+              ...l,
+              fileIds: l.fileIds.filter((id) => ids.has(id)),
+            }))
+            .filter((l) => l.fileIds.length),
+        }))
+        .filter((c) => c.layers.length);
+      const assigned = new Set(
+        accepted.cohorts.flatMap((c) => c.layers.flatMap((l) => l.fileIds)),
+      );
+      const added = snapshot.files
+        .filter((f) => !assigned.has(f.id))
+        .map((f) => f.id);
+      if (added.length)
+        accepted.cohorts.push({
+          name: "New files to organize",
+          explanation:
+            "These files were added since the previous grouping. Generate a new AI proposal to place them with related changes.",
+          layers: [
+            {
+              name: "Review new changes",
+              explanation:
+                "Check how these files connect to the existing cohorts.",
+              fileIds: added,
+            },
+          ],
+        });
+      accepted.findings = accepted.findings.filter((f) => same.has(f.fileId));
+      state.accepted = accepted;
+      state.groupingCarriedForward = true;
+    }
     state.reviewed = previous.state.reviewed.filter((id) => same.has(id));
     state.drafts = previous.state.drafts.map((draft) => ({
       ...draft,

@@ -1,12 +1,11 @@
 import { changeTarget } from "./lib/change-navigation";
 import { rememberWorkspace, restoreWorkspace } from "./lib/workspace";
 import { Card, CardContent } from "./components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import { Input } from "./components/ui/input";
-import { Textarea } from "./components/ui/textarea";
 import { NativeSelect } from "./components/ui/native-select";
 import { Badge } from "./components/ui/badge";
 import { ReviewDialog } from "./components/review-dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import { DialogTitle } from "./components/ui/dialog";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -20,12 +19,10 @@ import {
   GitBranch,
   FolderOpen,
   Layers,
-  MessageSquare,
   RefreshCw,
   Settings,
   Sparkles,
   X,
-  ShieldCheck,
   FileCode2,
   ArrowUp,
   ArrowDown,
@@ -39,8 +36,8 @@ import type {
 import "./style.css";
 import { useReviewNavigation } from "./lib/use-review-navigation";
 import { api } from "./lib/api";
-import { CoveragePanel } from "./components/coverage-panel";
-import { ModuleGraphViewer } from "./components/module-graph";
+import { RepositoryPicker } from "./components/repository-picker";
+import { GitHubReview } from "./components/github-review";
 import { CodexSettings } from "./components/codex-settings";
 import { AnalysisLoading } from "./components/analysis-loading";
 import { useAutoGrouping } from "./lib/use-auto-grouping";
@@ -60,16 +57,15 @@ const initialConfig: ProviderConfig = {
   localOnly: true,
 };
 function App({ startupError }: { startupError?: string }) {
+  const [repositoryPicker, showRepositoryPicker] = React.useState(false);
+  const [githubAvailable, setGithubAvailable] = React.useState(false);
   const [sessions, setSessions] = React.useState<SessionSummary[]>([]);
+  const fileList = React.useRef<HTMLDivElement>(null);
   const [root, setRoot] = React.useState("");
   const [mode, setMode] = React.useState<
     "unstaged" | "staged" | "all" | "branch"
   >("all");
   const [base, setBase] = React.useState("main");
-  const [tab, setTab] = React.useState("Explanation");
-  const [graphScope, setGraphScope] = React.useState<
-    "review" | "repository" | null
-  >(null);
   const [split, setSplit] = React.useState(true);
   const diffEditor = React.useRef<monaco.editor.IStandaloneDiffEditor | null>(
     null,
@@ -89,24 +85,16 @@ function App({ startupError }: { startupError?: string }) {
     (error: Error) => setError(error.message),
     [],
   );
-  const {
-    review,
-    selected,
-    anchor,
-    comment,
-    manifest,
-    navigating,
-    navigation,
-  } = useReviewNavigation(reportNavigationError);
+  const { review, selected, anchor, manifest, navigating, navigation } =
+    useReviewNavigation(reportNavigationError);
   useAutoGrouping(review, navigating, navigation, reportNavigationError);
   const setSelected = (id: string) => {
     pendingChange.current = null;
     navigation.selectFile(id);
   };
   const setAnchor = (value: typeof anchor) => navigation.setAnchor(value);
-  const setComment = (value: string) => navigation.setComment(value);
   const [busy, setBusy] = React.useState(false);
-  const [settings, showSettings] = React.useState(false);
+  const [settings, showSettings] = React.useState<"ai" | "editor" | null>(null);
   const [config, setConfig] = React.useState(initialConfig);
   const [token, setToken] = React.useState("");
   const [editorConfig, setEditorConfig] = React.useState<EditorConfig | null>(
@@ -119,7 +107,6 @@ function App({ startupError }: { startupError?: string }) {
   });
   const [editorArgs, setEditorArgs] = React.useState('["{file}"]');
   const [editorPresets, setEditorPresets] = React.useState<EditorConfig[]>([]);
-  const [editorSettings, showEditorSettings] = React.useState(false);
   const [openAfterConfigure, setOpenAfterConfigure] = React.useState(false);
   const [persist, setPersist] = React.useState(true);
   const [theme, setTheme] = React.useState(
@@ -129,6 +116,43 @@ function App({ startupError }: { startupError?: string }) {
     review?.snapshot.files.find((f) => f.id === selected) ??
     review?.snapshot.files[0];
   const active = !navigating && review?.snapshot.id === review?.history[0]?.id;
+  React.useEffect(() => {
+    const sidebar = fileList.current?.parentElement;
+    if (!sidebar) return;
+    const resize = () => {
+      const available =
+        window.innerHeight -
+        Math.max(16, sidebar.getBoundingClientRect().top) -
+        24;
+      sidebar.style.setProperty(
+        "--sidebar-height",
+        `${Math.max(240, Math.min(720, available))}px`,
+      );
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(document.body);
+    window.addEventListener("resize", resize);
+    window.addEventListener("scroll", resize, { passive: true });
+    document.addEventListener("toggle", resize, true);
+    resize();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", resize);
+      document.removeEventListener("toggle", resize, true);
+    };
+  }, [review?.snapshot.id]);
+  React.useEffect(() => {
+    const list = fileList.current;
+    const item = list?.querySelector<HTMLElement>(".file-item.selected");
+    if (!list || !item) return;
+    const bounds = list.getBoundingClientRect(),
+      selectedBounds = item.getBoundingClientRect();
+    if (selectedBounds.top < bounds.top)
+      list.scrollTop += selectedBounds.top - bounds.top;
+    else if (selectedBounds.bottom > bounds.bottom)
+      list.scrollTop += selectedBounds.bottom - bounds.bottom;
+  }, [selected, review?.snapshot.id]);
   const run = async (work: () => Promise<void>) => {
     setBusy(true);
     setError("");
@@ -162,6 +186,9 @@ function App({ startupError }: { startupError?: string }) {
   React.useEffect(() => {
     if (startupError) return;
     void run(async () => {
+      void api<{ github: boolean }>("/capabilities")
+        .then((c) => setGithubAvailable(c.github))
+        .catch(() => {});
       const sessions = await loadSessions();
       await restoreWorkspace(sessions, navigation);
       const saved = await api<ProviderConfig | null>("/provider");
@@ -226,6 +253,23 @@ function App({ startupError }: { startupError?: string }) {
       navigation.selectFile(target.fileId);
     }
   };
+  const selectedCohort = review?.state.accepted?.cohorts.find((c) =>
+    c.layers.some((l) => l.fileIds.includes(file?.id ?? "")),
+  );
+  const reviewSequence =
+    review?.state.accepted?.cohorts.flatMap((c) =>
+      c.layers.flatMap((l) => l.fileIds),
+    ) ?? [];
+  const nextReviewId = reviewSequence.find((id) => !reviewed.includes(id));
+  const nextReviewFile = review?.snapshot.files.find(
+    (f) => f.id === nextReviewId,
+  );
+  const nextReviewCohort = review?.state.accepted?.cohorts.find((c) =>
+    c.layers.some((l) => l.fileIds.includes(nextReviewId ?? "")),
+  );
+  const nextReviewLayer = nextReviewCohort?.layers.find((l) =>
+    l.fileIds.includes(nextReviewId ?? ""),
+  );
   const selectedLayer = review?.state.accepted?.cohorts
     .flatMap((c) => c.layers)
     .find((l) => l.fileIds.includes(file?.id ?? ""));
@@ -252,7 +296,7 @@ function App({ startupError }: { startupError?: string }) {
       if (!review || !anchor) return;
       if (!editorConfig) {
         setOpenAfterConfigure(true);
-        showEditorSettings(true);
+        showSettings("editor");
         return;
       }
       await api(`/sessions/${review.snapshot.sessionId}/open-editor`, {
@@ -286,64 +330,83 @@ function App({ startupError }: { startupError?: string }) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="privacy-label">
-            <ShieldCheck size={14} />
-            On your machine
-          </span>
-          <Button variant="ghost" onClick={() => showSettings(true)}>
-            <Settings size={16} />
-            AI settings
-          </Button>
           <Button
             variant="ghost"
             onClick={() => {
               setOpenAfterConfigure(false);
-              showEditorSettings(true);
+              showSettings("ai");
             }}
           >
-            Editor settings
+            <Settings size={16} />
+            Settings
           </Button>
         </div>
       </header>
       <section className="repository-bar">
-        <label className="root-input">
-          <FolderOpen size={16} />
-          <Input
-            aria-label="Repository root"
-            placeholder="Absolute path to a local Git repository"
-            value={root}
-            onChange={(e) => setRoot(e.target.value)}
-          />
-        </label>
-        <NativeSelect
-          aria-label="Comparison mode"
-          value={mode}
-          onChange={(e) => setMode(e.target.value as typeof mode)}
-        >
-          <option value="all">All uncommitted</option>
-          <option value="unstaged">Unstaged + untracked</option>
-          <option value="staged">Staged</option>
-          <option value="branch">Branch comparison</option>
-        </NativeSelect>
-        {mode === "branch" && (
-          <Input
-            className="base-input"
-            aria-label="Base branch"
-            value={base}
-            onChange={(e) => setBase(e.target.value)}
-          />
+        {githubAvailable && (
+          <Button variant="outline" onClick={() => showRepositoryPicker(true)}>
+            Choose repository
+          </Button>
         )}
-        <Button
-          disabled={busy || !root || !!startupError}
-          onClick={() =>
-            void run(async () => {
-              await navigation.open(root, { mode, base });
-              await loadSessions();
-            })
-          }
-        >
-          {pendingComparison ? "Open comparison" : "Open review"}
-        </Button>
+        {review?.snapshot.source ? (
+          <div className="remote-review-heading">
+            <strong>
+              {review.snapshot.source.fullName} #
+              {review.snapshot.source.pullNumber}
+            </strong>
+            <span>{review.snapshot.source.title}</span>
+          </div>
+        ) : githubAvailable ? (
+          <div className="remote-review-heading">
+            <strong>
+              {review
+                ? review.snapshot.root
+                : "Choose a repository to get started"}
+            </strong>
+            {review && <span>{review.snapshot.comparison.mode} changes</span>}
+          </div>
+        ) : (
+          <>
+            <label className="root-input">
+              <FolderOpen size={16} />
+              <Input
+                aria-label="Repository root"
+                placeholder="Absolute path to a local Git repository"
+                value={root}
+                onChange={(e) => setRoot(e.target.value)}
+              />
+            </label>
+            <NativeSelect
+              aria-label="Comparison mode"
+              value={mode}
+              onChange={(e) => setMode(e.target.value as typeof mode)}
+            >
+              <option value="all">All uncommitted</option>
+              <option value="unstaged">Unstaged + untracked</option>
+              <option value="staged">Staged</option>
+              <option value="branch">Branch comparison</option>
+            </NativeSelect>
+            {mode === "branch" && (
+              <Input
+                className="base-input"
+                aria-label="Base branch"
+                value={base}
+                onChange={(e) => setBase(e.target.value)}
+              />
+            )}
+            <Button
+              disabled={busy || !root || !!startupError}
+              onClick={() =>
+                void run(async () => {
+                  await navigation.open(root, { mode, base });
+                  await loadSessions();
+                })
+              }
+            >
+              {pendingComparison ? "Open comparison" : "Open review"}
+            </Button>
+          </>
+        )}
         <NativeSelect
           aria-label="Saved reviews"
           value={review?.snapshot.sessionId ?? ""}
@@ -372,6 +435,11 @@ function App({ startupError }: { startupError?: string }) {
       )}
       {!review ? (
         <main className="welcome">
+          {githubAvailable && (
+            <Button onClick={() => showRepositoryPicker(true)}>
+              Choose a repository to review
+            </Button>
+          )}
           <div className="eyebrow">YOUR REVIEW WORKSPACE</div>
           <h1>Your changes. A clear place to start.</h1>
           <p>
@@ -404,15 +472,15 @@ function App({ startupError }: { startupError?: string }) {
                 <Check />
                 <h2>Keep your place</h2>
                 <p>
-                  File progress and local comments survive restarts. Basic diff
-                  review needs no AI.
+                  File progress and accepted cohorts survive restarts. Basic
+                  diff review needs no AI.
                 </p>
               </CardContent>
             </Card>
           </div>
           <p className="small muted">
-            Start with a repository above. Your snapshots, progress, and draft
-            comments are saved locally.
+            Start with a repository above. Your snapshots, cohorts, and review
+            progress are saved locally.
           </p>
         </main>
       ) : (
@@ -474,6 +542,37 @@ function App({ startupError }: { startupError?: string }) {
               </div>
             </div>
           </div>
+          {review.snapshot.id !== review.history[0]?.id && (
+            <div
+              className="proposal-banner"
+              role="region"
+              aria-label="Previous snapshot guidance"
+            >
+              <div>
+                <strong>You're viewing a previous snapshot</strong>
+                <p>
+                  Return to the current snapshot to generate a new AI proposal
+                  or continue reviewing.
+                </p>
+                {review.state.analysisError && (
+                  <details>
+                    <summary>Saved error from this previous analysis</summary>
+                    <p>{review.state.analysisError}</p>
+                  </details>
+                )}
+              </div>
+              <Button
+                disabled={navigating}
+                onClick={() =>
+                  void run(async () => {
+                    await navigation.navigate(review.snapshot.sessionId);
+                  })
+                }
+              >
+                Return to current snapshot
+              </Button>
+            </div>
+          )}
           {pendingComparison && (
             <div className="proposal-banner" role="status">
               The selection differs from this {review.snapshot.comparison.mode}{" "}
@@ -497,7 +596,9 @@ function App({ startupError }: { startupError?: string }) {
               }
             >
               <Sparkles size={15} />
-              {review.state.analysisStatus === "running" ? "Analysis in progress…" : "Generate AI proposal"}
+              {review.state.analysisStatus === "running"
+                ? "Analysis in progress…"
+                : "Generate AI proposal"}
             </Button>
             <Button
               variant="ghost"
@@ -507,54 +608,12 @@ function App({ startupError }: { startupError?: string }) {
               <RefreshCw size={15} />
               Refresh snapshot
             </Button>
-            <Button
-              variant="outline"
-              disabled={navigating}
-              onClick={() => setGraphScope("review")}
-            >
-              Review dependencies
-            </Button>
-            <Button
-              variant="ghost"
-              disabled={navigating}
-              onClick={() => setGraphScope("repository")}
-            >
-              Repository graph
-            </Button>
-            {graphScope && (
-              <ModuleGraphViewer
-                key={review.snapshot.id}
-                review={review}
-                initialScope={graphScope}
-                onClose={() => setGraphScope(null)}
-                onNavigate={setSelected}
-              />
-            )}
-            {review.state.analysisStatus === "running" && (
-              <>
-                <Badge variant="secondary" className="badge">
-                  Analyzing with {config.provider}…
-                </Badge>
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    void run(async () => {
-                      await api(
-                        `/sessions/${review.snapshot.sessionId}/cancel`,
-                        { snapshotId: review.snapshot.id },
-                      );
-                    })
-                  }
-                >
-                  Cancel
-                </Button>
-              </>
-            )}
-            {review.state.analysisError && (
-              <span className="text-destructive text-sm">
-                {review.state.analysisError}
-              </span>
-            )}
+            {review.state.analysisError &&
+              review.snapshot.id === review.history[0]?.id && (
+                <span className="text-destructive text-sm">
+                  {review.state.analysisError}
+                </span>
+              )}
             {!active && (
               <Badge variant="secondary" className="badge">
                 Previous snapshot · read only
@@ -579,6 +638,57 @@ function App({ startupError }: { startupError?: string }) {
               }}
             />
           )}
+          {review.state.accepted && (
+            <section
+              className="review-route"
+              aria-label="Suggested review route"
+            >
+              <div>
+                <span className="eyebrow">
+                  {reviewed.length ? "CONTINUE YOUR REVIEW" : "START HERE"}
+                </span>
+                <h2>{nextReviewFile?.path ?? "All files reviewed"}</h2>
+                {nextReviewCohort && nextReviewLayer && (
+                  <p className="small">
+                    {nextReviewCohort.name} · Step{" "}
+                    {nextReviewCohort.layers.indexOf(nextReviewLayer) + 1}:{" "}
+                    {nextReviewLayer.name}
+                    <br />
+                    {nextReviewLayer.explanation}
+                  </p>
+                )}
+                <p className="small muted">
+                  {nextReviewFile
+                    ? "Follow the cohorts and numbered layers below. Start with the first unreviewed file in this order."
+                    : "You have reviewed every file in this snapshot."}
+                </p>
+                {review.state.groupingCarriedForward && (
+                  <p className="small muted">
+                    Cohorts kept from the previous snapshot. Check their
+                    explanations against the latest changes or generate a new AI
+                    proposal.
+                  </p>
+                )}
+              </div>
+              {nextReviewId && (
+                <Button onClick={() => setSelected(nextReviewId)}>
+                  {reviewed.length ? "Continue review" : "Start review"}
+                  <ChevronRight size={16} />
+                </Button>
+              )}
+            </section>
+          )}
+          {review.snapshot.source && (
+            <GitHubReview
+              review={review}
+              active={active}
+              anchor={anchor}
+              onChanged={async () => {
+                await navigation.navigate(review.snapshot.sessionId);
+                await loadSessions();
+              }}
+            />
+          )}
           <main className="workspace">
             <aside className="cohort-sidebar">
               <div className="section-heading">
@@ -589,123 +699,157 @@ function App({ startupError }: { startupError?: string }) {
                   {review.state.accepted ? "AI + your edits" : "Ungrouped"}
                 </Badge>
               </div>
-              {review.state.accepted
-                ? review.state.accepted.cohorts.map((cohort, ci) => (
-                    <div className="cohort-group" key={ci}>
-                      <div className="flex items-center justify-between gap-1">
-                        <h3>{cohort.name}</h3>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={!active}
-                          aria-label={`Rename ${cohort.name}`}
-                          onClick={() => {
-                            const name = prompt("Cohort name", cohort.name);
-                            if (name?.trim())
-                              regroup((a) => {
-                                a.cohorts[ci].name = name.trim();
-                              });
-                          }}
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                      {cohort.layers.map((layer, li) => (
-                        <div key={li}>
-                          <div className="layer-title">
-                            <span>
-                              {li + 1}. {layer.name}
-                            </span>
-                            <div className="flex">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                disabled={!active || li === 0}
-                                aria-label={`Move ${layer.name} earlier`}
-                                onClick={() =>
-                                  regroup((a) => {
-                                    const ls = a.cohorts[ci].layers;
-                                    [ls[li - 1], ls[li]] = [ls[li], ls[li - 1]];
-                                  })
-                                }
-                              >
-                                <ArrowUp size={12} />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                disabled={
-                                  !active || li === cohort.layers.length - 1
-                                }
-                                aria-label={`Move ${layer.name} later`}
-                                onClick={() =>
-                                  regroup((a) => {
-                                    const ls = a.cohorts[ci].layers;
-                                    [ls[li + 1], ls[li]] = [ls[li], ls[li + 1]];
-                                  })
-                                }
-                              >
-                                <ArrowDown size={12} />
-                              </Button>
-                            </div>
-                          </div>
-                          {layer.fileIds.map((id) => {
-                            const f = review.snapshot.files.find(
-                              (f) => f.id === id,
-                            )!;
-                            return (
-                              <button
-                                className={`file-item ${file?.id === id ? "selected" : ""}`}
-                                key={id}
-                                onClick={() => setSelected(id)}
-                              >
-                                <span
-                                  className={`file-indicator ${reviewed.includes(id) ? "done" : ""}`}
-                                >
-                                  {reviewed.includes(id) ? (
-                                    <Check size={12} />
-                                  ) : (
-                                    <FileCode2 size={12} />
-                                  )}
-                                </span>
-                                <span>
-                                  {f.path.split("/").pop()}
-                                  <small>{f.path}</small>
-                                </span>
-                              </button>
-                            );
-                          })}
+              <div
+                className="cohort-file-list"
+                ref={fileList}
+                role="region"
+                aria-label="Changed files list"
+                tabIndex={0}
+              >
+                {review.state.accepted
+                  ? review.state.accepted.cohorts.map((cohort, ci) => (
+                      <div className="cohort-group" key={ci}>
+                        <div className="flex items-center justify-between gap-1">
+                          <h3>{cohort.name}</h3>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={!active}
+                            aria-label={`Rename ${cohort.name}`}
+                            onClick={() => {
+                              const name = prompt("Cohort name", cohort.name);
+                              if (name?.trim())
+                                regroup((a) => {
+                                  a.cohorts[ci].name = name.trim();
+                                });
+                            }}
+                          >
+                            Edit
+                          </Button>
                         </div>
-                      ))}
-                    </div>
-                  ))
-                : review.snapshot.files.map((f) => (
-                    <button
-                      className={`file-item ${file?.id === f.id ? "selected" : ""}`}
-                      key={f.id}
-                      onClick={() => setSelected(f.id)}
-                    >
-                      <span
-                        className={`file-indicator ${reviewed.includes(f.id) ? "done" : ""}`}
+                        <p className="cohort-reason">
+                          {cohort.explanation ||
+                            "No grouping explanation was provided."}
+                        </p>
+                        <p className="small muted">
+                          {
+                            cohort.layers
+                              .flatMap((l) => l.fileIds)
+                              .filter((id) => reviewed.includes(id)).length
+                          }{" "}
+                          /{" "}
+                          {cohort.layers.reduce(
+                            (n, l) => n + l.fileIds.length,
+                            0,
+                          )}{" "}
+                          reviewed
+                        </p>
+                        {cohort.layers.map((layer, li) => (
+                          <div key={li}>
+                            <div className="layer-title">
+                              <span>
+                                {li + 1}. {layer.name}
+                              </span>
+                              <div className="flex">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  disabled={!active || li === 0}
+                                  aria-label={`Move ${layer.name} earlier`}
+                                  onClick={() =>
+                                    regroup((a) => {
+                                      const ls = a.cohorts[ci].layers;
+                                      [ls[li - 1], ls[li]] = [
+                                        ls[li],
+                                        ls[li - 1],
+                                      ];
+                                    })
+                                  }
+                                >
+                                  <ArrowUp size={12} />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  disabled={
+                                    !active || li === cohort.layers.length - 1
+                                  }
+                                  aria-label={`Move ${layer.name} later`}
+                                  onClick={() =>
+                                    regroup((a) => {
+                                      const ls = a.cohorts[ci].layers;
+                                      [ls[li + 1], ls[li]] = [
+                                        ls[li],
+                                        ls[li + 1],
+                                      ];
+                                    })
+                                  }
+                                >
+                                  <ArrowDown size={12} />
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="layer-reason">{layer.explanation}</p>
+                            {layer.fileIds.map((id) => {
+                              const f = review.snapshot.files.find(
+                                (f) => f.id === id,
+                              )!;
+                              return (
+                                <button
+                                  className={`file-item ${file?.id === id ? "selected" : ""}`}
+                                  key={id}
+                                  onClick={() => setSelected(id)}
+                                >
+                                  <span
+                                    className={`file-indicator ${reviewed.includes(id) ? "done" : ""}`}
+                                  >
+                                    {reviewed.includes(id) ? (
+                                      <Check size={12} />
+                                    ) : (
+                                      <FileCode2 size={12} />
+                                    )}
+                                  </span>
+                                  <span>
+                                    {f.path.split("/").pop()}
+                                    <small>{f.path}</small>
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  : review.snapshot.files.map((f) => (
+                      <button
+                        className={`file-item ${file?.id === f.id ? "selected" : ""}`}
+                        key={f.id}
+                        onClick={() => setSelected(f.id)}
                       >
-                        {reviewed.includes(f.id) ? (
-                          <Check size={12} />
-                        ) : (
-                          <FileCode2 size={12} />
-                        )}
-                      </span>
-                      <span>
-                        {f.path.split("/").pop()}
-                        <small>{f.path}</small>
-                      </span>
-                      <span className="status-letter">
-                        {f.status[0].toUpperCase()}
-                      </span>
-                    </button>
-                  ))}
-              {!review.snapshot.files.length && (
-                <p className="empty-message">No changes in this comparison.</p>
-              )}
+                        <span
+                          className={`file-indicator ${reviewed.includes(f.id) ? "done" : ""}`}
+                        >
+                          {reviewed.includes(f.id) ? (
+                            <Check size={12} />
+                          ) : (
+                            <FileCode2 size={12} />
+                          )}
+                        </span>
+                        <span>
+                          {f.path.split("/").pop()}
+                          <small>{f.path}</small>
+                        </span>
+                        <span className="status-letter">
+                          {f.status[0].toUpperCase()}
+                        </span>
+                      </button>
+                    ))}
+                {!review.snapshot.files.length && (
+                  <p className="empty-message">
+                    No changes in this comparison.
+                  </p>
+                )}
+              </div>
             </aside>
             <section className="diff-pane">
               {file ? (
@@ -758,7 +902,7 @@ function App({ startupError }: { startupError?: string }) {
                     </div>
                   </div>
                   <div className="editor-wrapper">
-                    {anchor && (
+                    {anchor && !review.snapshot.source && (
                       <div className="diff-footer">
                         <span className="small">
                           {anchor.side} · line {anchor.line}
@@ -767,13 +911,6 @@ function App({ startupError }: { startupError?: string }) {
                             : ""}
                         </span>
                         <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setTab("Comments")}
-                          >
-                            Draft comment
-                          </Button>
                           <Button
                             size="sm"
                             disabled={
@@ -872,21 +1009,6 @@ function App({ startupError }: { startupError?: string }) {
                                 side,
                                 line: event.target.position.lineNumber,
                               });
-                              if (
-                                [
-                                  monaco.editor.MouseTargetType
-                                    .GUTTER_LINE_NUMBERS,
-                                  monaco.editor.MouseTargetType
-                                    .GUTTER_GLYPH_MARGIN,
-                                ].includes(event.target.type)
-                              ) {
-                                setAnchor({
-                                  fileId: file.id,
-                                  side,
-                                  line: event.target.position.lineNumber,
-                                });
-                                setTab("Comments");
-                              }
                             });
                         }}
                       />
@@ -906,7 +1028,9 @@ function App({ startupError }: { startupError?: string }) {
                   </div>
                   <div className="diff-footer">
                     <span className="muted small">
-                      Click a line number to draft a local comment.
+                      {review.snapshot.source
+                        ? "Select a diff line to attach feedback. Drafts stay local until submission."
+                        : "Select a line to open it in your editor."}
                     </span>
                     <div className="flex gap-2">
                       <Button
@@ -946,345 +1070,302 @@ function App({ startupError }: { startupError?: string }) {
                 </div>
               )}
             </section>
-            <Tabs
-              value={tab}
-              onValueChange={setTab}
-              className="detail-pane"
-              asChild
-            >
-              <aside>
-                <TabsList className="detail-tabs" aria-label="Review details">
-                  {["Explanation", "CRAP", "Comments"].map((t) => (
-                    <TabsTrigger key={t} value={t}>
-                      {t}
-                      {t === "Comments" && (
-                        <span>{review.state.drafts.length}</span>
+            <aside className="detail-pane" aria-label="AI review guide">
+              <h2 className="review-guide-heading">
+                <Sparkles size={16} />
+                AI review guide
+              </h2>
+              <div className="details-content">
+                {selectedCohort && (
+                  <section
+                    className="cohort-context"
+                    aria-label="Why these files belong together"
+                  >
+                    <span className="eyebrow">
+                      WHY THESE FILES BELONG TOGETHER
+                    </span>
+                    <h2>{selectedCohort.name}</h2>
+                    <p>
+                      {selectedCohort.explanation ||
+                        "No grouping explanation was provided."}
+                    </p>
+                  </section>
+                )}
+                <span className="eyebrow">
+                  {selectedLayer && selectedCohort
+                    ? "STEP " +
+                      (selectedCohort.layers.indexOf(selectedLayer) + 1) +
+                      " OF " +
+                      selectedCohort.layers.length
+                    : "READING ORDER"}
+                </span>
+                <h2>{selectedLayer?.name ?? "Review this file"}</h2>
+                <p>
+                  {selectedLayer?.explanation ??
+                    "Generate an AI grouping to organize these changes into cohorts and layers. Ungrouped review is available now."}
+                </p>
+                {selectedLayer && (
+                  <Badge variant="secondary" className="badge">
+                    Suggested order · editable
+                  </Badge>
+                )}
+                {selectedLayer && (
+                  <ol
+                    className="layer-reading-list"
+                    aria-label="Files in this review step"
+                  >
+                    {selectedLayer.fileIds.map((id) => {
+                      const entry = review.snapshot.files.find(
+                        (f) => f.id === id,
+                      );
+                      return (
+                        <li key={id}>
+                          <button
+                            aria-current={file?.id === id ? "step" : undefined}
+                            onClick={() => setSelected(id)}
+                          >
+                            {entry?.path}
+                            <span className="small muted">
+                              {reviewed.includes(id)
+                                ? "Reviewed"
+                                : id === nextReviewId
+                                  ? "Up next"
+                                  : "To review"}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                )}
+                <h3 className="mt-7">AI findings</h3>
+                {review.state.accepted?.findings
+                  .filter((f) => f.fileId === file?.id)
+                  .map((finding, i) => (
+                    <div className="finding" key={i}>
+                      <Badge variant="secondary" className="badge">
+                        {finding.kind} · AI suggestion
+                      </Badge>
+                      <p>{finding.message}</p>
+                      {finding.line && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!active}
+                          onClick={() => {
+                            setAnchor({
+                              fileId: finding.fileId,
+                              side: "after",
+                              line: finding.line!,
+                            });
+                            const editor =
+                              diffEditor.current?.getModifiedEditor();
+                            editor?.setPosition({
+                              lineNumber: finding.line!,
+                              column: 1,
+                            });
+                            editor?.revealLineInCenter(finding.line!);
+                          }}
+                        >
+                          Go to finding
+                        </Button>
                       )}
-                    </TabsTrigger>
+                    </div>
                   ))}
-                </TabsList>
-                <TabsContent value={tab} className="detail-tab-content">
-                  {tab === "CRAP" ? (
-                    <CoveragePanel
-                      key={`${review.snapshot.id}:${file?.id}`}
-                      review={review}
-                      fileId={file?.id}
-                      active={active}
-                    />
-                  ) : tab === "Explanation" ? (
-                    <div className="details-content">
-                      <span className="eyebrow">READING ORDER</span>
-                      <h2>{selectedLayer?.name ?? "Review this file"}</h2>
-                      <p>
-                        {selectedLayer?.explanation ??
-                          "Generate an AI grouping to organize these changes into cohorts and layers. Ungrouped review is available now."}
-                      </p>
-                      {selectedLayer && (
-                        <Badge variant="secondary" className="badge">
-                          Suggested order · editable
-                        </Badge>
-                      )}
-                      <h3 className="mt-7">AI findings</h3>
-                      {review.state.accepted?.findings
-                        .filter((f) => f.fileId === file?.id)
-                        .map((finding, i) => (
-                          <div className="finding" key={i}>
-                            <Badge variant="secondary" className="badge">
-                              {finding.kind} · AI suggestion
-                            </Badge>
-                            <p>{finding.message}</p>
-                            {finding.line && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={!active}
-                                onClick={() => {
-                                  setAnchor({
-                                    fileId: finding.fileId,
-                                    side: "after",
-                                    line: finding.line!,
-                                  });
-                                  setComment(finding.message);
-                                  setTab("Comments");
-                                }}
-                              >
-                                Create local draft
-                              </Button>
-                            )}
-                          </div>
-                        ))}
-                      {!review.state.accepted?.findings.some(
-                        (f) => f.fileId === file?.id,
-                      ) && (
-                        <p className="small muted">
-                          No accepted AI findings for this file. This is not a
-                          guarantee of correctness.
-                        </p>
-                      )}
-                      {file &&
-                        review.state.manifest?.files.find(
+                {!review.state.accepted?.findings.some(
+                  (f) => f.fileId === file?.id,
+                ) && (
+                  <p className="small muted">
+                    No accepted AI findings for this file. This is not a
+                    guarantee of correctness.
+                  </p>
+                )}
+                {file &&
+                  review.state.manifest?.files.find((f) => f.id === file.id)
+                    ?.reason && (
+                    <p className="omission">
+                      AI context omitted:{" "}
+                      {
+                        review.state.manifest.files.find(
                           (f) => f.id === file.id,
-                        )?.reason && (
-                          <p className="omission">
-                            AI context omitted:{" "}
-                            {
-                              review.state.manifest.files.find(
-                                (f) => f.id === file.id,
-                              )?.reason
-                            }
-                          </p>
-                        )}
-                      {review.state.accepted && file && (
-                        <label className="mt-7 small">
-                          Move file to cohort
-                          <NativeSelect
-                            disabled={!active}
-                            value=""
-                            onChange={(e) => {
-                              const target = Number(e.target.value);
-                              regroup((a) => {
-                                for (const c of a.cohorts)
-                                  for (const l of c.layers)
-                                    l.fileIds = l.fileIds.filter(
-                                      (id) => id !== file.id,
-                                    );
-                                a.cohorts[target].layers[0].fileIds.push(
-                                  file.id,
-                                );
-                                a.cohorts.forEach((c) => {
-                                  c.layers = c.layers.filter(
-                                    (l) => l.fileIds.length,
-                                  );
-                                });
-                                a.cohorts = a.cohorts.filter(
-                                  (c) => c.layers.length,
-                                );
-                              });
-                            }}
-                          >
-                            <option value="" disabled>
-                              Select cohort…
-                            </option>
-                            {review.state.accepted.cohorts.map((c, i) => (
-                              <option key={i} value={i}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </NativeSelect>
-                        </label>
-                      )}
-                      <div className="phase-note">
-                        <h3>Measured metrics</h3>
-                        <p>
-                          Use the CRAP tab to import coverage or explicitly run
-                          your tests. Open Review dependencies for changed
-                          modules or Repository graph for the full pinned source
-                          graph.
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="details-content">
-                      <h2>Local draft comments</h2>
-                      <p className="small muted">
-                        Saved on this machine. Local Git has no remote
-                        publication target.
-                      </p>
-                      {anchor ? (
-                        <>
-                          <div className="anchor-label">
-                            {anchor.side} · line {anchor.line}
-                          </div>
-                          <Textarea
-                            aria-label="Draft comment"
-                            rows={4}
-                            placeholder="Write a review comment…"
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                          />
-                          <Button
-                            disabled={busy || !comment.trim() || !active}
-                            onClick={() =>
-                              void run(async () => {
-                                if (!review) return;
-                                await navigation.mutate(
-                                  "drafts",
-                                  { ...anchor, text: comment },
-                                  { clearComment: true },
-                                );
-                              })
-                            }
-                          >
-                            Save draft
-                          </Button>
-                        </>
-                      ) : (
-                        <p className="empty-message">
-                          Select a line number in the diff to add a comment.
-                        </p>
-                      )}
-                      {review.state.drafts.map((d) => (
-                        <div className="draft" key={d.id}>
-                          <div className="flex justify-between">
-                            <Badge variant="secondary" className="badge">
-                              {d.needsReattachment
-                                ? "Needs reattachment"
-                                : "Local draft"}
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              aria-label="Delete draft"
-                              disabled={!active}
-                              onClick={() =>
-                                void run(async () => {
-                                  await navigation.mutate(
-                                    `drafts/${d.id}`,
-                                    {},
-                                    { method: "DELETE" },
-                                  );
-                                })
-                              }
-                            >
-                              <X size={12} />
-                            </Button>
-                          </div>
-                          <p>{d.text}</p>
-                          <small>
-                            {d.path} · {d.side} {d.line}
-                          </small>
-                        </div>
-                      ))}
-                    </div>
+                        )?.reason
+                      }
+                    </p>
                   )}
-                </TabsContent>
-              </aside>
-            </Tabs>
+                {review.state.accepted && file && (
+                  <label className="mt-7 small">
+                    Move file to cohort
+                    <NativeSelect
+                      disabled={!active}
+                      value=""
+                      onChange={(e) => {
+                        const target = Number(e.target.value);
+                        regroup((a) => {
+                          for (const c of a.cohorts)
+                            for (const l of c.layers)
+                              l.fileIds = l.fileIds.filter(
+                                (id) => id !== file.id,
+                              );
+                          a.cohorts[target].layers[0].fileIds.push(file.id);
+                          a.cohorts.forEach((c) => {
+                            c.layers = c.layers.filter((l) => l.fileIds.length);
+                          });
+                          a.cohorts = a.cohorts.filter((c) => c.layers.length);
+                        });
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select cohort…
+                      </option>
+                      {review.state.accepted.cohorts.map((c, i) => (
+                        <option key={i} value={i}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </NativeSelect>
+                  </label>
+                )}
+              </div>
+            </aside>
           </main>
         </>
       )}
-      {editorSettings && (
-        <ReviewDialog
-          labelledBy="editor-title"
-          onClose={() => showEditorSettings(false)}
-        >
-          <DialogTitle id="editor-title">
-            Choose your default editor
-          </DialogTitle>
-          <p className="small muted">
-            This opens your working file, not an editable copy of the review
-            snapshot. Use an executable path or a terminal launcher for Neovim.
-          </p>
-          <label>
-            Preset
-            <NativeSelect
-              aria-label="Editor preset"
-              value=""
-              onChange={(e) => {
-                const preset = editorPresets[Number(e.target.value)];
-                if (preset) {
-                  setEditorDraft(preset);
-                  setEditorArgs(JSON.stringify(preset.args));
-                }
-              }}
-            >
-              <option value="" disabled>
-                Select a preset…
-              </option>
-              {editorPresets.map((p, i) => (
-                <option key={p.name} value={i}>
-                  {p.name}
-                </option>
-              ))}
-            </NativeSelect>
-          </label>
-          <label>
-            Editor name
-            <Input
-              value={editorDraft.name}
-              onChange={(e) =>
-                setEditorDraft({ ...editorDraft, name: e.target.value })
-              }
-            />
-          </label>
-          <label>
-            Executable
-            <Input
-              value={editorDraft.executable}
-              onChange={(e) =>
-                setEditorDraft({ ...editorDraft, executable: e.target.value })
-              }
-              placeholder="Path to Code.exe, idea64.exe, or your terminal launcher"
-            />
-          </label>
-          <label>
-            Arguments as a JSON array
-            <Input
-              value={editorArgs}
-              onChange={(e) => setEditorArgs(e.target.value)}
-            />
-          </label>
-          <p className="small muted">
-            Placeholders: {"{file}"}, {"{line}"}, {"{column}"}. Arguments are
-            passed directly, without a shell. On macOS, configure a terminal
-            launcher for Neovim rather than starting it without a terminal.
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                showEditorSettings(false);
-                setOpenAfterConfigure(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={busy || !editorDraft.executable}
-              onClick={() =>
-                void run(async () => {
-                  const config = {
-                    ...editorDraft,
-                    args: JSON.parse(editorArgs),
-                  };
-                  const saved = await api<EditorConfig>("/editor", config);
-                  setEditorConfig(saved);
-                  showEditorSettings(false);
-                  if (openAfterConfigure && review && anchor)
-                    await api(
-                      `/sessions/${review.snapshot.sessionId}/open-editor`,
-                      {
-                        snapshotId: review.snapshot.id,
-                        ...anchor,
-                        column: 1,
-                      },
-                    );
-                  setOpenAfterConfigure(false);
-                })
-              }
-            >
-              {openAfterConfigure
-                ? "Save & open editor"
-                : "Save default editor"}
-            </Button>
-          </div>
-        </ReviewDialog>
+      {repositoryPicker && (
+        <RepositoryPicker
+          sessions={sessions}
+          onClose={() => showRepositoryPicker(false)}
+          onLocal={async (root, comparison) => {
+            await navigation.open(root, comparison);
+            await loadSessions();
+          }}
+          onRemote={async (remote) => {
+            await navigation.navigate(remote.snapshot.sessionId);
+            await loadSessions();
+          }}
+        />
       )}
       {settings && (
         <ReviewDialog
           labelledBy="settings-title"
-          onClose={() => showSettings(false)}
+          onClose={() => {
+            showSettings(null);
+            setOpenAfterConfigure(false);
+          }}
         >
-          <div className="flex items-center justify-between">
-            <DialogTitle id="settings-title">AI provider settings</DialogTitle>
-            <Button
-              variant="ghost"
-              aria-label="Close settings"
-              onClick={() => showSettings(false)}
-            >
-              <X size={16} />
-            </Button>
-          </div>
+          <DialogTitle id="settings-title">Settings</DialogTitle>
+          <Tabs
+            value={settings}
+            onValueChange={(value) => showSettings(value as "ai" | "editor")}
+          >
+            <TabsList aria-label="Settings sections">
+              <TabsTrigger value="ai">AI</TabsTrigger>
+              <TabsTrigger value="editor">Editor</TabsTrigger>
+            </TabsList>
+            <TabsContent value="editor" className="settings-section">
+              <p className="small muted">
+                This opens your working file, not an editable copy of the review
+                snapshot. Use an executable path or a terminal launcher for
+                Neovim.
+              </p>
+              <label>
+                Preset
+                <NativeSelect
+                  aria-label="Editor preset"
+                  value=""
+                  onChange={(e) => {
+                    const preset = editorPresets[Number(e.target.value)];
+                    if (preset) {
+                      setEditorDraft(preset);
+                      setEditorArgs(JSON.stringify(preset.args));
+                    }
+                  }}
+                >
+                  <option value="" disabled>
+                    Select a preset…
+                  </option>
+                  {editorPresets.map((p, i) => (
+                    <option key={p.name} value={i}>
+                      {p.name}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </label>
+              <label>
+                Editor name
+                <Input
+                  value={editorDraft.name}
+                  onChange={(e) =>
+                    setEditorDraft({ ...editorDraft, name: e.target.value })
+                  }
+                />
+              </label>
+              <label>
+                Executable
+                <Input
+                  value={editorDraft.executable}
+                  onChange={(e) =>
+                    setEditorDraft({
+                      ...editorDraft,
+                      executable: e.target.value,
+                    })
+                  }
+                  placeholder="Path to Code.exe, idea64.exe, or your terminal launcher"
+                />
+              </label>
+              <label>
+                Arguments as a JSON array
+                <Input
+                  value={editorArgs}
+                  onChange={(e) => setEditorArgs(e.target.value)}
+                />
+              </label>
+              <p className="small muted">
+                Placeholders: {"{file}"}, {"{line}"}, {"{column}"}. Arguments
+                are passed directly, without a shell. On macOS, configure a
+                terminal launcher for Neovim rather than starting it without a
+                terminal.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    showSettings(null);
+                    setOpenAfterConfigure(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={busy || !editorDraft.executable}
+                  onClick={() =>
+                    void run(async () => {
+                      const config = {
+                        ...editorDraft,
+                        args: JSON.parse(editorArgs),
+                      };
+                      const saved = await api<EditorConfig>("/editor", config);
+                      setEditorConfig(saved);
+                      showSettings(null);
+                      if (openAfterConfigure && review && anchor)
+                        await api(
+                          `/sessions/${review.snapshot.sessionId}/open-editor`,
+                          {
+                            snapshotId: review.snapshot.id,
+                            ...anchor,
+                            column: 1,
+                          },
+                        );
+                      setOpenAfterConfigure(false);
+                    })
+                  }
+                >
+                  {openAfterConfigure
+                    ? "Save & open editor"
+                    : "Save default editor"}
+                </Button>
+              </div>
+            </TabsContent>
+            <TabsContent value="ai" className="settings-section">
               <p className="small muted">
                 Repository content is sent only after you confirm an analysis
                 manifest.
@@ -1431,13 +1512,14 @@ function App({ startupError }: { startupError?: string }) {
                       persist,
                     });
                     setToken("");
-                    showSettings(false);
+                    showSettings(null);
                   })
                 }
               >
                 Save configuration
               </Button>
-
+            </TabsContent>
+          </Tabs>
         </ReviewDialog>
       )}
       {manifest && (

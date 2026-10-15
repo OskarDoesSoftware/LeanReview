@@ -11,15 +11,26 @@ export async function verifyWelcome(page: Page) {
     fullPage: true,
   });
   const settings = page.getByRole("button", {
-    name: "AI settings",
+    name: "Settings",
     exact: true,
   });
   await settings.click();
-  const dialog = page.getByRole("dialog", { name: "AI provider settings" });
+  const dialog = page.getByRole("dialog", { name: "Settings" });
   await expect(dialog).toBeVisible();
+  await expect(page.getByText("On your machine", { exact: true })).toHaveCount(
+    0,
+  );
+  await dialog.getByRole("tab", { name: "Editor", exact: true }).click();
+  await expect(
+    dialog.getByRole("textbox", { name: "Executable", exact: true }),
+  ).toBeVisible();
+  await dialog.getByRole("tab", { name: "AI", exact: true }).click();
+  await expect(
+    dialog.getByRole("combobox", { name: "Provider", exact: true }),
+  ).toBeVisible();
   for (let i = 0; i < 18; i++) {
     await page.keyboard.press("Tab");
-    await expect(dialog).toContainText("AI provider settings");
+    await expect(dialog).toContainText("Settings");
     expect(
       await dialog.evaluate((el) => el.contains(document.activeElement)),
     ).toBe(true);
@@ -30,21 +41,29 @@ export async function verifyWelcome(page: Page) {
 }
 
 export async function verifyWorkspace(page: Page) {
-  const explanation = page.getByRole("tab", {
-    name: "Explanation",
-    exact: true,
-  });
   const primary = page.getByRole("button", {
     name: "Mark file reviewed",
     exact: true,
   });
   await expect(primary).toHaveCSS("color", "rgb(255, 255, 255)");
-  await explanation.focus();
-  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("complementary", { name: "AI review guide" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("tab", { name: "CRAP", exact: true }),
-  ).toHaveAttribute("aria-selected", "true");
-  await explanation.click();
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("tab", { name: "Comments", exact: false }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Repository graph", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Review dependencies", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("textbox", { name: "Draft comment" }),
+  ).toHaveCount(0);
   await page.screenshot({
     path: ".leanreview-test/ui-workspace.png",
     fullPage: true,
@@ -61,12 +80,9 @@ export async function verifyWorkspace(page: Page) {
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page
-    .getByRole("button", { name: "Editor settings", exact: true })
-    .click();
-  await expect(
-    page.getByRole("dialog", { name: "Choose your default editor" }),
-  ).toBeInViewport();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Editor", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Settings" })).toBeInViewport();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

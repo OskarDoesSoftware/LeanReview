@@ -21,6 +21,7 @@ public class CoreApi {
   private final CoreReview operations;
   private final dev.leanreview.editor.EditorService editors;
   private final ReviewAnalysis analysis;
+  private final dev.leanreview.github.GitHubReviews github;
 
   public CoreApi(
       ObjectMapper json,
@@ -29,7 +30,8 @@ public class CoreApi {
       LocalSnapshots git,
       CoreReview operations,
       dev.leanreview.editor.EditorService editors,
-      ReviewAnalysis analysis) {
+      ReviewAnalysis analysis,
+      dev.leanreview.github.GitHubReviews github) {
     this.json = json;
     this.snapshots = snapshots;
     this.reviews = reviews;
@@ -37,6 +39,7 @@ public class CoreApi {
     this.operations = operations;
     this.editors = editors;
     this.analysis = analysis;
+    this.github = github;
   }
 
   private ResponseEntity<String> reply(Object value) throws IOException {
@@ -79,7 +82,14 @@ public class CoreApi {
     WireInput.object(body);
     String expected = WireInput.text(body, "snapshotId");
     JsonNode previous = snapshots.current(id, expected).path("snapshot");
+    for (JsonNode submission :
+        snapshots.current(id, expected).path("state").path("githubSubmissions"))
+      if (Set.of("sending", "uncertain").contains(submission.path("status").asText()))
+        throw new IllegalArgumentException(
+            "Reconcile the pending GitHub submission before refreshing.");
     analysis.cancel(expected);
+    if (previous.path("source").path("provider").asText().equals("github"))
+      return reply(github.refresh(id, expected));
     // No connection is held during Git capture; refresh rechecks the current ID transactionally.
     ObjectNode next =
         git.capture(git.select(previous.path("root").asText()), previous.path("comparison"), id);

@@ -1,0 +1,58 @@
+name: Java acceptance
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      [
+        "backend-java/**",
+        "frontend/**",
+        "packages/**",
+        "tests/**",
+        "scripts/**",
+        "package*.json",
+        ".github/workflows/java-acceptance.yml",
+      ]
+  pull_request:
+jobs:
+  acceptance:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build:java
+      - name: Native keychain interoperability on macOS
+        if: runner.os == 'macOS'
+        run: sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test
+        env:
+          LEANREVIEW_KEYRING_ACCEPTANCE: "1"
+      - name: Secret Service interoperability on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnome-keyring libsecret-1-0 dbus-x11
+          dbus-run-session -- sh -c 'printf "%s" fixture-password | gnome-keyring-daemon --unlock --components=secrets; LEANREVIEW_KEYRING_ACCEPTANCE=1 sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test'
+      - run: node scripts/verify-java-launch.mjs
+      - run: npx vitest run tests/data-backup.test.ts
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config playwright.java.config.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-${{ matrix.os }}
+          path: |
+            backend-java/target/surefire-reports
+            test-results

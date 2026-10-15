@@ -64,7 +64,12 @@ public class CoreSnapshots {
   public ObjectNode create(ObjectNode snapshot) throws IOException {
     Rows.Session session = new Rows.Session();
     session.id = snapshot.path("sessionId").asText();
-    session.name = Path.of(snapshot.path("root").asText()).getFileName().toString();
+    session.name =
+        snapshot.path("source").path("provider").asText().equals("github")
+            ? snapshot.path("source").path("fullName").asText()
+                + " #"
+                + snapshot.path("source").path("pullNumber").asInt()
+            : Path.of(snapshot.path("root").asText()).getFileName().toString();
     session.root = snapshot.path("root").asText();
     session.activeSnapshot = snapshot.path("id").asText();
     session.updatedAt = snapshot.path("capturedAt").asText();
@@ -88,6 +93,10 @@ public class CoreSnapshots {
   public ObjectNode refresh(String sessionId, String expected, ObjectNode snapshot)
       throws IOException {
     ObjectNode previous = current(sessionId, expected);
+    for (JsonNode submission : previous.path("state").path("githubSubmissions"))
+      if (Set.of("sending", "uncertain").contains(submission.path("status").asText()))
+        throw new IllegalArgumentException(
+            "Reconcile the pending GitHub submission before refreshing.");
     if (!snapshot.path("sessionId").asText().equals(sessionId))
       throw new IllegalArgumentException("Snapshot belongs to another review.");
     if (snapshots.existsById(snapshot.path("id").asText()))
@@ -106,6 +115,60 @@ public class CoreSnapshots {
         unchanged.add(file.path("id").asText());
     }
     ObjectNode state = emptyState();
+    if (previous.path("state").has("githubSubmissions"))
+      state.set("githubSubmissions", previous.path("state").path("githubSubmissions").deepCopy());
+    JsonNode priorGrouping = previous.path("state").path("accepted");
+    if (priorGrouping.isObject() && !snapshot.path("files").isEmpty()) {
+      var currentIds = new HashSet<String>();
+      for (JsonNode file : snapshot.path("files")) currentIds.add(file.path("id").asText());
+      var assigned = new HashSet<String>();
+      ObjectNode grouping = priorGrouping.deepCopy();
+      ArrayNode cohorts = json.createArrayNode();
+      for (JsonNode cohort : priorGrouping.path("cohorts")) {
+        ObjectNode kept = cohort.deepCopy();
+        ArrayNode layers = json.createArrayNode();
+        for (JsonNode layer : cohort.path("layers")) {
+          ObjectNode step = layer.deepCopy();
+          ArrayNode ids = json.createArrayNode();
+          for (JsonNode id : layer.path("fileIds")) {
+            if (currentIds.contains(id.asText())) {
+              ids.add(id);
+              assigned.add(id.asText());
+            }
+          }
+          if (!ids.isEmpty()) {
+            step.set("fileIds", ids);
+            layers.add(step);
+          }
+        }
+        if (!layers.isEmpty()) {
+          kept.set("layers", layers);
+          cohorts.add(kept);
+        }
+      }
+      ArrayNode added = json.createArrayNode();
+      for (JsonNode file : snapshot.path("files"))
+        if (!assigned.contains(file.path("id").asText())) added.add(file.path("id").asText());
+      if (!added.isEmpty()) {
+        ObjectNode cohort = cohorts.addObject();
+        cohort.put("name", "New files to organize");
+        cohort.put(
+            "explanation",
+            "These files were added since the previous grouping. Generate a new AI proposal to"
+                + " place them with related changes.");
+        ObjectNode layer = cohort.putArray("layers").addObject();
+        layer.put("name", "Review new changes");
+        layer.put("explanation", "Check how these files connect to the existing cohorts.");
+        layer.set("fileIds", added);
+      }
+      grouping.set("cohorts", cohorts);
+      ArrayNode findings = json.createArrayNode();
+      for (JsonNode finding : priorGrouping.path("findings"))
+        if (unchanged.contains(finding.path("fileId").asText())) findings.add(finding);
+      grouping.set("findings", findings);
+      state.set("accepted", grouping);
+      state.put("groupingCarriedForward", true);
+    }
     for (JsonNode id : previous.path("state").path("reviewed"))
       if (unchanged.contains(id.asText())) state.withArray("reviewed").add(id);
     for (JsonNode draft : previous.path("state").path("drafts")) {

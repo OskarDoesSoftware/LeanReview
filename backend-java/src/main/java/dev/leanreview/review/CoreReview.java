@@ -27,6 +27,11 @@ public class CoreReview {
     String expected = WireInput.text(body, "snapshotId");
     ObjectNode review = snapshots.current(id, expected);
     JsonNode snapshot = review.path("snapshot");
+    if (action.equals("drafts") || action.equals("delete-draft"))
+      for (JsonNode submission : review.path("state").path("githubSubmissions"))
+        if (Set.of("sending", "uncertain").contains(submission.path("status").asText()))
+          throw new IllegalArgumentException(
+              "Reconcile the pending GitHub submission before editing drafts.");
     var files = new HashMap<String, JsonNode>();
     snapshot.path("files").forEach(file -> files.put(file.path("id").asText(), file));
     return reviews.updateCurrentState(
@@ -51,7 +56,10 @@ public class CoreReview {
             }
             case "grouping" -> {
               state.set("accepted", grouping(body.path("analysis"), files));
-              if (body.path("acceptProposal").asBoolean()) state.putNull("proposal");
+              if (body.path("acceptProposal").asBoolean()) {
+                state.putNull("proposal");
+                state.remove("groupingCarriedForward");
+              }
             }
             case "drafts" -> {
               String fileId = WireInput.text(body, "fileId"),

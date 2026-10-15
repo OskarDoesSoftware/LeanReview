@@ -24,7 +24,11 @@
     "benchmark:graph": "node --import tsx scripts/benchmark-graph.mjs",
     "compatibility:freeze": "node --import tsx scripts/freeze-backend-compatibility.ts --write",
     "test:compatibility": "vitest run tests/backend-compatibility.test.ts",
-    "benchmark:backend": "node --import tsx scripts/benchmark-backend.ts"
+    "benchmark:backend": "node --import tsx scripts/benchmark-backend.ts",
+    "build:java": "node scripts/java-launch.mjs --build --build-only",
+    "start:java": "node scripts/java-launch.mjs",
+    "dev:java": "node scripts/java-launch.mjs --dev",
+    "benchmark:java": "node --import tsx scripts/benchmark-java.ts"
   },
   "dependencies": {
     "@napi-rs/keyring": "2.1.1",

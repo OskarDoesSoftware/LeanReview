@@ -126,11 +126,11 @@ export class ReviewNavigation {
         throw new Error(
           "Response does not belong to the selected review snapshot.",
         );
-      this.accept(next);
-      if (options.advance && this.state.selected === selected) {
-        const nextId = nextUnreviewed(next, selected);
-        if (nextId) this.selectFile(nextId);
-      }
+      const advanceTo =
+        options.advance && this.state.selected === selected
+          ? nextUnreviewed(next, selected)
+          : undefined;
+      this.accept(next, advanceTo);
       if (
         options.clearComment &&
         this.state.anchor === anchor &&
@@ -214,7 +214,7 @@ export class ReviewNavigation {
     }
   }
 
-  private accept(review: Review) {
+  private accept(review: Review, advanceTo?: string) {
     const sessionChanged =
       this.state.review?.snapshot.sessionId !== review.snapshot.sessionId;
     const changed =
@@ -228,8 +228,9 @@ export class ReviewNavigation {
       review,
       selected: sessionChanged
         ? (review.snapshot.files[0]?.id ?? "")
-        : selected,
+        : (advanceTo ?? selected),
       ...(changed ? { anchor: null, comment: "", manifest: null } : {}),
+      ...(advanceTo ? { anchor: null, comment: "" } : {}),
     });
   }
   private patch(update: Partial<NavigationState>) {

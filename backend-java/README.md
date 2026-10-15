@@ -1,6 +1,6 @@
 # Java backend migration
 
-This module implements storage (#23), the local API and review flow (#24), credentials and review analysis (#25), and graphs, coverage, and explicit tests (#26). The application launcher still uses the Node backend. Java HTTP startup remains opt-in while Codex parity, packaging, platform acceptance, and cutover continue.
+This module implements storage (#23), the local API and review flow (#24), credentials and review analysis (#25), and graphs, coverage, and explicit tests (#26). The application launcher still uses the Node backend. Java HTTP startup remains opt-in while platform acceptance and cutover continue. Root-level build/start/development commands and recovery tooling are described in [Java launch and acceptance](../docs/migration/java-launch-acceptance.md). The [GitHub review workflow](../docs/github-review.md) is available in this preview.
 
 ## Try the React UI with Java
 

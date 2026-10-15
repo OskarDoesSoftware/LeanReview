@@ -13,7 +13,7 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
   const { root, link, providerOrigin } = JSON.parse(
     await readFile(".leanreview-test/java-browser-fixture.json", "utf8"),
   );
-  await page.goto(link);
+  await page.goto("/");
   await expect(
     page.getByRole("combobox", { name: "Saved reviews" }),
   ).toBeVisible();
@@ -21,16 +21,21 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
     .getByRole("combobox", { name: "Saved reviews" })
     .selectOption("session-fixture");
   await expect(page.locator(".monaco-diff-editor")).toBeVisible();
-  await page.getByRole("textbox", { name: "Repository root" }).fill(root);
   await page
-    .getByRole("combobox", { name: "Comparison mode" })
+    .getByRole("button", { name: "Choose repository", exact: true })
+    .click();
+  await page.getByRole("textbox", { name: "Local repository path" }).fill(root);
+  await page
+    .getByRole("combobox", { name: "Local comparison" })
     .selectOption("all");
   const created = page.waitForResponse(
     (response) =>
       new URL(response.url()).pathname === "/api/sessions" &&
       response.request().method() === "POST",
   );
-  await page.getByRole("button", { name: /Open (review|comparison)/ }).click();
+  await page
+    .getByRole("button", { name: "Open local changes", exact: true })
+    .click();
   const response = await created;
   expect(response.ok()).toBe(true);
   const review = await response.json();
@@ -85,7 +90,9 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
   await expect(page.locator(".progress-summary")).toContainText(
     "1 / 2 reviewed",
   );
-  await page.getByRole("button", { name: /^(Settings|AI settings)$/, exact: true }).click();
+  await page
+    .getByRole("button", { name: /^(Settings|AI settings)$/, exact: true })
+    .click();
   const settings = page.getByRole("dialog", {
     name: /^(Settings|AI settings|AI provider settings)$/,
   });
@@ -135,7 +142,9 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
   await expect(page.locator(".progress-summary")).toContainText(
     "1 / 2 reviewed",
   );
-  await page.getByRole("button", { name: /^(Settings|AI settings)$/, exact: true }).click();
+  await page
+    .getByRole("button", { name: /^(Settings|AI settings)$/, exact: true })
+    .click();
   await settings
     .getByRole("button", { name: "Sign out of LeanReview" })
     .click();

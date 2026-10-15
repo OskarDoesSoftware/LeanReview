@@ -21,6 +21,18 @@ export type FileChange = {
   patch: string;
 };
 export type Snapshot = {
+  source?: {
+    provider: "github";
+    host: "github.com";
+    repositoryId: number;
+    fullName: string;
+    pullNumber: number;
+    headSha: string;
+    baseSha: string;
+    title: string;
+    body: string;
+    url: string;
+  };
   graphContext?: {
     before: import("./graph").PinnedInventory;
     after: import("./graph").PinnedInventory;
@@ -61,6 +73,7 @@ export const analysisSchema = z.object({
 });
 export type Analysis = z.infer<typeof analysisSchema>;
 export type Draft = {
+  replyTo?: number;
   id: string;
   fileId: string;
   path: string;
@@ -70,6 +83,12 @@ export type Draft = {
   needsReattachment: boolean;
 };
 export type ReviewState = {
+  githubSubmissions?: {
+    id: string;
+    status: string;
+    confirmedDraftIds: string[];
+  }[];
+  groupingCarriedForward?: boolean;
   reviewed: string[];
   accepted: Analysis | null;
   proposal: Analysis | null;

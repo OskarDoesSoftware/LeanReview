@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, writeFile, cp } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, cp, rm } from "node:fs/promises";
 import { execFileSync, spawn } from "node:child_process";
 import path from "node:path";
 import { createServer } from "node:http";
@@ -20,6 +20,7 @@ await build({
 });
 
 await mkdir(".leanreview-test", { recursive: true });
+await rm(".leanreview-test/java-browser-fixture.json", { force: true });
 const directory = await mkdtemp(path.resolve(".leanreview-test/java-browser-"));
 const root = path.join(directory, "java-review-fixture");
 await mkdir(root);
@@ -99,7 +100,8 @@ const child = spawn(
     `--leanreview.frontend-directory=${path.resolve("frontend/dist")}`,
     `--leanreview.analysis.helper=${path.resolve("backend-java/helper/dist/index.js")}`,
     `--leanreview.analysis.node=${process.execPath}`,
-    `--leanreview.codex.command=${JSON.stringify([process.execPath,path.resolve("tests/fixtures/java-codex-app-server.mjs"),"browser-login",path.join(directory,"codex-protocol.jsonl")])}`,
+    `--leanreview.codex.command=${JSON.stringify([process.execPath, path.resolve("tests/fixtures/java-codex-app-server.mjs"), "browser-login", path.join(directory, "codex-protocol.jsonl")])}`,
+    `--leanreview.github.command=${JSON.stringify([process.execPath, path.resolve("tests/fixtures/github-cli.mjs"), path.join(directory, "github-fixture")])}`,
     "--logging.level.root=ERROR",
     "--spring.main.banner-mode=off",
   ],

@@ -40,6 +40,12 @@ Immutable text associated with a review snapshot, such as captured source, a dif
 **Repository source**:
 The origin of reviewable changes: Local Git, GitHub, or Azure DevOps Repos.
 
+**Pull request review target**:
+A pull request identified by its provider, host, stable repository identity, and pull request number. Each review snapshot captures fixed revisions of that target.
+
+**Review submission**:
+An explicit publication of selected local drafts and an optional review decision. A submission with an uncertain provider outcome remains pending until its result can be confirmed.
+
 **CRAP score**:
 A function or method's measured change-risk indicator combining cyclomatic complexity and observed test coverage under an explicitly named convention. Missing or unaligned coverage makes the score unavailable.
 _Avoid_: AI quality score

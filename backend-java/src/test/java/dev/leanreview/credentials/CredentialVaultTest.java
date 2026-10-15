@@ -63,6 +63,34 @@ class CredentialVaultTest {
     assertThat(nativeStore.get(account)).isNull();
   }
 
+  @org.junit.jupiter.api.condition.EnabledOnOs({
+    org.junit.jupiter.api.condition.OS.MAC,
+    org.junit.jupiter.api.condition.OS.LINUX
+  })
+  @org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable(
+      named = "LEANREVIEW_KEYRING_ACCEPTANCE",
+      matches = "1")
+  @Test
+  void unixCredentialsRoundTripWithTheExistingNodeBinding() throws Exception {
+    String account = "leanreview-platform-test-" + UUID.randomUUID();
+    String token = "synthetic-platform-credential";
+    var nativeStore = new NativeCredentials();
+    try {
+      node(account, token, "set");
+      assertThat(nativeStore.get(account)).isEqualTo(token);
+      nativeStore.set(account, token + "-java");
+      node(account, token + "-java", "check");
+    } finally {
+      var type =
+          System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")
+              ? com.github.javakeyring.KeyringStorageType.OSX_KEYCHAIN
+              : com.github.javakeyring.KeyringStorageType.GNOME_KEYRING;
+      try (var store = com.github.javakeyring.Keyring.create(type)) {
+        store.deletePassword("LeanReview", account);
+      }
+    }
+  }
+
   private void node(String account, String token, String action) throws Exception {
     String script =
         "import {Entry} from '@napi-rs/keyring'; import fs from 'node:fs'; const"

@@ -105,7 +105,23 @@ test("analysis stays visible while the diff is usable and cancellation has its o
   await expect(
     loading.getByText("example-20.ts", { exact: true }),
   ).toBeVisible();
-  await page.locator(".file-item").last().click();
+  const files = page.getByRole("region", { name: "Changed files list" });
+  expect(
+    await files.evaluate(
+      (element) => element.scrollHeight > element.clientHeight,
+    ),
+  ).toBe(true);
+  expect(await files.evaluate((element) => element.clientHeight)).toBeLessThan(
+    750,
+  );
+  await files.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  await expect(files.locator(".file-item").last()).toBeInViewport();
+  await files.locator(".file-item").last().click();
+  await expect(page.locator(".file-heading strong")).toHaveText(
+    "example-59.ts",
+  );
   await page.reload();
   await expect(page.locator(".file-heading strong")).toHaveText(
     "example-59.ts",
