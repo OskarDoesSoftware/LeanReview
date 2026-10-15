@@ -4,6 +4,8 @@ The GitHub workflow is implemented in the default Java backend. Local Git remain
 
 Choose a repository before selecting its open pull requests or local changes. Search connected repositories or recent local folders, browse for a folder, and link a local folder to a stable GitHub repository identity. The picker remembers its last tab per GitHub repository. Open PRs can be filtered to your own requests or requests awaiting your review, including team requests.
 
+Recent reviews reopen saved snapshots, progress, and drafts directly without recapturing the PR. A remembered Local changes tab opens without fetching remote PRs, so a denied PR listing does not block the linked working folder. Folder browsing is also available while linking that folder.
+
 ## Sign-in
 
 Install GitHub CLI, then select **Sign in with GitHub CLI** in the repository picker. Open the displayed GitHub verification link and enter the one-time device code. LeanReview uses an application-owned CLI configuration and excludes inherited token variables. The CLI owns authentication; the local API does not return tokens.
@@ -16,6 +18,8 @@ Opening a PR resumes its saved snapshot, progress, and drafts. First capture enu
 
 The PR description and discussions are shown separately from the AI guide. Select a diff line to draft an inline comment, or draft a reply from a discussion. Both remain local. Preview submission selects drafts and a review decision. **Submit to GitHub** is the publishing action. Resolve and reopen actions are labelled **on GitHub now** and publish immediately.
 
+Saving another draft preserves your existing submission selections. Switching PRs or snapshots clears unsaved composer text and the reply target; saved drafts remain attached to their original review.
+
 New commits produce a notice; they never silently replace the diff. Refresh retains history, copies progress only for unchanged content/diffs, preserves drafts, and flags positions that need checking. A draft can be reattached to a checked line in the current captured diff before submission.
 
 Publication rechecks the current revision, complete file listing, and selected draft positions. Confirmed drafts are removed individually, while failed or uncertain drafts remain local. An uncertain request is reconciled using submission markers before any retry. The app does not automatically resend an ambiguous write. If GitHub never confirms it, the retained drafts and pending record remain available for investigation.
@@ -23,5 +27,7 @@ Publication rechecks the current revision, complete file listing, and selected d
 ## Verification limits
 
 Controlled CLI fixtures cover sign-in, capture, local drafts/replies, selective publication, thread resolution, reopening, changed revisions, incomplete listings, and uncertain publication reconciliation. Fixture tests do not establish live GitHub OAuth, private repository permissions, organization SSO, or real publication. Use a designated test PR for those shared writes before closing issue 30.
+
+Regression coverage includes composer isolation between PRs, preserving unchecked drafts when adding feedback, resuming recent reviews without recapture, linked local changes when remote listing is denied, paginated repository/PR/team discovery, and retaining a failed reply after its inline feedback succeeded. Live GitHub checks remain read-only at the user's request; no actual comment, reply, review, or thread mutation is claimed as verified.
 
 Sources: [GitHub CLI browser authentication](https://cli.github.com/manual/gh_auth_login), [GitHub CLI authentication status](https://cli.github.com/manual/gh_auth_status), [GitHub review API](https://docs.github.com/en/rest/pulls/reviews), and [GitHub discussion mutations](https://docs.github.com/en/graphql/reference/mutations#resolvereviewthread).

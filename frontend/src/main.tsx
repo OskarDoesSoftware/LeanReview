@@ -680,6 +680,7 @@ function App({ startupError }: { startupError?: string }) {
           )}
           {review.snapshot.source && (
             <GitHubReview
+              key={review.snapshot.id}
               review={review}
               active={active}
               anchor={anchor}

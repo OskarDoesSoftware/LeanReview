@@ -56,6 +56,8 @@ export function RepositoryPicker({
   const [base, setBase] = React.useState("main");
   const [changedCount, setChangedCount] = React.useState<number>();
   const [busy, setBusy] = React.useState(false);
+  const [fetchingPulls, setFetchingPulls] = React.useState(false);
+  const working = busy || fetchingPulls;
   const [error, setError] = React.useState("");
   const run = async (work: () => Promise<unknown>) => {
     setBusy(true);
@@ -118,14 +120,34 @@ export function RepositoryPicker({
       clearTimeout(timer);
     };
   }, [local, mode, base, repository?.id, tab]);
+  React.useEffect(() => {
+    if (!repository || tab !== "pulls") return;
+    let live = true;
+    setFetchingPulls(true);
+    setError("");
+    setPulls([]);
+    void api<Pull[]>(`/github/repositories/${repository.id}/pulls`)
+      .then((list) => {
+        if (live) setPulls(list);
+      })
+      .catch((e) => {
+        if (live) setError(e.message);
+      })
+      .finally(() => {
+        if (live) setFetchingPulls(false);
+      });
+    return () => {
+      live = false;
+      setFetchingPulls(false);
+    };
+  }, [repository?.id, tab]);
   const choose = (repo: Repository) =>
     void run(async () => {
       const context = await api<{ tab?: string; localPath?: string } | null>(
         `/github/repositories/${repo.id}/context`,
       );
-      const list = await api<Pull[]>(`/github/repositories/${repo.id}/pulls`);
       setRepository(repo);
-      setPulls(list);
+      setPulls([]);
       setTab(context?.tab ?? "pulls");
       setLocal(context?.localPath ?? "");
     });
@@ -136,6 +158,11 @@ export function RepositoryPicker({
         api(`/github/repositories/${repository.id}/context`, { tab: value }),
       );
   };
+  const browse = () =>
+    void run(async () => {
+      const result = await api<{ root?: string }>("/repositories/browse", {});
+      if (result.root) setLocal(result.root);
+    });
   return (
     <ReviewDialog labelledBy="repository-picker-title" onClose={onClose}>
       <DialogTitle id="repository-picker-title">Choose repository</DialogTitle>
@@ -146,6 +173,40 @@ export function RepositoryPicker({
             Search repositories
             <Input value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
+          {sessions.length > 0 && (
+            <>
+              <h3>Recent reviews</h3>
+              <div className="repository-results">
+                {sessions
+                  .filter((session) =>
+                    `${session.name} ${session.root}`
+                      .toLowerCase()
+                      .includes(query.toLowerCase()),
+                  )
+                  .slice(0, 10)
+                  .map((session) => (
+                    <button
+                      key={session.id}
+                      disabled={busy}
+                      aria-label={`Resume review ${session.name}`}
+                      onClick={() =>
+                        void run(async () => {
+                          await onRemote(
+                            await api<Review>(
+                              `/sessions/${encodeURIComponent(session.id)}`,
+                            ),
+                          );
+                          onClose();
+                        })
+                      }
+                    >
+                      {session.name}
+                      <small>{session.root} · Saved review</small>
+                    </button>
+                  ))}
+              </div>
+            </>
+          )}
           <h3>Recent local repositories</h3>
           <div className="repository-results">
             {[
@@ -179,19 +240,7 @@ export function RepositoryPicker({
               placeholder="Choose a folder or enter its path"
             />
           </label>
-          <Button
-            variant="outline"
-            disabled={busy}
-            onClick={() =>
-              void run(async () => {
-                const result = await api<{ root?: string }>(
-                  "/repositories/browse",
-                  {},
-                );
-                if (result.root) setLocal(result.root);
-              })
-            }
-          >
+          <Button variant="outline" disabled={busy} onClick={browse}>
             Browse folders
           </Button>
           <h3>GitHub.com</h3>
@@ -219,6 +268,7 @@ export function RepositoryPicker({
                     <button
                       disabled={busy}
                       key={r.id}
+                      aria-label={`Choose GitHub repository ${r.full_name}`}
                       onClick={() => choose(r)}
                     >
                       {r.full_name}
@@ -283,19 +333,27 @@ export function RepositoryPicker({
         </>
       ) : (
         <>
-          <Button variant="ghost" onClick={() => setRepository(undefined)}>
+          <Button
+            variant="ghost"
+            disabled={busy}
+            onClick={() => {
+              setRepository(undefined);
+            }}
+          >
             Back to repositories
           </Button>
           <h3>{repository.full_name}</h3>
           <p className="small muted">GitHub.com · {repository.owner.login}</p>
           <div className="flex gap-2">
             <Button
+              disabled={busy}
               variant={tab === "pulls" ? "default" : "outline"}
               onClick={() => changeTab("pulls")}
             >
               Pull requests
             </Button>
             <Button
+              disabled={busy}
               variant={tab === "local" ? "default" : "outline"}
               onClick={() => changeTab("local")}
             >
@@ -346,7 +404,9 @@ export function RepositoryPicker({
                       <small>{p.user.login}</small>
                     </button>
                   ))}
-                {!pulls.length && <p>No open pull requests.</p>}
+                {!fetchingPulls && !error && !pulls.length && (
+                  <p>No open pull requests.</p>
+                )}
               </div>
             </>
           ) : (
@@ -362,6 +422,9 @@ export function RepositoryPicker({
                   onChange={(e) => setLocal(e.target.value)}
                 />
               </label>
+              <Button variant="outline" disabled={busy} onClick={browse}>
+                Browse folders
+              </Button>
               <Button
                 variant="outline"
                 disabled={!local || busy}
@@ -421,7 +484,7 @@ export function RepositoryPicker({
           </Button>
         </>
       )}
-      {busy && <p role="status">Loading repository data…</p>}
+      {working && <p role="status">Loading repository data…</p>}
     </ReviewDialog>
   );
 }

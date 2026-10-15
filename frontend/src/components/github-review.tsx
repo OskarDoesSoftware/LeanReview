@@ -259,7 +259,14 @@ export function GitHubReview({
                   setSelected((prior) => [
                     ...new Set([
                       ...prior,
-                      ...response.state.drafts.map((d) => d.id),
+                      ...response.state.drafts
+                        .filter(
+                          (draft) =>
+                            !review.state.drafts.some(
+                              (prior) => prior.id === draft.id,
+                            ),
+                        )
+                        .map((draft) => draft.id),
                     ]),
                   ]);
                   setFeedback("");

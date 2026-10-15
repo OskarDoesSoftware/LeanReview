@@ -26,6 +26,40 @@ class GitHubWorkflowTest {
   }
 
   @Test
+  void discoveryPaginatesRepositoriesPullsAndTeamsBeforeFilteringReviewRequests() throws Exception {
+    Path fixture = directory.resolve("discovery-provider");
+    var command =
+        List.of(
+            AnalysisHelper.executable("node"),
+            Path.of("../tests/fixtures/github-cli.mjs").toAbsolutePath().toString(),
+            fixture.toString());
+    try (var context =
+        new SpringApplicationBuilder(LeanReviewApplication.class)
+            .run(
+                "--leanreview.data-directory=" + directory.resolve("discovery-data"),
+                "--leanreview.github.command=" + json.writeValueAsString(command),
+                "--logging.level.root=OFF",
+                "--spring.main.banner-mode=off")) {
+      var cli = context.getBean(GitHubCli.class);
+      var github = context.getBean(GitHubReviews.class);
+      cli.login();
+      long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(10);
+      while (!cli.status().path("connected").asBoolean() && System.nanoTime() < deadline)
+        Thread.sleep(100);
+      assertThat(cli.status().path("connected").asBoolean()).isTrue();
+      control(fixture, "paginate", true);
+      JsonNode repositories = github.repositories();
+      assertThat(repositories.size()).isEqualTo(101);
+      assertThat(repositories.get(100).path("id").asLong()).isEqualTo(42);
+      JsonNode pulls = github.pulls(42);
+      assertThat(pulls.size()).isEqualTo(101);
+      assertThat(pulls.get(0).path("needsMyReview").asBoolean()).isFalse();
+      assertThat(pulls.get(100).path("number").asInt()).isEqualTo(7);
+      assertThat(pulls.get(100).path("needsMyReview").asBoolean()).isTrue();
+    }
+  }
+
+  @Test
   void capturedReviewRetainsDraftsAndReconcilesAmbiguousPublicationWithoutResending()
       throws Exception {
     Path fixture = directory.resolve("provider");
@@ -110,6 +144,39 @@ class GitHubWorkflowTest {
       control(fixture, "failDefinite", false);
       publish.put("submissionId", UUID.randomUUID().toString());
       assertThat(feedback.publish(id, publish).path("status").asText()).isEqualTo("complete");
+      // Confirmed inline feedback must not be resent when a later reply is rejected.
+      review = operations.mutate(id, draft, "drafts", null);
+      String partialInline = review.path("state").path("drafts").get(0).path("id").asText();
+      review =
+          feedback.replyDraft(
+              id,
+              json.createObjectNode()
+                  .put("snapshotId", snapshot)
+                  .put("replyTo", 11)
+                  .put("text", "Keep this reply local on failure."));
+      String partialReply = review.path("state").path("drafts").get(1).path("id").asText();
+      publish
+          .put("submissionId", UUID.randomUUID().toString())
+          .put("decision", "COMMENT")
+          .put("message", "");
+      publish.putArray("draftIds").add(partialInline).add(partialReply);
+      control(fixture, "failReply", true);
+      assertThat(feedback.publish(id, publish).path("status").asText()).isEqualTo("failed");
+      JsonNode retained = github.open(42, 7).path("state").path("drafts");
+      assertThat(retained.size()).isEqualTo(1);
+      assertThat(retained.get(0).path("id").asText()).isEqualTo(partialReply);
+      assertThat(retained.get(0).path("text").asText())
+          .isEqualTo("Keep this reply local on failure.");
+      int publishedReviews =
+          json.readTree(Files.readString(fixture.resolve("state.json"))).path("reviews").size();
+      control(fixture, "failReply", false);
+      publish.put("submissionId", UUID.randomUUID().toString());
+      publish.putArray("draftIds").add(partialReply);
+      assertThat(feedback.publish(id, publish).path("status").asText()).isEqualTo("complete");
+      assertThat(store.review(id, null).path("state").path("drafts").size()).isZero();
+      assertThat(
+              json.readTree(Files.readString(fixture.resolve("state.json"))).path("reviews").size())
+          .isEqualTo(publishedReviews);
       control(fixture, "newHead", true);
       assertThat(feedback.status(id).path("newCommits").asBoolean()).isTrue();
       assertThat(github.open(42, 7).path("snapshot").path("id").asText()).isEqualTo(snapshot);
