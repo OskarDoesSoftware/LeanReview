@@ -1,3 +1,9 @@
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { NativeSelect } from "./ui/native-select";
+import { Badge } from "./ui/badge";
+import { ReviewDialog } from "./review-dialog";
+import { DialogTitle } from "./ui/dialog";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Play, Upload, Settings2, Square, Download } from "lucide-react";
 import type { Review } from "../../../packages/contracts/src/index";
@@ -138,18 +144,20 @@ export function CoveragePanel({
     <div className="details-content coverage-panel">
       <div className="flex items-center justify-between gap-2">
         <h2>CRAP meter</h2>
-        <span className="badge">Measured · no AI estimates</span>
+        <Badge variant="secondary" className="badge">
+          Measured · no AI estimates
+        </Badge>
       </div>
       <label className="small mt-3">
         Coverage format
-        <select
+        <NativeSelect
           aria-label="Coverage format"
           value={format}
           onChange={(e) => setFormat(e.target.value as typeof format)}
         >
           <option value="istanbul">TS/JS · Istanbul JSON</option>
           <option value="jacoco">Java · JaCoCo XML</option>
-        </select>
+        </NativeSelect>
       </label>
       {error && (
         <p className="text-destructive" role="alert">
@@ -316,254 +324,248 @@ export function CoveragePanel({
         are advisory.
       </p>
       {importing && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="coverage-import-title"
-          >
-            <h2 id="coverage-import-title">Import coverage report</h2>
-            <p>
-              Choose{" "}
-              {format === "istanbul"
-                ? "original-source-mapped Istanbul JSON"
-                : "JaCoCo XML"}{" "}
-              and, when available, its LeanReview provenance sidecar.
+        <ReviewDialog
+          labelledBy="coverage-import-title"
+          onClose={() => setImporting(false)}
+        >
+          <DialogTitle id="coverage-import-title">
+            Import coverage report
+          </DialogTitle>
+          <p>
+            Choose{" "}
+            {format === "istanbul"
+              ? "original-source-mapped Istanbul JSON"
+              : "JaCoCo XML"}{" "}
+            and, when available, its LeanReview provenance sidecar.
+          </p>
+          <label>
+            Coverage report
+            <Input
+              aria-label="Coverage report file"
+              type="file"
+              accept={format === "istanbul" ? ".json" : ".xml"}
+              onChange={(e) => setReport(e.target.files?.[0] ?? null)}
+            />
+          </label>
+          <label>
+            Source provenance · optional
+            <Input
+              aria-label="Coverage provenance file"
+              type="file"
+              accept=".json"
+              onChange={(e) => setProvenance(e.target.files?.[0] ?? null)}
+            />
+          </label>
+          <p className="small muted">
+            Without matching report/source fingerprints, CRAP remains
+            unavailable. Test runs inside LeanReview generate a sidecar
+            automatically. No code is sent to an LLM.
+          </p>
+          {error && (
+            <p role="alert" className="text-destructive">
+              {error}
             </p>
-            <label>
-              Coverage report
-              <input
-                aria-label="Coverage report file"
-                type="file"
-                accept={format === "istanbul" ? ".json" : ".xml"}
-                onChange={(e) => setReport(e.target.files?.[0] ?? null)}
-              />
-            </label>
-            <label>
-              Source provenance · optional
-              <input
-                aria-label="Coverage provenance file"
-                type="file"
-                accept=".json"
-                onChange={(e) => setProvenance(e.target.files?.[0] ?? null)}
-              />
-            </label>
-            <p className="small muted">
-              Without matching report/source fingerprints, CRAP remains
-              unavailable. Test runs inside LeanReview generate a sidecar
-              automatically. No code is sent to an LLM.
-            </p>
-            {error && (
-              <p role="alert" className="text-destructive">
-                {error}
-              </p>
-            )}
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setImporting(false)}>
-                Cancel
-              </Button>
-              <Button
-                disabled={!report || busy}
-                onClick={() =>
-                  void action(async () => {
-                    if (
-                      report!.size > 20 * 1024 * 1024 ||
-                      (provenance && provenance.size > 2 * 1024 * 1024)
-                    )
-                      throw new Error("Report/sidecar exceeds import limit.");
-                    await api(
-                      base + "/import",
-                      {
-                        snapshotId: review.snapshot.id,
-                        format,
-                        report: await report!.text(),
-                        provenance: provenance
-                          ? JSON.parse(await provenance.text())
-                          : undefined,
-                        threshold: config.threshold,
-                      },
-                      "POST",
-                      "application/vnd.leanreview.coverage+json",
-                    );
-                    setImporting(false);
-                    await reload();
-                  })
-                }
-              >
-                Import measured data
-              </Button>
-            </div>
-          </section>
-        </div>
+          )}
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setImporting(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={!report || busy}
+              onClick={() =>
+                void action(async () => {
+                  if (
+                    report!.size > 20 * 1024 * 1024 ||
+                    (provenance && provenance.size > 2 * 1024 * 1024)
+                  )
+                    throw new Error("Report/sidecar exceeds import limit.");
+                  await api(
+                    base + "/import",
+                    {
+                      snapshotId: review.snapshot.id,
+                      format,
+                      report: await report!.text(),
+                      provenance: provenance
+                        ? JSON.parse(await provenance.text())
+                        : undefined,
+                      threshold: config.threshold,
+                    },
+                    "POST",
+                    "application/vnd.leanreview.coverage+json",
+                  );
+                  setImporting(false);
+                  await reload();
+                })
+              }
+            >
+              Import measured data
+            </Button>
+          </div>
+        </ReviewDialog>
       )}
       {editing && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="coverage-config-title"
-          >
-            <h2 id="coverage-config-title">Configure tests & coverage</h2>
-            <p className="small muted">
-              Saved for this repository and report format. Nothing runs when
-              saving.
-            </p>
+        <ReviewDialog
+          labelledBy="coverage-config-title"
+          onClose={() => setEditing(false)}
+        >
+          <DialogTitle id="coverage-config-title">
+            Configure tests & coverage
+          </DialogTitle>
+          <p className="small muted">
+            Saved for this repository and report format. Nothing runs when
+            saving.
+          </p>
+          <label>
+            Working directory · relative to repository
+            <Input
+              aria-label="Test working directory"
+              value={config.cwd}
+              onChange={(e) => setConfig({ ...config, cwd: e.target.value })}
+            />
+          </label>
+          <label>
+            Report path · relative to repository
+            <Input
+              aria-label="Coverage report path"
+              value={config.reportPath}
+              onChange={(e) =>
+                setConfig({ ...config, reportPath: e.target.value })
+              }
+            />
+          </label>
+          <div className="two-fields">
             <label>
-              Working directory · relative to repository
-              <input
-                aria-label="Test working directory"
-                value={config.cwd}
-                onChange={(e) => setConfig({ ...config, cwd: e.target.value })}
-              />
-            </label>
-            <label>
-              Report path · relative to repository
-              <input
-                aria-label="Coverage report path"
-                value={config.reportPath}
+              Timeout · seconds
+              <Input
+                type="number"
+                value={config.timeoutSeconds}
                 onChange={(e) =>
-                  setConfig({ ...config, reportPath: e.target.value })
-                }
-              />
-            </label>
-            <div className="two-fields">
-              <label>
-                Timeout · seconds
-                <input
-                  type="number"
-                  value={config.timeoutSeconds}
-                  onChange={(e) =>
-                    setConfig({
-                      ...config,
-                      timeoutSeconds: Number(e.target.value),
-                    })
-                  }
-                />
-              </label>
-              <label>
-                Advisory threshold
-                <input
-                  type="number"
-                  value={config.threshold}
-                  onChange={(e) =>
-                    setConfig({ ...config, threshold: Number(e.target.value) })
-                  }
-                />
-              </label>
-            </div>
-            <label>
-              Command steps · JSON array
-              <textarea
-                aria-label="Test command steps"
-                rows={8}
-                value={steps}
-                onChange={(e) => setSteps(e.target.value)}
-              />
-            </label>
-            <p className="small muted">
-              Each step has executable, args, and shell. Enable shell only for
-              your explicitly configured wrapper/command. Windows npm.cmd,
-              mvnw.cmd or gradlew.bat require a shell. For Gradle use your
-              wrapper with test and jacocoTestReport; Java tooling must already
-              be installed.
-            </p>
-            {error && (
-              <p role="alert" className="text-destructive">
-                {error}
-              </p>
-            )}
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setEditing(false)}>
-                Cancel
-              </Button>
-              <Button
-                disabled={busy}
-                onClick={() =>
-                  void action(async () => {
-                    const saved = await api<TestConfig>(base + "/config", {
-                      snapshotId: review.snapshot.id,
-                      config: { ...config, steps: JSON.parse(steps) },
-                    });
-                    setConfig(saved);
-                    setEditing(false);
-                    await reload();
+                  setConfig({
+                    ...config,
+                    timeoutSeconds: Number(e.target.value),
                   })
                 }
-              >
-                Save test configuration
-              </Button>
-            </div>
-          </section>
-        </div>
+              />
+            </label>
+            <label>
+              Advisory threshold
+              <Input
+                type="number"
+                value={config.threshold}
+                onChange={(e) =>
+                  setConfig({ ...config, threshold: Number(e.target.value) })
+                }
+              />
+            </label>
+          </div>
+          <label>
+            Command steps · JSON array
+            <Textarea
+              aria-label="Test command steps"
+              rows={8}
+              value={steps}
+              onChange={(e) => setSteps(e.target.value)}
+            />
+          </label>
+          <p className="small muted">
+            Each step has executable, args, and shell. Enable shell only for
+            your explicitly configured wrapper/command. Windows npm.cmd,
+            mvnw.cmd or gradlew.bat require a shell. For Gradle use your wrapper
+            with test and jacocoTestReport; Java tooling must already be
+            installed.
+          </p>
+          {error && (
+            <p role="alert" className="text-destructive">
+              {error}
+            </p>
+          )}
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setEditing(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={busy}
+              onClick={() =>
+                void action(async () => {
+                  const saved = await api<TestConfig>(base + "/config", {
+                    snapshotId: review.snapshot.id,
+                    config: { ...config, steps: JSON.parse(steps) },
+                  });
+                  setConfig(saved);
+                  setEditing(false);
+                  await reload();
+                })
+              }
+            >
+              Save test configuration
+            </Button>
+          </div>
+        </ReviewDialog>
       )}
       {preview && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="test-preview-title"
-          >
-            <h2 id="test-preview-title">Run tests and measure coverage?</h2>
-            <p>
-              This executes trusted repository code on your machine. Commands
-              may write build artifacts, run project plugins, and download
-              dependencies.
-            </p>
-            <p className="small">
-              Working directory: <code>{preview.workingDirectory}</code>
-              <br />
-              Report: <code>{preview.config.reportPath}</code>
-              <br />
-              Matched source files: {preview.sourceCount} · Timeout:{" "}
-              {preview.config.timeoutSeconds}s
-            </p>
-            {preview.config.steps.map((step, index) => (
-              <div key={index}>
-                <strong>
-                  Step {index + 1}
-                  {step.shell ? " · shell enabled" : ""}
-                </strong>
-                <pre>
-                  {JSON.stringify([step.executable, ...step.args], null, 2)}
-                </pre>
-              </div>
-            ))}
-            <p className="small muted">
-              Provider credentials are not passed into the test environment.
-              This is trusted execution, not a sandbox. Previous measurements
-              survive failed runs.
-            </p>
-            {error && (
-              <p role="alert" className="text-destructive">
-                {error}
-              </p>
-            )}
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setPreview(null)}>
-                Cancel
-              </Button>
-              <Button
-                disabled={busy}
-                onClick={() =>
-                  void action(async () => {
-                    await api(base + "/run", {
-                      snapshotId: review.snapshot.id,
-                      previewId: preview.id,
-                      confirmed: true,
-                    });
-                    setPreview(null);
-                    await reload();
-                  })
-                }
-              >
-                Confirm & run tests
-              </Button>
+        <ReviewDialog
+          labelledBy="test-preview-title"
+          onClose={() => setPreview(null)}
+        >
+          <DialogTitle id="test-preview-title">
+            Run tests and measure coverage?
+          </DialogTitle>
+          <p>
+            This executes trusted repository code on your machine. Commands may
+            write build artifacts, run project plugins, and download
+            dependencies.
+          </p>
+          <p className="small">
+            Working directory: <code>{preview.workingDirectory}</code>
+            <br />
+            Report: <code>{preview.config.reportPath}</code>
+            <br />
+            Matched source files: {preview.sourceCount} · Timeout:{" "}
+            {preview.config.timeoutSeconds}s
+          </p>
+          {preview.config.steps.map((step, index) => (
+            <div key={index}>
+              <strong>
+                Step {index + 1}
+                {step.shell ? " · shell enabled" : ""}
+              </strong>
+              <pre>
+                {JSON.stringify([step.executable, ...step.args], null, 2)}
+              </pre>
             </div>
-          </section>
-        </div>
+          ))}
+          <p className="small muted">
+            Provider credentials are not passed into the test environment. This
+            is trusted execution, not a sandbox. Previous measurements survive
+            failed runs.
+          </p>
+          {error && (
+            <p role="alert" className="text-destructive">
+              {error}
+            </p>
+          )}
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setPreview(null)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={busy}
+              onClick={() =>
+                void action(async () => {
+                  await api(base + "/run", {
+                    snapshotId: review.snapshot.id,
+                    previewId: preview.id,
+                    confirmed: true,
+                  });
+                  setPreview(null);
+                  await reload();
+                })
+              }
+            >
+              Confirm & run tests
+            </Button>
+          </div>
+        </ReviewDialog>
       )}
     </div>
   );

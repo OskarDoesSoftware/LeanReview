@@ -1,3 +1,11 @@
+import { Card, CardContent } from "./components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
+import { Input } from "./components/ui/input";
+import { Textarea } from "./components/ui/textarea";
+import { NativeSelect } from "./components/ui/native-select";
+import { Badge } from "./components/ui/badge";
+import { ReviewDialog } from "./components/review-dialog";
+import { DialogTitle } from "./components/ui/dialog";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { DiffEditor } from "./components/diff-editor";
@@ -226,14 +234,14 @@ function App({ startupError }: { startupError?: string }) {
       <section className="repository-bar">
         <label className="root-input">
           <FolderOpen size={16} />
-          <input
+          <Input
             aria-label="Repository root"
             placeholder="Absolute path to a local Git repository"
             value={root}
             onChange={(e) => setRoot(e.target.value)}
           />
         </label>
-        <select
+        <NativeSelect
           aria-label="Comparison mode"
           value={mode}
           onChange={(e) => setMode(e.target.value as typeof mode)}
@@ -242,9 +250,9 @@ function App({ startupError }: { startupError?: string }) {
           <option value="unstaged">Unstaged + untracked</option>
           <option value="staged">Staged</option>
           <option value="branch">Branch comparison</option>
-        </select>
+        </NativeSelect>
         {mode === "branch" && (
-          <input
+          <Input
             className="base-input"
             aria-label="Base branch"
             value={base}
@@ -262,7 +270,7 @@ function App({ startupError }: { startupError?: string }) {
         >
           {pendingComparison ? "Open comparison" : "Open review"}
         </Button>
-        <select
+        <NativeSelect
           aria-label="Saved reviews"
           value={review?.snapshot.sessionId ?? ""}
           onChange={(e) => {
@@ -278,7 +286,7 @@ function App({ startupError }: { startupError?: string }) {
               {s.name} · {new Date(s.updatedAt).toLocaleDateString()}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </section>
       {error && (
         <div className="error-banner" role="alert">
@@ -290,41 +298,47 @@ function App({ startupError }: { startupError?: string }) {
       )}
       {!review ? (
         <main className="welcome">
-          <div className="eyebrow">UNDERSTAND THE CHANGE</div>
-          <h1>A clear path through your review.</h1>
+          <div className="eyebrow">YOUR REVIEW WORKSPACE</div>
+          <h1>Your changes. A clear place to start.</h1>
           <p>
             Open a local Git repository. Inspect its changes, organize them with
             your selected AI provider, and save your review progress.
           </p>
           <div className="welcome-features">
-            <div>
-              <GitBranch />
-              <h2>Capture a snapshot</h2>
-              <p>
-                Staged, unstaged, uncommitted, or branch changes. Your review
-                stays fixed as code evolves.
-              </p>
-            </div>
-            <div>
-              <Sparkles />
-              <h2>Follow the change</h2>
-              <p>
-                AI proposes cohorts and reading layers. You decide what to
-                accept and adjust.
-              </p>
-            </div>
-            <div>
-              <Check />
-              <h2>Keep your place</h2>
-              <p>
-                File progress and local comments survive restarts. Basic diff
-                review needs no AI.
-              </p>
-            </div>
+            <Card>
+              <CardContent className="welcome-card">
+                <GitBranch />
+                <h2>Capture a snapshot</h2>
+                <p>
+                  Staged, unstaged, uncommitted, or branch changes. Your review
+                  stays fixed as code evolves.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="welcome-card">
+                <Sparkles />
+                <h2>Follow the change</h2>
+                <p>
+                  AI proposes cohorts and reading layers. You decide what to
+                  accept and adjust.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="welcome-card">
+                <Check />
+                <h2>Keep your place</h2>
+                <p>
+                  File progress and local comments survive restarts. Basic diff
+                  review needs no AI.
+                </p>
+              </CardContent>
+            </Card>
           </div>
           <p className="small muted">
-            Local vertical slice · remote providers, measured CRAP, and module
-            graphs are subsequent implementation work.
+            Start with a repository above. Your snapshots, progress, and draft
+            comments are saved locally.
           </p>
         </main>
       ) : (
@@ -343,7 +357,7 @@ function App({ startupError }: { startupError?: string }) {
                 <GitBranch size={13} />
                 {review.snapshot.head?.slice(0, 8) ?? "Unborn HEAD"}
                 <span>·</span>
-                <select
+                <NativeSelect
                   aria-label="Snapshot history"
                   value={review.snapshot.id}
                   onChange={(e) =>
@@ -361,7 +375,7 @@ function App({ startupError }: { startupError?: string }) {
                       {new Date(h.capturedAt).toLocaleTimeString()}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
                 <span className="muted">Immutable snapshot</span>
               </div>
             </div>
@@ -374,7 +388,14 @@ function App({ startupError }: { startupError?: string }) {
                 </span>
               </strong>
               <span>{percent}%</span>
-              <div className="progress-track">
+              <div
+                className="progress-track"
+                role="progressbar"
+                aria-label="Files reviewed"
+                aria-valuenow={percent}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
                 <div style={{ width: `${percent}%` }} />
               </div>
             </div>
@@ -414,7 +435,9 @@ function App({ startupError }: { startupError?: string }) {
             </Button>
             {review.state.analysisStatus === "running" && (
               <>
-                <span className="badge">Analyzing with {config.provider}…</span>
+                <Badge variant="secondary" className="badge">
+                  Analyzing with {config.provider}…
+                </Badge>
                 <Button
                   variant="outline"
                   onClick={() =>
@@ -436,7 +459,9 @@ function App({ startupError }: { startupError?: string }) {
               </span>
             )}
             {!active && (
-              <span className="badge">Previous snapshot · read only</span>
+              <Badge variant="secondary" className="badge">
+                Previous snapshot · read only
+              </Badge>
             )}
           </div>
           {review.state.proposal && (
@@ -495,9 +520,9 @@ function App({ startupError }: { startupError?: string }) {
                 <h2>
                   {review.state.accepted ? "Cohorts & layers" : "Changed files"}
                 </h2>
-                <span className="badge">
+                <Badge variant="secondary" className="badge">
                   {review.state.accepted ? "AI + your edits" : "Ungrouped"}
-                </span>
+                </Badge>
               </div>
               {review.state.accepted
                 ? review.state.accepted.cohorts.map((cohort, ci) => (
@@ -623,7 +648,9 @@ function App({ startupError }: { startupError?: string }) {
                   <div className="file-heading">
                     <div>
                       <strong>{file.path}</strong>
-                      <span className="badge">{file.status}</span>
+                      <Badge variant="secondary" className="badge">
+                        {file.status}
+                      </Badge>
                       {file.oldPath !== file.path && (
                         <p className="small muted">From {file.oldPath}</p>
                       )}
@@ -785,535 +812,531 @@ function App({ startupError }: { startupError?: string }) {
                 </div>
               )}
             </section>
-            <aside className="detail-pane">
-              <div className="detail-tabs">
-                {["Explanation", "CRAP", "Comments"].map((t) => (
-                  <button
-                    key={t}
-                    className={tab === t ? "active" : ""}
-                    onClick={() => setTab(t)}
-                  >
-                    {t}
-                    {t === "Comments" && (
-                      <span>{review.state.drafts.length}</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-              {tab === "CRAP" ? (
-                <CoveragePanel
-                  key={`${review.snapshot.id}:${file?.id}`}
-                  review={review}
-                  fileId={file?.id}
-                  active={active}
-                />
-              ) : tab === "Explanation" ? (
-                <div className="details-content">
-                  <span className="eyebrow">READING ORDER</span>
-                  <h2>{selectedLayer?.name ?? "Review this file"}</h2>
-                  <p>
-                    {selectedLayer?.explanation ??
-                      "Generate and accept an AI proposal to organize these changes into cohorts and layers. Ungrouped review is available now."}
-                  </p>
-                  {selectedLayer && (
-                    <span className="badge">Suggested order · editable</span>
-                  )}
-                  <h3 className="mt-7">AI findings</h3>
-                  {review.state.accepted?.findings
-                    .filter((f) => f.fileId === file?.id)
-                    .map((finding, i) => (
-                      <div className="finding" key={i}>
-                        <span className="badge">
-                          {finding.kind} · AI suggestion
-                        </span>
-                        <p>{finding.message}</p>
-                        {finding.line && (
-                          <Button
-                            variant="outline"
-                            size="sm"
+            <Tabs
+              value={tab}
+              onValueChange={setTab}
+              className="detail-pane"
+              asChild
+            >
+              <aside>
+                <TabsList className="detail-tabs" aria-label="Review details">
+                  {["Explanation", "CRAP", "Comments"].map((t) => (
+                    <TabsTrigger key={t} value={t}>
+                      {t}
+                      {t === "Comments" && (
+                        <span>{review.state.drafts.length}</span>
+                      )}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                <TabsContent value={tab} className="detail-tab-content">
+                  {tab === "CRAP" ? (
+                    <CoveragePanel
+                      key={`${review.snapshot.id}:${file?.id}`}
+                      review={review}
+                      fileId={file?.id}
+                      active={active}
+                    />
+                  ) : tab === "Explanation" ? (
+                    <div className="details-content">
+                      <span className="eyebrow">READING ORDER</span>
+                      <h2>{selectedLayer?.name ?? "Review this file"}</h2>
+                      <p>
+                        {selectedLayer?.explanation ??
+                          "Generate and accept an AI proposal to organize these changes into cohorts and layers. Ungrouped review is available now."}
+                      </p>
+                      {selectedLayer && (
+                        <Badge variant="secondary" className="badge">
+                          Suggested order · editable
+                        </Badge>
+                      )}
+                      <h3 className="mt-7">AI findings</h3>
+                      {review.state.accepted?.findings
+                        .filter((f) => f.fileId === file?.id)
+                        .map((finding, i) => (
+                          <div className="finding" key={i}>
+                            <Badge variant="secondary" className="badge">
+                              {finding.kind} · AI suggestion
+                            </Badge>
+                            <p>{finding.message}</p>
+                            {finding.line && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={!active}
+                                onClick={() => {
+                                  setAnchor({
+                                    fileId: finding.fileId,
+                                    side: "after",
+                                    line: finding.line!,
+                                  });
+                                  setComment(finding.message);
+                                  setTab("Comments");
+                                }}
+                              >
+                                Create local draft
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                      {!review.state.accepted?.findings.some(
+                        (f) => f.fileId === file?.id,
+                      ) && (
+                        <p className="small muted">
+                          No accepted AI findings for this file. This is not a
+                          guarantee of correctness.
+                        </p>
+                      )}
+                      {file &&
+                        review.state.manifest?.files.find(
+                          (f) => f.id === file.id,
+                        )?.reason && (
+                          <p className="omission">
+                            AI context omitted:{" "}
+                            {
+                              review.state.manifest.files.find(
+                                (f) => f.id === file.id,
+                              )?.reason
+                            }
+                          </p>
+                        )}
+                      {review.state.accepted && file && (
+                        <label className="mt-7 small">
+                          Move file to cohort
+                          <NativeSelect
                             disabled={!active}
-                            onClick={() => {
-                              setAnchor({
-                                fileId: finding.fileId,
-                                side: "after",
-                                line: finding.line!,
+                            value=""
+                            onChange={(e) => {
+                              const target = Number(e.target.value);
+                              regroup((a) => {
+                                for (const c of a.cohorts)
+                                  for (const l of c.layers)
+                                    l.fileIds = l.fileIds.filter(
+                                      (id) => id !== file.id,
+                                    );
+                                a.cohorts[target].layers[0].fileIds.push(
+                                  file.id,
+                                );
+                                a.cohorts.forEach((c) => {
+                                  c.layers = c.layers.filter(
+                                    (l) => l.fileIds.length,
+                                  );
+                                });
+                                a.cohorts = a.cohorts.filter(
+                                  (c) => c.layers.length,
+                                );
                               });
-                              setComment(finding.message);
-                              setTab("Comments");
                             }}
                           >
-                            Create local draft
-                          </Button>
-                        )}
+                            <option value="" disabled>
+                              Select cohort…
+                            </option>
+                            {review.state.accepted.cohorts.map((c, i) => (
+                              <option key={i} value={i}>
+                                {c.name}
+                              </option>
+                            ))}
+                          </NativeSelect>
+                        </label>
+                      )}
+                      <div className="phase-note">
+                        <h3>Measured metrics</h3>
+                        <p>
+                          Use the CRAP tab to import coverage or explicitly run
+                          your tests. Module graphs are still a separate
+                          implementation step.
+                        </p>
                       </div>
-                    ))}
-                  {!review.state.accepted?.findings.some(
-                    (f) => f.fileId === file?.id,
-                  ) && (
-                    <p className="small muted">
-                      No accepted AI findings for this file. This is not a
-                      guarantee of correctness.
-                    </p>
-                  )}
-                  {file &&
-                    review.state.manifest?.files.find((f) => f.id === file.id)
-                      ?.reason && (
-                      <p className="omission">
-                        AI context omitted:{" "}
-                        {
-                          review.state.manifest.files.find(
-                            (f) => f.id === file.id,
-                          )?.reason
-                        }
-                      </p>
-                    )}
-                  {review.state.accepted && file && (
-                    <label className="mt-7 small">
-                      Move file to cohort
-                      <select
-                        disabled={!active}
-                        value=""
-                        onChange={(e) => {
-                          const target = Number(e.target.value);
-                          regroup((a) => {
-                            for (const c of a.cohorts)
-                              for (const l of c.layers)
-                                l.fileIds = l.fileIds.filter(
-                                  (id) => id !== file.id,
-                                );
-                            a.cohorts[target].layers[0].fileIds.push(file.id);
-                            a.cohorts.forEach((c) => {
-                              c.layers = c.layers.filter(
-                                (l) => l.fileIds.length,
-                              );
-                            });
-                            a.cohorts = a.cohorts.filter(
-                              (c) => c.layers.length,
-                            );
-                          });
-                        }}
-                      >
-                        <option value="" disabled>
-                          Select cohort…
-                        </option>
-                        {review.state.accepted.cohorts.map((c, i) => (
-                          <option key={i} value={i}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  )}
-                  <div className="phase-note">
-                    <h3>Measured metrics</h3>
-                    <p>
-                      Use the CRAP tab to import coverage or explicitly run your
-                      tests. Module graphs are still a separate implementation
-                      step.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="details-content">
-                  <h2>Local draft comments</h2>
-                  <p className="small muted">
-                    Saved on this machine. Local Git has no remote publication
-                    target.
-                  </p>
-                  {anchor ? (
-                    <>
-                      <div className="anchor-label">
-                        {anchor.side} · line {anchor.line}
-                      </div>
-                      <textarea
-                        aria-label="Draft comment"
-                        rows={4}
-                        placeholder="Write a review comment…"
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                      />
-                      <Button
-                        disabled={busy || !comment.trim() || !active}
-                        onClick={() =>
-                          void run(async () => {
-                            if (!review) return;
-                            await navigation.mutate(
-                              "drafts",
-                              { ...anchor, text: comment },
-                              { clearComment: true },
-                            );
-                          })
-                        }
-                      >
-                        Save draft
-                      </Button>
-                    </>
-                  ) : (
-                    <p className="empty-message">
-                      Select a line number in the diff to add a comment.
-                    </p>
-                  )}
-                  {review.state.drafts.map((d) => (
-                    <div className="draft" key={d.id}>
-                      <div className="flex justify-between">
-                        <span className="badge">
-                          {d.needsReattachment
-                            ? "Needs reattachment"
-                            : "Local draft"}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-label="Delete draft"
-                          disabled={!active}
-                          onClick={() =>
-                            void run(async () => {
-                              await navigation.mutate(
-                                `drafts/${d.id}`,
-                                {},
-                                { method: "DELETE" },
-                              );
-                            })
-                          }
-                        >
-                          <X size={12} />
-                        </Button>
-                      </div>
-                      <p>{d.text}</p>
-                      <small>
-                        {d.path} · {d.side} {d.line}
-                      </small>
                     </div>
-                  ))}
-                </div>
-              )}
-            </aside>
+                  ) : (
+                    <div className="details-content">
+                      <h2>Local draft comments</h2>
+                      <p className="small muted">
+                        Saved on this machine. Local Git has no remote
+                        publication target.
+                      </p>
+                      {anchor ? (
+                        <>
+                          <div className="anchor-label">
+                            {anchor.side} · line {anchor.line}
+                          </div>
+                          <Textarea
+                            aria-label="Draft comment"
+                            rows={4}
+                            placeholder="Write a review comment…"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                          />
+                          <Button
+                            disabled={busy || !comment.trim() || !active}
+                            onClick={() =>
+                              void run(async () => {
+                                if (!review) return;
+                                await navigation.mutate(
+                                  "drafts",
+                                  { ...anchor, text: comment },
+                                  { clearComment: true },
+                                );
+                              })
+                            }
+                          >
+                            Save draft
+                          </Button>
+                        </>
+                      ) : (
+                        <p className="empty-message">
+                          Select a line number in the diff to add a comment.
+                        </p>
+                      )}
+                      {review.state.drafts.map((d) => (
+                        <div className="draft" key={d.id}>
+                          <div className="flex justify-between">
+                            <Badge variant="secondary" className="badge">
+                              {d.needsReattachment
+                                ? "Needs reattachment"
+                                : "Local draft"}
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              aria-label="Delete draft"
+                              disabled={!active}
+                              onClick={() =>
+                                void run(async () => {
+                                  await navigation.mutate(
+                                    `drafts/${d.id}`,
+                                    {},
+                                    { method: "DELETE" },
+                                  );
+                                })
+                              }
+                            >
+                              <X size={12} />
+                            </Button>
+                          </div>
+                          <p>{d.text}</p>
+                          <small>
+                            {d.path} · {d.side} {d.line}
+                          </small>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </TabsContent>
+              </aside>
+            </Tabs>
           </main>
         </>
       )}
       {editorSettings && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="editor-title"
-          >
-            <h2 id="editor-title">Choose your default editor</h2>
-            <p className="small muted">
-              This opens your working file, not an editable copy of the review
-              snapshot. Use an executable path or a terminal launcher for
-              Neovim.
-            </p>
-            <label>
-              Preset
-              <select
-                aria-label="Editor preset"
-                value=""
-                onChange={(e) => {
-                  const preset = editorPresets[Number(e.target.value)];
-                  if (preset) {
-                    setEditorDraft(preset);
-                    setEditorArgs(JSON.stringify(preset.args));
-                  }
-                }}
-              >
-                <option value="" disabled>
-                  Select a preset…
+        <ReviewDialog
+          labelledBy="editor-title"
+          onClose={() => showEditorSettings(false)}
+        >
+          <DialogTitle id="editor-title">
+            Choose your default editor
+          </DialogTitle>
+          <p className="small muted">
+            This opens your working file, not an editable copy of the review
+            snapshot. Use an executable path or a terminal launcher for Neovim.
+          </p>
+          <label>
+            Preset
+            <NativeSelect
+              aria-label="Editor preset"
+              value=""
+              onChange={(e) => {
+                const preset = editorPresets[Number(e.target.value)];
+                if (preset) {
+                  setEditorDraft(preset);
+                  setEditorArgs(JSON.stringify(preset.args));
+                }
+              }}
+            >
+              <option value="" disabled>
+                Select a preset…
+              </option>
+              {editorPresets.map((p, i) => (
+                <option key={p.name} value={i}>
+                  {p.name}
                 </option>
-                {editorPresets.map((p, i) => (
-                  <option key={p.name} value={i}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Editor name
-              <input
-                value={editorDraft.name}
-                onChange={(e) =>
-                  setEditorDraft({ ...editorDraft, name: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Executable
-              <input
-                value={editorDraft.executable}
-                onChange={(e) =>
-                  setEditorDraft({ ...editorDraft, executable: e.target.value })
-                }
-                placeholder="Path to Code.exe, idea64.exe, or your terminal launcher"
-              />
-            </label>
-            <label>
-              Arguments as a JSON array
-              <input
-                value={editorArgs}
-                onChange={(e) => setEditorArgs(e.target.value)}
-              />
-            </label>
-            <p className="small muted">
-              Placeholders: {"{file}"}, {"{line}"}, {"{column}"}. Arguments are
-              passed directly, without a shell. On macOS, configure a terminal
-              launcher for Neovim rather than starting it without a terminal.
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  showEditorSettings(false);
-                  setOpenAfterConfigure(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={busy || !editorDraft.executable}
-                onClick={() =>
-                  void run(async () => {
-                    const config = {
-                      ...editorDraft,
-                      args: JSON.parse(editorArgs),
-                    };
-                    const saved = await api<EditorConfig>("/editor", config);
-                    setEditorConfig(saved);
-                    showEditorSettings(false);
-                    if (openAfterConfigure && review && anchor)
-                      await api(
-                        `/sessions/${review.snapshot.sessionId}/open-editor`,
-                        {
-                          snapshotId: review.snapshot.id,
-                          ...anchor,
-                          column: 1,
-                        },
-                      );
-                    setOpenAfterConfigure(false);
-                  })
-                }
-              >
-                {openAfterConfigure
-                  ? "Save & open editor"
-                  : "Save default editor"}
-              </Button>
-            </div>
-          </section>
-        </div>
-      )}
-      {settings && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="settings-title"
-          >
-            <div className="flex items-center justify-between">
-              <h2 id="settings-title">AI provider settings</h2>
-              <Button
-                variant="ghost"
-                aria-label="Close settings"
-                onClick={() => showSettings(false)}
-              >
-                <X size={16} />
-              </Button>
-            </div>
-            <p className="small muted">
-              Repository content is sent only after you confirm an analysis
-              manifest.
-            </p>
-            <label>
-              Provider
-              <select
-                value={config.provider}
-                onChange={(e) => {
-                  const provider = e.target.value as ProviderConfig["provider"];
-                  setConfig({
-                    ...config,
-                    provider,
-                    model: "",
-                    localOnly: provider === "ollama",
-                    endpoint:
-                      provider === "ollama"
-                        ? "http://127.0.0.1:11434"
-                        : provider === "openai"
-                          ? "https://api.openai.com/v1"
-                          : "https://api.anthropic.com/v1",
-                  });
-                }}
-              >
-                {["ollama", "openai", "anthropic"].map((p) => (
-                  <option key={p}>{p}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Endpoint
-              <input
-                value={config.endpoint}
-                onChange={(e) =>
-                  setConfig({ ...config, endpoint: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Model
-              <input
-                value={config.model}
-                onChange={(e) =>
-                  setConfig({ ...config, model: e.target.value })
-                }
-                placeholder="An installed or API-accessible structured-output model"
-              />
-            </label>
-            <div className="two-fields">
-              <label>
-                Context window
-                <input
-                  type="number"
-                  value={config.contextWindow}
-                  onChange={(e) =>
-                    setConfig({
-                      ...config,
-                      contextWindow: Number(e.target.value),
-                    })
-                  }
-                />
-              </label>
-              <label>
-                Output reservation
-                <input
-                  type="number"
-                  value={config.maxOutput}
-                  onChange={(e) =>
-                    setConfig({ ...config, maxOutput: Number(e.target.value) })
-                  }
-                />
-              </label>
-            </div>
-            {config.provider === "ollama" && (
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={config.localOnly}
-                  onChange={(e) =>
-                    setConfig({ ...config, localOnly: e.target.checked })
-                  }
-                />
-                I use a local model with Ollama cloud features disabled
-              </label>
-            )}
-            {config.provider !== "ollama" && (
-              <>
-                <label>
-                  API key
-                  <input
-                    type="password"
-                    autoComplete="off"
-                    value={token}
-                    onChange={(e) => setToken(e.target.value)}
-                    placeholder="Enter a new key; stored keys are never returned"
-                  />
-                </label>
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={persist}
-                    onChange={(e) => setPersist(e.target.checked)}
-                  />
-                  Store using the OS credential manager
-                </label>
-                <p className="small muted">
-                  Uncheck for session-only storage. Cloud retention depends on
-                  your provider and account; this app cannot grant zero
-                  retention.
-                </p>
-              </>
-            )}
+              ))}
+            </NativeSelect>
+          </label>
+          <label>
+            Editor name
+            <Input
+              value={editorDraft.name}
+              onChange={(e) =>
+                setEditorDraft({ ...editorDraft, name: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            Executable
+            <Input
+              value={editorDraft.executable}
+              onChange={(e) =>
+                setEditorDraft({ ...editorDraft, executable: e.target.value })
+              }
+              placeholder="Path to Code.exe, idea64.exe, or your terminal launcher"
+            />
+          </label>
+          <label>
+            Arguments as a JSON array
+            <Input
+              value={editorArgs}
+              onChange={(e) => setEditorArgs(e.target.value)}
+            />
+          </label>
+          <p className="small muted">
+            Placeholders: {"{file}"}, {"{line}"}, {"{column}"}. Arguments are
+            passed directly, without a shell. On macOS, configure a terminal
+            launcher for Neovim rather than starting it without a terminal.
+          </p>
+          <div className="flex gap-2">
             <Button
-              disabled={busy || !config.model}
+              variant="outline"
+              onClick={() => {
+                showEditorSettings(false);
+                setOpenAfterConfigure(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={busy || !editorDraft.executable}
               onClick={() =>
                 void run(async () => {
-                  await api("/provider", {
-                    config,
-                    token: token || undefined,
-                    persist,
-                  });
-                  setToken("");
-                  showSettings(false);
+                  const config = {
+                    ...editorDraft,
+                    args: JSON.parse(editorArgs),
+                  };
+                  const saved = await api<EditorConfig>("/editor", config);
+                  setEditorConfig(saved);
+                  showEditorSettings(false);
+                  if (openAfterConfigure && review && anchor)
+                    await api(
+                      `/sessions/${review.snapshot.sessionId}/open-editor`,
+                      {
+                        snapshotId: review.snapshot.id,
+                        ...anchor,
+                        column: 1,
+                      },
+                    );
+                  setOpenAfterConfigure(false);
                 })
               }
             >
-              Save configuration
+              {openAfterConfigure
+                ? "Save & open editor"
+                : "Save default editor"}
             </Button>
-          </section>
-        </div>
+          </div>
+        </ReviewDialog>
       )}
-      {manifest && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="manifest-title"
-          >
-            <h2 id="manifest-title">Confirm analysis input</h2>
-            <p>
-              <strong>
-                {manifest.config.provider} · {manifest.config.model}
-              </strong>
-              <br />
-              <span className="small">{manifest.config.endpoint}</span>
-            </p>
-            <p className="small muted">
-              {manifest.config.localOnly
-                ? "Configured as local-only; verify your Ollama server has cloud disabled."
-                : "This transmits repository code and filenames to the configured endpoint."}{" "}
-              No provider fallback occurs.
-            </p>
-            <div className="manifest-list">
-              {manifest.files.map((f) => (
-                <div key={f.id}>
-                  <span>{f.path}</span>
-                  <small>
-                    {f.included
-                      ? "Diff included"
-                      : `Code omitted · ${f.reason} · filename included`}
-                  </small>
-                </div>
+      {settings && (
+        <ReviewDialog
+          labelledBy="settings-title"
+          onClose={() => showSettings(false)}
+        >
+          <div className="flex items-center justify-between">
+            <DialogTitle id="settings-title">AI provider settings</DialogTitle>
+            <Button
+              variant="ghost"
+              aria-label="Close settings"
+              onClick={() => showSettings(false)}
+            >
+              <X size={16} />
+            </Button>
+          </div>
+          <p className="small muted">
+            Repository content is sent only after you confirm an analysis
+            manifest.
+          </p>
+          <label>
+            Provider
+            <NativeSelect
+              value={config.provider}
+              onChange={(e) => {
+                const provider = e.target.value as ProviderConfig["provider"];
+                setConfig({
+                  ...config,
+                  provider,
+                  model: "",
+                  localOnly: provider === "ollama",
+                  endpoint:
+                    provider === "ollama"
+                      ? "http://127.0.0.1:11434"
+                      : provider === "openai"
+                        ? "https://api.openai.com/v1"
+                        : "https://api.anthropic.com/v1",
+                });
+              }}
+            >
+              {["ollama", "openai", "anthropic"].map((p) => (
+                <option key={p}>{p}</option>
               ))}
-            </div>
-            <p className="small muted">
-              Conservative byte-based token estimate: {manifest.estimatedTokens}
-              . Batches fit an input budget of {manifest.inputBudget}; no silent
-              model downloads.
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => navigation.closeManifest()}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={busy}
-                onClick={() =>
-                  void run(async () => {
-                    if (!review || manifest.snapshotId !== review.snapshot.id)
-                      throw new Error("Snapshot changed; preview again.");
-                    await navigation.mutate("analysis", {
-                      manifestId: manifest.id,
-                      authorize: true,
-                    });
+            </NativeSelect>
+          </label>
+          <label>
+            Endpoint
+            <Input
+              value={config.endpoint}
+              onChange={(e) =>
+                setConfig({ ...config, endpoint: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            Model
+            <Input
+              value={config.model}
+              onChange={(e) => setConfig({ ...config, model: e.target.value })}
+              placeholder="An installed or API-accessible structured-output model"
+            />
+          </label>
+          <div className="two-fields">
+            <label>
+              Context window
+              <Input
+                type="number"
+                value={config.contextWindow}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    contextWindow: Number(e.target.value),
                   })
                 }
-              >
-                Authorize & analyze
-              </Button>
-            </div>
-          </section>
-        </div>
+              />
+            </label>
+            <label>
+              Output reservation
+              <Input
+                type="number"
+                value={config.maxOutput}
+                onChange={(e) =>
+                  setConfig({ ...config, maxOutput: Number(e.target.value) })
+                }
+              />
+            </label>
+          </div>
+          {config.provider === "ollama" && (
+            <label className="checkbox-label">
+              <Input
+                type="checkbox"
+                checked={config.localOnly}
+                onChange={(e) =>
+                  setConfig({ ...config, localOnly: e.target.checked })
+                }
+              />
+              I use a local model with Ollama cloud features disabled
+            </label>
+          )}
+          {config.provider !== "ollama" && (
+            <>
+              <label>
+                API key
+                <Input
+                  type="password"
+                  autoComplete="off"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="Enter a new key; stored keys are never returned"
+                />
+              </label>
+              <label className="checkbox-label">
+                <Input
+                  type="checkbox"
+                  checked={persist}
+                  onChange={(e) => setPersist(e.target.checked)}
+                />
+                Store using the OS credential manager
+              </label>
+              <p className="small muted">
+                Uncheck for session-only storage. Cloud retention depends on
+                your provider and account; this app cannot grant zero retention.
+              </p>
+            </>
+          )}
+          <Button
+            disabled={busy || !config.model}
+            onClick={() =>
+              void run(async () => {
+                await api("/provider", {
+                  config,
+                  token: token || undefined,
+                  persist,
+                });
+                setToken("");
+                showSettings(false);
+              })
+            }
+          >
+            Save configuration
+          </Button>
+        </ReviewDialog>
+      )}
+      {manifest && (
+        <ReviewDialog
+          labelledBy="manifest-title"
+          onClose={() => navigation.closeManifest()}
+        >
+          <DialogTitle id="manifest-title">Confirm analysis input</DialogTitle>
+          <p>
+            <strong>
+              {manifest.config.provider} · {manifest.config.model}
+            </strong>
+            <br />
+            <span className="small">{manifest.config.endpoint}</span>
+          </p>
+          <p className="small muted">
+            {manifest.config.localOnly
+              ? "Configured as local-only; verify your Ollama server has cloud disabled."
+              : "This transmits repository code and filenames to the configured endpoint."}{" "}
+            No provider fallback occurs.
+          </p>
+          <div className="manifest-list">
+            {manifest.files.map((f) => (
+              <div key={f.id}>
+                <span>{f.path}</span>
+                <small>
+                  {f.included
+                    ? "Diff included"
+                    : `Code omitted · ${f.reason} · filename included`}
+                </small>
+              </div>
+            ))}
+          </div>
+          <p className="small muted">
+            Conservative byte-based token estimate: {manifest.estimatedTokens}.
+            Batches fit an input budget of {manifest.inputBudget}; no silent
+            model downloads.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigation.closeManifest()}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={busy}
+              onClick={() =>
+                void run(async () => {
+                  if (!review || manifest.snapshotId !== review.snapshot.id)
+                    throw new Error("Snapshot changed; preview again.");
+                  await navigation.mutate("analysis", {
+                    manifestId: manifest.id,
+                    authorize: true,
+                  });
+                })
+              }
+            >
+              Authorize & analyze
+            </Button>
+          </div>
+        </ReviewDialog>
       )}
     </div>
   );

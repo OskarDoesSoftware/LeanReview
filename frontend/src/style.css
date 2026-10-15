@@ -66,21 +66,29 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-card: var(--background);
+  --color-card-foreground: var(--foreground);
+  --color-secondary: var(--accent);
+  --color-secondary-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-destructive-foreground: #fff;
   --color-destructive: var(--destructive);
   --color-input: var(--border);
   --color-ring: var(--primary);
 }
 :root {
   color-scheme: light dark;
-  --background: light-dark(#fff, #15171e);
-  --canvas: light-dark(#f7f8fb, #101219);
-  --foreground: light-dark(#253044, #e6eaf2);
-  --muted: light-dark(#637189, #a6afc1);
-  --primary: light-dark(#4957c9, #a4afff);
+  --background: light-dark(#fff, #18181b);
+  --canvas: light-dark(#fafafa, #09090b);
+  --foreground: light-dark(#18181b, #fafafa);
+  --muted-foreground: light-dark(#71717a, #a1a1aa);
+  --muted: light-dark(#f4f4f5, #27272a);
+  --primary: light-dark(#18181b, #fafafa);
   --primary-foreground: light-dark(#fff, #15171e);
-  --accent: light-dark(#edf0ff, #282d45);
-  --border: light-dark(#e0e4ed, #303544);
+  --accent: light-dark(#f4f4f5, #27272a);
+  --border: light-dark(#e4e4e7, #3f3f46);
   --destructive: light-dark(#ad243e, #ff9bb0);
 }
 * {
@@ -100,19 +108,11 @@ button,
 input,
 select,
 textarea {
-  font: inherit;
-}
-button {
-  cursor: pointer;
+  min-width: 0;
 }
 input,
 select,
 textarea {
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--foreground);
-  padding: 7px 10px;
   min-width: 0;
 }
 input:focus-visible,
@@ -157,7 +157,7 @@ label {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 12px;
 }
 .repository-bar {
@@ -196,7 +196,7 @@ label {
 .eyebrow {
   font-size: 10px;
   letter-spacing: 1.5px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-weight: 600;
 }
 h1 {
@@ -222,14 +222,14 @@ p {
   font-size: 12px;
 }
 .muted {
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .snapshot-meta {
   display: flex;
   gap: 8px;
   align-items: center;
   font-size: 12px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   flex-wrap: wrap;
 }
 .snapshot-meta select {
@@ -300,7 +300,7 @@ p {
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   margin: 12px 0 5px;
 }
 .file-item {
@@ -332,11 +332,11 @@ p {
 .file-item small {
   display: block;
   font-size: 10px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .file-indicator {
   display: flex;
-  color: var(--muted);
+  color: var(--muted-foreground);
   flex-shrink: 0;
 }
 .file-indicator.done {
@@ -344,7 +344,7 @@ p {
 }
 .status-letter {
   font-size: 10px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .diff-pane {
   min-width: 0;
@@ -384,24 +384,21 @@ p {
 }
 .detail-tabs {
   display: flex;
-  border-bottom: 1px solid var(--border);
-  padding: 0 14px;
-  gap: 15px;
+  margin: 12px;
+  width: calc(100% - 24px);
+  gap: 2px;
 }
 .detail-tabs button {
-  background: transparent;
-  padding: 16px 0 13px;
-  border: 0;
-  border-bottom: 2px solid transparent;
+  flex: 1;
   font-size: 12px;
-  color: var(--muted);
-}
-.detail-tabs button.active {
-  color: var(--foreground);
-  border-bottom-color: var(--primary);
+  padding-inline: 8px;
 }
 .detail-tabs span {
   margin-left: 5px;
+  font-size: 10px;
+}
+.detail-tab-content {
+  margin-top: 0;
 }
 .details-content {
   padding: 20px 18px;
@@ -421,7 +418,7 @@ p {
   border-bottom: 1px solid var(--border);
 }
 .draft small {
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 10px;
   overflow-wrap: anywhere;
 }
@@ -429,7 +426,7 @@ p {
   border-top: 1px solid var(--border);
   margin-top: 28px;
   padding-top: 17px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 12px;
 }
 .phase-note h3 {
@@ -443,7 +440,7 @@ p {
   flex-direction: column;
   text-align: center;
   padding: 35px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   gap: 8px;
 }
 .metadata-only h2 {
@@ -452,7 +449,7 @@ p {
 .empty-message {
   font-size: 12px;
   padding: 12px 6px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .proposal-banner {
   margin: 0 24px 18px;
@@ -493,25 +490,16 @@ p {
   background: transparent;
   color: inherit;
 }
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: #0007;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  overflow: auto;
-}
+
 .modal {
   background: var(--background);
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  max-width: 580px;
+  max-width: min(580px, calc(100vw - 32px));
   width: 100%;
-  max-height: 90vh;
+  max-height: 90dvh;
+  display: block;
   overflow: auto;
   box-shadow: 0 18px 80px #0003;
 }
@@ -556,11 +544,11 @@ p {
 }
 .manifest-list small {
   display: block;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .omission {
   font-size: 11px;
-  color: var(--muted);
+  color: var(--muted-foreground);
   border-left: 2px solid var(--primary);
   padding-left: 10px;
 }
@@ -575,7 +563,7 @@ p {
   margin: 10px 0 20px;
 }
 .welcome > p {
-  color: var(--muted);
+  color: var(--muted-foreground);
   max-width: 620px;
   font-size: 16px;
 }
@@ -594,7 +582,7 @@ p {
 }
 .welcome-features p {
   font-size: 13px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .welcome .small {
   font-size: 12px;
@@ -662,10 +650,204 @@ p {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  .modal-backdrop {
-    padding: 10px;
-  }
+
   .progress-summary {
     width: 100%;
+  }
+}
+
+/* Workspace layout; primitives live in components/ui. */
+.app-shell {
+  min-height: 100dvh;
+}
+.app-header {
+  height: 68px;
+}
+.logo {
+  border-radius: 7px;
+  padding: 8px;
+}
+.brand {
+  font-size: 17px;
+  letter-spacing: -0.6px;
+}
+.repository-bar {
+  padding-block: 16px;
+  align-items: center;
+  gap: 8px;
+}
+.root-input {
+  background: var(--canvas);
+  border-radius: 6px;
+}
+.root-input input {
+  box-shadow: none;
+}
+.review-heading {
+  padding-top: 28px;
+  padding-bottom: 16px;
+}
+.review-actions {
+  padding-bottom: 22px;
+}
+.workspace {
+  margin: 0 24px 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: clip;
+  grid-template-columns: 250px minmax(0, 1fr) 310px;
+  box-shadow: 0 2px 6px #00000004;
+}
+.cohort-sidebar {
+  background: var(--canvas);
+  padding-top: 20px;
+}
+.file-item {
+  padding: 10px;
+  margin-block: 3px;
+  transition: background 0.15s;
+}
+.file-item.selected {
+  background: var(--background);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 1px 3px #00000008;
+  font-weight: 500;
+}
+.file-item small {
+  font-weight: 400;
+  margin-top: 3px;
+}
+.status-letter {
+  font-family: ui-monospace, monospace;
+}
+.file-heading {
+  min-height: 66px;
+  align-items: center;
+}
+.file-heading > div:first-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.file-heading .badge {
+  margin-left: 0;
+}
+.badge {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.details-content {
+  padding-top: 14px;
+}
+.details-content > h2 {
+  margin-top: 8px;
+}
+.progress-track {
+  height: 6px;
+  background: var(--muted);
+}
+.progress-track > div {
+  transition: width 0.2s;
+}
+.welcome {
+  max-width: 1120px;
+  padding: 76px 36px 40px;
+}
+.welcome h1 {
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -1.8px;
+  max-width: 650px;
+  margin: 18px 0 22px;
+}
+.welcome > p {
+  line-height: 1.75;
+  max-width: 600px;
+}
+.welcome-features {
+  gap: 16px;
+  margin: 42px 0 26px;
+}
+.welcome-features > div {
+  border-color: var(--border);
+  box-shadow: 0 1px 3px #00000004;
+}
+.welcome-card {
+  padding: 24px;
+}
+.welcome-card svg {
+  height: 34px;
+  width: 34px;
+  padding: 7px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 22px;
+}
+.welcome-card p {
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+.error-banner {
+  background: color-mix(in srgb, var(--destructive) 8%, var(--background));
+}
+.modal > h2,
+.modal > div:first-child h2 {
+  padding-right: 25px;
+  margin-bottom: 16px;
+}
+.modal input[type="checkbox"] {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  box-shadow: none;
+}
+button:disabled {
+  cursor: default;
+}
+@media (max-width: 1200px) {
+  .workspace {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+  .detail-pane {
+    grid-column: 1 / -1;
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+  .detail-tabs {
+    width: max-content;
+  }
+}
+@media (max-width: 720px) {
+  .app-header {
+    height: auto;
+    min-height: 64px;
+    padding-block: 12px;
+    flex-wrap: wrap;
+  }
+  .app-header > div:last-child {
+    flex-wrap: wrap;
+  }
+  .workspace {
+    margin: 0 12px 12px;
+    display: block;
+  }
+  .welcome {
+    padding: 44px 20px;
+  }
+  .welcome-features {
+    grid-template-columns: 1fr;
+  }
+  .repository-bar > select {
+    flex: 1;
+    max-width: 100%;
+  }
+  .proposal-banner {
+    flex-wrap: wrap;
+  }
+  .two-fields {
+    grid-template-columns: 1fr;
   }
 }

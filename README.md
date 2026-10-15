@@ -1,6 +1,6 @@
 # LeanReview
 
-A local-first human code review workspace. The initial vertical slice connects local Git snapshots to AI cohort/layer proposals, Monaco diffs, local comments, and SQLite-backed progress. It implements the selected cohort-sidebar layout with React, Tailwind, and an owned shadcn/ui-style Button component using Radix Slot and CVA.
+A local-first human code review workspace. The initial vertical slice connects local Git snapshots to AI cohort/layer proposals, Monaco diffs, local comments, and SQLite-backed progress. It implements the selected cohort-sidebar layout with React, Tailwind, and owned shadcn/ui components, Radix dialogs and tabs, and a neutral theme that follows system appearance.
 
 ## Run
 
@@ -76,3 +76,7 @@ GitHub and Azure DevOps repository/PR adapters and tested publication are later 
 - `packages/contracts`: shared normalized types and Zod schemas.
 
 The canonical [decision map](https://github.com/OskarDoesSoftware/LeanReview/issues/1) contains the implementation-ready product contracts. Planning completion is separate from implementation acceptance.
+
+## UI components
+
+Owned shadcn/ui source lives in `frontend/src/components/ui`. Registry configuration is in `components.json`; the `@/` alias resolves to `frontend/src`. Use these components for forms, badges, cards, tabs, and dialogs. `ReviewDialog` adds the shared scrollable layout and restores focus to the opening control. Native selects preserve platform keyboard behavior.
