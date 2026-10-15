@@ -57,6 +57,8 @@ jobs:
           dbus-run-session -- sh -c 'printf "%s" fixture-password | gnome-keyring-daemon --unlock --components=secrets; LEANREVIEW_KEYRING_ACCEPTANCE=1 sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test'
       - run: node scripts/verify-java-launch.mjs
       - run: npx vitest run tests/data-backup.test.ts tests/process-tree-memory.test.ts tests/java-performance.test.ts
+      - name: Verify recorded Windows performance budgets
+        run: npm run check:java-performance
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test --config playwright.java.config.ts
       - uses: actions/upload-artifact@v4
