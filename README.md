@@ -60,7 +60,7 @@ The CRAP tab supports TS/JS Istanbul JSON and Java JaCoCo XML, coverage report i
 
 Choose **Review dependencies** for changed modules and their dependencies, or **Repository graph** for the full pinned TS/JS and Java source scan. The viewer supports before/after snapshots, Java package/class drill-down, cycles, filters, neighbor expansion, source evidence, and cached source navigation. See [module graph behavior and limits](docs/module-graphs.md).
 
-The graph starts with grouped TS/JS folders and readable labels. Open folders to drill down, select a node to show its connections, or explicitly choose all connections. Scan progress and duration are visible. Pinned blobs use one Git batch process per scan. Run `npm run benchmark:graph` to check the isolated performance fixture.
+The graph starts with grouped TS/JS folders and readable labels. Dependencies between folders are visible by default. Open folders to reveal individual files, or select a node to inspect its dependency evidence. Scan progress and duration are visible. Pinned blobs use one Git batch process per scan. Run `npm run benchmark:graph` to check the isolated performance fixture.
 
 ## Current scope
 

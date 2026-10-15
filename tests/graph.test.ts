@@ -52,6 +52,45 @@ function memory(files: Record<string, string>, complete = true): GraphSource {
   };
 }
 describe("source dependency adapters", () => {
+  it("shows folder dependency edges while hiding root and nested files until expanded", async () => {
+    const graph = await scanGraph(
+      snapshot(),
+      options,
+      undefined,
+      memory({
+        "index.ts": 'import "./src/a/file";',
+        "src/a/file.ts": 'import "../b/dependency";',
+        "src/b/dependency.ts": "export const value=1;",
+      }),
+    );
+    const opts = {
+      scope: "repository" as const,
+      query: "",
+      showExternal: false,
+      showTypeOnly: true,
+      expanded: [],
+      javaPackage: null,
+      collapseCycles: false,
+      limit: 200,
+      groupModules: true,
+    };
+    const overview = graphView(graph, opts);
+    expect(overview.nodes.every((n) => n.kind === "folder")).toBe(true);
+    expect(overview.edges).toHaveLength(2);
+    expect(overview.nodes.some((n) => n.label === "Repository root")).toBe(
+      true,
+    );
+    expect(
+      graphView(graph, { ...opts, folder: "." }).nodes.some(
+        (n) => n.path === "index.ts",
+      ),
+    ).toBe(true);
+    expect(
+      graphView(graph, { ...opts, folder: "src/a" }).nodes.some(
+        (n) => n.path === "src/a/file.ts",
+      ),
+    ).toBe(true);
+  });
   it("groups a 43-module repository into readable folders and retains drill-down and search", async () => {
     const files: Record<string, string> = {};
     for (let i = 0; i < 43; i++)

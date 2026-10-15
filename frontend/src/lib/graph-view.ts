@@ -27,7 +27,11 @@ export function graphView(
   if (options.folder) {
     selected = new Set(
       graph.nodes
-        .filter((n) => n.path?.startsWith(options.folder + "/"))
+        .filter((n) =>
+          options.folder === "."
+            ? n.kind === "module" && !!n.path && !n.path.includes("/")
+            : n.path?.startsWith(options.folder + "/"),
+        )
         .map((n) => n.id),
     );
     const inside = new Set(selected);
@@ -47,18 +51,21 @@ export function graphView(
   for (const node of graph.nodes) {
     if (options.groupModules && node.kind === "module" && node.path) {
       const parts = node.path.split("/"),
-        inside = options.folder && node.path.startsWith(options.folder + "/");
+        inside =
+          options.folder === "."
+            ? !node.path.includes("/")
+            : options.folder && node.path.startsWith(options.folder + "/");
+      const remaining =
+        options.folder === "."
+          ? node.path
+          : node.path.slice((options.folder?.length ?? 0) + 1);
       const prefix = inside
-        ? options.folder +
-          "/" +
-          node.path.slice(options.folder!.length + 1).split("/")[0]
-        : parts.slice(0, Math.min(2, parts.length - 1)).join("/");
+        ? options.folder + "/" + remaining.split("/")[0]
+        : parts.length === 1
+          ? "."
+          : parts.slice(0, Math.min(2, parts.length - 1)).join("/");
       const directory =
-        inside && node.path.slice(options.folder!.length + 1).includes("/")
-          ? prefix
-          : inside
-            ? ""
-            : prefix;
+        inside && remaining.includes("/") ? prefix : inside ? "" : prefix;
       if (directory) {
         const id = `folder:${directory}`;
         projection.set(node.id, id);
@@ -67,7 +74,7 @@ export function graphView(
         else
           groups.set(id, {
             id,
-            label: directory,
+            label: directory === "." ? "Repository root" : directory,
             kind: "folder",
             language: "ts/js",
             changed: node.changed,

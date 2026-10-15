@@ -276,7 +276,8 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(graph.getByRole("status")).toContainText("2 cycles");
   await expect(graph.getByLabel("Group TS/JS folders")).toBeChecked();
   await expect(graph.locator(".graph-node-list button")).toHaveCount(5);
-  await expect(graph.locator(".react-flow__edge")).toHaveCount(0);
+  await expect(graph.locator(".react-flow__edge")).not.toHaveCount(0);
+  await expect(graph.getByLabel("Graph connections")).toHaveValue("all");
   await graph.getByLabel("External / unresolved").check();
   await expect(
     graph.getByRole("button", {

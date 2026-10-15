@@ -48,7 +48,7 @@ export function ModuleGraphViewer({
     [selected, setSelected] = useState<string | null>(null);
   const [groupModules, setGroupModules] = useState(true),
     [folder, setFolder] = useState<string | null>(null),
-    [connections, setConnections] = useState<"selected" | "all">("selected");
+    [connections, setConnections] = useState<"selected" | "all">("all");
   const flow = useRef<ReactFlowInstance | null>(null);
   const [maxFiles, setMaxFiles] = useState(10000),
     [maxMiB, setMaxMiB] = useState(20),
@@ -621,8 +621,8 @@ export function ModuleGraphViewer({
               </ReactFlow>
               {!selectedNode && (
                 <p className="graph-focus-hint">
-                  Select a folder or module to show its connections. Open
-                  folders to explore their files.
+                  Arrows show dependencies between folders. Open a folder to
+                  explore its files; select a node to inspect source evidence.
                 </p>
               )}
               {layoutNote && <p className="graph-layout-note">{layoutNote}</p>}
@@ -658,7 +658,7 @@ export function ModuleGraphViewer({
                     <Button
                       size="sm"
                       onClick={() => {
-                        setFolder(selectedNode.label);
+                        setFolder(selectedNode.id.slice("folder:".length));
                         setSelected(null);
                       }}
                     >
