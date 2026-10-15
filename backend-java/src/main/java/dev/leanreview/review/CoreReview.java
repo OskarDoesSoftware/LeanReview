@@ -89,6 +89,12 @@ public class CoreReview {
         });
   }
 
+  public JsonNode validateAnalysis(JsonNode input, JsonNode snapshot) {
+    var files = new HashMap<String, JsonNode>();
+    snapshot.path("files").forEach(file -> files.put(file.path("id").asText(), file));
+    return grouping(input, files);
+  }
+
   private JsonNode grouping(JsonNode input, Map<String, JsonNode> files) {
     WireInput.object(input);
     JsonNode cohorts = input.path("cohorts");

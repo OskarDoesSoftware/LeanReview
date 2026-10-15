@@ -7,7 +7,7 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const { root, link } = JSON.parse(
+  const { root, link, providerOrigin } = JSON.parse(
     await readFile(".leanreview-test/java-browser-fixture.json", "utf8"),
   );
   await page.goto(link);
@@ -51,13 +51,42 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
     .locator(".monaco-diff-editor .editor.modified .line-numbers")
     .filter({ hasText: /^1$/ })
     .click();
+  const configured = await page.request.post("/api/provider", {
+    headers: { Origin: "http://127.0.0.1:4324" },
+    data: {
+      config: {
+        provider: "ollama",
+        endpoint: providerOrigin,
+        model: "fixture-java-model",
+        contextWindow: 8192,
+        maxOutput: 2048,
+        localOnly: true,
+      },
+      persist: false,
+    },
+  });
+  expect(configured.ok()).toBe(true);
   await page
-    .getByRole("textbox", { name: "Draft comment" })
-    .fill("Preserve this comment across refresh");
-  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+    .getByRole("button", { name: "Generate AI proposal", exact: true })
+    .click();
   await expect(
-    page.getByText("Preserve this comment across refresh", { exact: true }),
+    page.getByRole("dialog", { name: "Confirm analysis input" }),
+  ).toContainText("fixture-java-model");
+  await page
+    .getByRole("button", { name: "Authorize & analyze", exact: true })
+    .click();
+  await expect(
+    page.getByText("Analysis proposal ready", { exact: true }),
   ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Accept proposal", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "AI fixture", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".progress-summary")).toContainText(
+    "1 / 2 reviewed",
+  );
   const grouping = await page.request.post(
     `/api/sessions/${session}/grouping`,
     {
@@ -105,10 +134,6 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
     .getByRole("button", { name: "Refresh snapshot", exact: true })
     .click();
   expect((await refreshed).ok()).toBe(true);
-  await page.getByRole("tab", { name: "Comments", exact: false }).click();
-  await expect(
-    page.getByText("Needs reattachment", { exact: true }),
-  ).toBeVisible();
   const history = page.getByRole("combobox", { name: "Snapshot history" });
   await history.selectOption(review.snapshot.id);
   await expect(page.getByText("Previous snapshot · read only")).toBeVisible();

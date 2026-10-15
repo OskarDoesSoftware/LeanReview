@@ -1,6 +1,6 @@
 # Java backend migration
 
-This module implements the storage foundation for [#23](https://github.com/OskarDoesSoftware/LeanReview/issues/23) and the local HTTP API and manual review flow for [#24](https://github.com/OskarDoesSoftware/LeanReview/issues/24). The application launcher still uses the Node backend. Java HTTP startup is opt-in while analysis, graph, coverage, packaging, and cutover work continues in later migration issues.
+This module implements the storage foundation for [#23](https://github.com/OskarDoesSoftware/LeanReview/issues/23), the local HTTP API and manual review flow for [#24](https://github.com/OskarDoesSoftware/LeanReview/issues/24), and credentials/review analysis for [#25](https://github.com/OskarDoesSoftware/LeanReview/issues/25). The application launcher still uses the Node backend. Java HTTP startup is opt-in while graph, coverage, packaging, platform acceptance, and cutover work continues in later migration issues.
 
 ## Try the React UI with Java
 
@@ -17,7 +17,15 @@ Use an isolated data directory. To test existing reviews, stop the original back
 
 The web profile serves the built frontend from `../frontend/dist`; override `--leanreview.frontend-directory` with an absolute directory when launching elsewhere. Git capture runs outside database transactions, uses argument-only subprocesses with time/output bounds, and rejects a capture when consecutive reads disagree. Refresh checks the current snapshot again in its write transaction. Progress, manual grouping, draft comments, historical snapshots, and editor settings retain the existing JSON format.
 
-After `verify` and the frontend build, run the browser acceptance test from the repository root with `npx playwright test --config playwright.java.config.ts`. It starts an isolated Java server on port 4324 and uses temporary fixture data. The test covers migrated reviews and Java-created reviews without calling the analysis or graph APIs that belong to subsequent issues.
+After `verify` and the frontend build, run the browser acceptance test from the repository root with `npx playwright test --config playwright.java.config.ts`. It starts an isolated Java server on port 4324 and uses temporary fixture data and a local fixture provider. It covers migrated/new reviews, manifest authorization, inference, proposal acceptance, manual edits, refresh, and history. It does not call live models or the graph APIs that belong to subsequent issues.
+
+## Credentials and analysis
+
+Java supports Ollama, OpenAI Responses, and Anthropic Messages through the existing provider settings and manifest flow. An explicit authorization is required before sending captured diffs. Generated/vendor files and over-budget diffs are omitted with reasons. One application-wide slot covers credential lookup and all sequential batches; cancellation keeps that slot until the owned work settles. Invalid, incomplete, oversized, or failed provider output preserves accepted grouping and manual edits.
+
+Session-only keys live in backend memory. Persistent keys use Windows Credential Manager through JNA, macOS Keychain through java-keyring, or explicitly Linux Secret Service through java-keyring. There is no plaintext or automatic session-storage fallback. The API never returns keys. Windows read/write interoperability with the existing Node binding is verified using a temporary credential; macOS/Linux interoperability still needs platform acceptance. If lookup is unavailable, re-enter the key in settings and explicitly choose its storage mode.
+
+The Node Codex subscription feature is tracked separately for Java in [#36](https://github.com/OskarDoesSoftware/LeanReview/issues/36), which blocks final platform acceptance. Java currently rejects that provider explicitly. See `docs/migration/java-review-analysis.md` for the evidence and scope limits.
 
 ## Toolchain
 
@@ -49,4 +57,4 @@ The tested SQLite dialect reports foreign-key rejection through Spring's generic
 
 Stop the application before recovery. Keep the original database, any WAL/SHM sidecars, and the entire cache together. To restore a pre-migration database, copy its backup and the matching cache into a separate data directory, name the database `leanreview.sqlite`, and verify that copy before replacing application data. Database migration backups do not include the cache and are not a replacement for a paired database/cache backup before production cutover.
 
-Verified on Windows x64 with the toolchain above on 2026-10-15: all 11 `StorageCompatibilityTest` cases pass. These cover schema versions 1, 2, and 3, exact recovered review JSON, schema validation, read/write/reopen, composite keys, rollback, cascades, connection replacement, concurrent transactions, exclusive ownership, failed startup, artifacts, failed migration recovery, and committed WAL backup contents. The complete suite now has 29 cases: 28 pass and one skips symlink creation because this Windows account lacks permission. React browser acceptance against the packaged Java backend also passes. See `docs/migration/java-core-api.md` for core API evidence and remaining platform limits.
+Verified on Windows x64 with the toolchain above on 2026-10-15: all 11 `StorageCompatibilityTest` cases pass. These cover schema versions 1, 2, and 3, exact recovered review JSON, schema validation, read/write/reopen, composite keys, rollback, cascades, connection replacement, concurrent transactions, exclusive ownership, failed startup, artifacts, failed migration recovery, and committed WAL backup contents. The complete suite now has 45 cases: 44 pass and one skips symlink creation because this Windows account lacks permission. React browser acceptance against the packaged Java backend also passes. See `docs/migration/java-core-api.md` and `docs/migration/java-review-analysis.md` for API/analysis evidence and remaining platform limits.

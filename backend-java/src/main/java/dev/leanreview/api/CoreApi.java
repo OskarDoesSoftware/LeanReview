@@ -20,6 +20,7 @@ public class CoreApi {
   private final LocalSnapshots git;
   private final CoreReview operations;
   private final dev.leanreview.editor.EditorService editors;
+  private final ReviewAnalysis analysis;
 
   public CoreApi(
       ObjectMapper json,
@@ -27,13 +28,15 @@ public class CoreApi {
       ReviewStore reviews,
       LocalSnapshots git,
       CoreReview operations,
-      dev.leanreview.editor.EditorService editors) {
+      dev.leanreview.editor.EditorService editors,
+      ReviewAnalysis analysis) {
     this.json = json;
     this.snapshots = snapshots;
     this.reviews = reviews;
     this.git = git;
     this.operations = operations;
     this.editors = editors;
+    this.analysis = analysis;
   }
 
   private ResponseEntity<String> reply(Object value) throws IOException {
@@ -76,6 +79,7 @@ public class CoreApi {
     WireInput.object(body);
     String expected = WireInput.text(body, "snapshotId");
     JsonNode previous = snapshots.current(id, expected).path("snapshot");
+    analysis.cancel(expected);
     // No connection is held during Git capture; refresh rechecks the current ID transactionally.
     ObjectNode next =
         git.capture(git.select(previous.path("root").asText()), previous.path("comparison"), id);

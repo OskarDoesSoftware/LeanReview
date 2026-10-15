@@ -1,0 +1,87 @@
+package dev.leanreview.credentials;
+
+import static org.assertj.core.api.Assertions.*;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Test;
+
+class CredentialVaultTest {
+  @Test
+  void sessionMemoryAndUnavailablePersistentStorageNeverFallBackSilently() {
+    var persistent =
+        new CredentialVault.Persistent() {
+          public void set(String key, String token) {
+            throw new IllegalStateException("private diagnostic");
+          }
+
+          public String get(String key) {
+            throw new IllegalStateException("private diagnostic");
+          }
+        };
+    var vault = new CredentialVault(persistent);
+    vault.set("key", "session-fixture-token", false);
+    assertThat(vault.get("key", false)).isEqualTo("session-fixture-token");
+    assertThatThrownBy(() -> vault.set("key", "new-fixture-token", true))
+        .hasMessage(
+            "OS credential storage is unavailable or locked. Select session-only storage"
+                + " explicitly.");
+    assertThat(vault.get("key", true)).isEqualTo("session-fixture-token");
+    assertThat(new CredentialVault(persistent).get("key", true)).isNull();
+    assertThat(new CredentialVault(persistent).get("key", false)).isNull();
+  }
+
+  @Test
+  void windowsCredentialsRoundTripWithTheExistingNodeBinding() throws Exception {
+    org.junit.jupiter.api.Assumptions.assumeTrue(
+        System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win"));
+    String account = "leanreview-migration-test-" + UUID.randomUUID();
+    String token = "fixture-secret-café-123";
+    var nativeStore = new NativeCredentials();
+    try {
+      node(account, token, "set");
+      var windows = com.sun.jna.Native.load("Advapi32", NativeCredentials.Windows.class);
+      var reference = new com.sun.jna.ptr.PointerByReference();
+      assertThat(
+              windows.CredReadW(new com.sun.jna.WString(account + ".LeanReview"), 1, 0, reference))
+          .isTrue();
+      try {
+        assertThat(new NativeCredentials.Credential(reference.getValue()).persist).isEqualTo(3);
+      } finally {
+        windows.CredFree(reference.getValue());
+      }
+      assertThat(nativeStore.get(account)).isEqualTo(token);
+      nativeStore.set(account, token + "-java");
+      node(account, token + "-java", "check");
+      assertThat(new NativeCredentials().get(account)).isEqualTo(token + "-java");
+    } finally {
+      com.sun.jna.Native.load("Advapi32", NativeCredentials.Windows.class)
+          .CredDeleteW(new com.sun.jna.WString(account + ".LeanReview"), 1, 0);
+    }
+    assertThat(nativeStore.get(account)).isNull();
+  }
+
+  private void node(String account, String token, String action) throws Exception {
+    String script =
+        "import {Entry} from '@napi-rs/keyring'; import fs from 'node:fs'; const"
+            + " x=JSON.parse(fs.readFileSync(0,'utf8'));const e=new"
+            + " Entry('LeanReview',x.account);if(x.action==='set')e.setPassword(x.token);else"
+            + " if(e.getPassword()!==x.token)process.exit(2);console.log('ok');";
+    Process process =
+        new ProcessBuilder("node", "--input-type=module", "-e", script)
+            .directory(Path.of("..").toFile())
+            .redirectErrorStream(true)
+            .start();
+    try (var stream = process.getOutputStream()) {
+      stream.write(
+          new com.fasterxml.jackson.databind.ObjectMapper()
+              .writeValueAsBytes(Map.of("account", account, "token", token, "action", action)));
+    }
+    assertThat(process.waitFor(20, TimeUnit.SECONDS)).isTrue();
+    assertThat(process.exitValue()).as("Node credential fixture exit code").isZero();
+    assertThat(new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim())
+        .isEqualTo("ok");
+  }
+}

@@ -1,6 +1,7 @@
 import { mkdtemp, mkdir, writeFile, cp } from "node:fs/promises";
 import { execFileSync, spawn } from "node:child_process";
 import path from "node:path";
+import { createServer } from "node:http";
 
 await mkdir(".leanreview-test", { recursive: true });
 const directory = await mkdtemp(path.resolve(".leanreview-test/java-browser-"));
@@ -22,6 +23,36 @@ git("commit", "--no-gpg-sign", "-m", "fixture");
 await writeFile(path.join(root, "first.ts"), "export const first = 2;\n");
 await writeFile(path.join(root, "second.ts"), "export const second = true;\n");
 const data = path.join(directory, "data");
+const provider = createServer(async (request, response) => {
+  let body = "";
+  for await (const chunk of request) body += chunk;
+  const input = JSON.parse(JSON.parse(body).messages[1].content);
+  const result = {
+    cohorts: [
+      {
+        name: "AI fixture",
+        explanation: "Local provider fixture",
+        layers: [
+          {
+            name: "Read changes",
+            explanation: "Both files",
+            fileIds: input.files.map((file) => file.id),
+          },
+        ],
+      },
+    ],
+    findings: [],
+  };
+  response.setHeader("content-type", "application/json");
+  response.end(
+    JSON.stringify({
+      message: { content: JSON.stringify(result) },
+      done_reason: "stop",
+    }),
+  );
+});
+await new Promise((resolve) => provider.listen(0, "127.0.0.1", resolve));
+const providerOrigin = `http://127.0.0.1:${provider.address().port}`;
 await cp("tests/fixtures/backend-compatibility/databases/v3", data, {
   recursive: true,
 });
@@ -60,7 +91,7 @@ child.stdout.on("data", async (chunk) => {
     saved = true;
     await writeFile(
       ".leanreview-test/java-browser-fixture.json",
-      JSON.stringify({ root, link: match[1] }),
+      JSON.stringify({ root, link: match[1], providerOrigin }),
     );
     console.log("Java browser fixture ready");
   }

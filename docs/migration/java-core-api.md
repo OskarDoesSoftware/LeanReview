@@ -2,6 +2,8 @@
 
 Implementation for [Port local API protection and the core review flow](https://github.com/OskarDoesSoftware/LeanReview/issues/24), following [the migration map](https://github.com/OskarDoesSoftware/LeanReview/issues/21).
 
+This document records the #24 milestone. Subsequent credential/provider/analysis work is recorded in `java-review-analysis.md`.
+
 ## Scope
 
 The opt-in Spring web profile serves the existing React build and implements the launch nonce/session cookie, saved-review list, create/read/refresh/history, progress, manual cohorts and layers, draft comments, and editor configuration/launch routes. It also reads the existing provider configuration so the frontend can open. Provider writes, analysis, graphs, coverage, and test execution belong to subsequent migration tickets.

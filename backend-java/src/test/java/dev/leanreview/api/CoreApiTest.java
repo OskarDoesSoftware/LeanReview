@@ -103,6 +103,13 @@ class CoreApiTest {
           Set.of(
               "unknown route",
               "provider",
+              "set provider",
+              "invalid provider budget",
+              "invalid local provider",
+              "manifest",
+              "unauthorized analysis",
+              "stale manifest",
+              "cancel idle analysis",
               "stale refresh",
               "recovered review",
               "historical review",

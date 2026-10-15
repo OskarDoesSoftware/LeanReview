@@ -34,11 +34,24 @@ public class ReviewStore {
   @Transactional(rollbackFor = Exception.class)
   public ObjectNode updateCurrentState(
       String sessionId, String snapshotId, Consumer<ObjectNode> update) throws IOException {
+    return updateState(sessionId, snapshotId, update, true);
+  }
+
+  /** Job failure/cancellation belongs to its captured snapshot, including after refresh. */
+  @Transactional(rollbackFor = Exception.class)
+  public ObjectNode updateSnapshotState(
+      String sessionId, String snapshotId, Consumer<ObjectNode> update) throws IOException {
+    return updateState(sessionId, snapshotId, update, false);
+  }
+
+  private ObjectNode updateState(
+      String sessionId, String snapshotId, Consumer<ObjectNode> update, boolean requireCurrent)
+      throws IOException {
     Rows.Session session =
         sessions
             .findById(sessionId)
             .orElseThrow(() -> new IllegalArgumentException("Review session not found."));
-    if (!Objects.equals(session.activeSnapshot, snapshotId)) {
+    if (requireCurrent && !Objects.equals(session.activeSnapshot, snapshotId)) {
       throw new IllegalArgumentException("Snapshot changed. Reload this review before editing.");
     }
     Rows.Snapshot row =
@@ -51,7 +64,15 @@ public class ReviewStore {
     session.updatedAt =
         new DateTimeFormatterBuilder().appendInstant(3).toFormatter().format(Instant.now());
     snapshots.flush();
-    return review(sessionId, null);
+    return review(sessionId, requireCurrent ? null : snapshotId);
+  }
+
+  @Transactional(readOnly = true)
+  public String currentSnapshotId(String sessionId) {
+    return sessions
+        .findById(sessionId)
+        .orElseThrow(() -> new IllegalArgumentException("Review session not found."))
+        .activeSnapshot;
   }
 
   @Transactional(readOnly = true)

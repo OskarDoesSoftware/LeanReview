@@ -20,8 +20,10 @@ class EditorLaunchTest {
 
   public static class Probe {
     public static void main(String[] args) throws Exception {
+      Path pending = Path.of(args[0] + ".pending");
       Files.writeString(
-          Path.of(args[0]), String.join("\n", java.util.Arrays.copyOfRange(args, 1, args.length)));
+          pending, String.join("\n", java.util.Arrays.copyOfRange(args, 1, args.length)));
+      Files.move(pending, Path.of(args[0]), java.nio.file.StandardCopyOption.ATOMIC_MOVE);
     }
   }
 

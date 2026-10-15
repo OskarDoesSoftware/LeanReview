@@ -1,0 +1,93 @@
+{
+  "type": "object",
+  "properties": {
+    "cohorts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "layers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "fileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "explanation",
+                "fileIds"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "explanation",
+          "layers"
+        ]
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "bug",
+              "security",
+              "performance",
+              "improvement"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fileId",
+          "line",
+          "kind",
+          "message"
+        ]
+      }
+    }
+  },
+  "required": [
+    "cohorts",
+    "findings"
+  ]
+}
