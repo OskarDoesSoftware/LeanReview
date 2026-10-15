@@ -1,0 +1,593 @@
+{
+  "measuredAt": "2026-10-15T12:50:45.786Z",
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "win32",
+    "cpu": "AMD Ryzen 7 250 w/ Radeon 780M Graphics        ",
+    "java": "openjdk version \"25.0.4.1\" 2026-08-18 LTS\r\nOpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)\r\nOpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode, sharing)"
+  },
+  "source": {
+    "commit": "c1a4ee7acc9e863ac20cbff07e56b982d85a06b3",
+    "workingTree": "M backend-java/src/main/java/dev/leanreview/llm/ProviderClient.java\n M scripts/benchmark-java.ts",
+    "jarSha256": "d9d5d6b0575517b8181202f481a77caac8dd8704d61704aee803bc33541a1245",
+    "helperSha256": "5b4c041242e5deed550a4fef6e77ece039cee1b64b9df34acc82befcdb2f79ea"
+  },
+  "methodology": {
+    "scope": "Same deterministic generator and scan options as Node baseline. Run without concurrent tests/builds. Startup includes Spring/JPA/Tomcat. Capture includes HTTP roundtrip. Windows peak Java RSS excludes Git and Node parser helper; total memory acceptance remains separate."
+  },
+  "datasets": [
+    {
+      "kind": "typescript",
+      "generatorVersion": 1,
+      "files": 1000,
+      "bytes": 1874780,
+      "manifestSha256": "c450afa0dd8ef2a5353b39874b3584c28dfd07be4bd57de5a0e0fdabc0b666cf",
+      "tree": "c6628b9ddb839ad3cf16ea49f97f9943ea67e89e",
+      "revision": "21e8a120980913c60f9ccfde5cd965e5be5625bc",
+      "runs": [
+        {
+          "repetition": 1,
+          "startupMs": 7848.77,
+          "captureMs": 6593.11,
+          "peakJavaRssMiB": 522.3,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 8919.64,
+              "nodes": 1000,
+              "edges": 1000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1874780,
+                "parserFailures": 0,
+                "unresolved": 0,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 425,
+                "p95Ms": 21.95,
+                "maxMs": 174.73
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 1894.12,
+              "nodes": 1000,
+              "edges": 1000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1874780,
+                "parserFailures": 0,
+                "unresolved": 0,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 120,
+                "p95Ms": 3.44,
+                "maxMs": 6.5
+              }
+            }
+          ]
+        },
+        {
+          "repetition": 2,
+          "startupMs": 7124.2,
+          "captureMs": 5522.94,
+          "peakJavaRssMiB": 470.69,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 5499.12,
+              "nodes": 1000,
+              "edges": 1000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1874780,
+                "parserFailures": 0,
+                "unresolved": 0,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 344,
+                "p95Ms": 5.01,
+                "maxMs": 9.66
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 1759.48,
+              "nodes": 1000,
+              "edges": 1000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1874780,
+                "parserFailures": 0,
+                "unresolved": 0,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 113,
+                "p95Ms": 2.97,
+                "maxMs": 4.53
+              }
+            }
+          ]
+        },
+        {
+          "repetition": 3,
+          "startupMs": 6662.13,
+          "captureMs": 5588.19,
+          "peakJavaRssMiB": 466.36,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 5606.69,
+              "nodes": 1000,
+              "edges": 1000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1874780,
+                "parserFailures": 0,
+                "unresolved": 0,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 351,
+                "p95Ms": 4.85,
+                "maxMs": 13.53
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 1896.15,
+              "nodes": 1000,
+              "edges": 1000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1874780,
+                "parserFailures": 0,
+                "unresolved": 0,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 119,
+                "p95Ms": 2.75,
+                "maxMs": 4.77
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "java",
+      "generatorVersion": 1,
+      "files": 1000,
+      "bytes": 1807780,
+      "manifestSha256": "4f67232bba65ca3f75da368ddd975672fe179b3e43c984ea43613b8512b8d81c",
+      "tree": "c9c118fc65428047fe50746b700e613d414d39e5",
+      "revision": "fcf030070c6896476d506b06605f191b07e3eaa7",
+      "runs": [
+        {
+          "repetition": 1,
+          "startupMs": 7411.75,
+          "captureMs": 7457.01,
+          "peakJavaRssMiB": 588.38,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 6908.94,
+              "nodes": 1004,
+              "edges": 4000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1807780,
+                "parserFailures": 0,
+                "unresolved": 2000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 426,
+                "p95Ms": 5.25,
+                "maxMs": 14.86
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 2515.69,
+              "nodes": 1004,
+              "edges": 4000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1807780,
+                "parserFailures": 0,
+                "unresolved": 2000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 160,
+                "p95Ms": 3.2,
+                "maxMs": 5.54
+              }
+            }
+          ]
+        },
+        {
+          "repetition": 2,
+          "startupMs": 7948.27,
+          "captureMs": 7196.05,
+          "peakJavaRssMiB": 706.83,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 5996.23,
+              "nodes": 1004,
+              "edges": 4000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1807780,
+                "parserFailures": 0,
+                "unresolved": 2000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 381,
+                "p95Ms": 4.22,
+                "maxMs": 11.76
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 2471.38,
+              "nodes": 1004,
+              "edges": 4000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1807780,
+                "parserFailures": 0,
+                "unresolved": 2000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 159,
+                "p95Ms": 2.74,
+                "maxMs": 8.86
+              }
+            }
+          ]
+        },
+        {
+          "repetition": 3,
+          "startupMs": 7096.85,
+          "captureMs": 6786.19,
+          "peakJavaRssMiB": 701.05,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 5468.48,
+              "nodes": 1004,
+              "edges": 4000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1807780,
+                "parserFailures": 0,
+                "unresolved": 2000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 345,
+                "p95Ms": 4.72,
+                "maxMs": 7.26
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 2114.52,
+              "nodes": 1004,
+              "edges": 4000,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1807780,
+                "parserFailures": 0,
+                "unresolved": 2000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 134,
+                "p95Ms": 2.73,
+                "maxMs": 5.67
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "mixed",
+      "generatorVersion": 1,
+      "files": 1000,
+      "bytes": 1841280,
+      "manifestSha256": "9f04f8239d1ce17c7e082a262ab20de3418360b0146d495347371d3480a4746e",
+      "tree": "c850f6c64ae790e5ca27336daf94f992a1d9da7d",
+      "revision": "11945ae18f4d603102408560af792a65d18d4777",
+      "runs": [
+        {
+          "repetition": 1,
+          "startupMs": 5749.09,
+          "captureMs": 7226.87,
+          "peakJavaRssMiB": 443.02,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 6335.59,
+              "nodes": 1004,
+              "edges": 2500,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1841280,
+                "parserFailures": 0,
+                "unresolved": 1000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 397,
+                "p95Ms": 4.85,
+                "maxMs": 15.74
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 2205.31,
+              "nodes": 1004,
+              "edges": 2500,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1841280,
+                "parserFailures": 0,
+                "unresolved": 1000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 140,
+                "p95Ms": 2.85,
+                "maxMs": 8.03
+              }
+            }
+          ]
+        },
+        {
+          "repetition": 2,
+          "startupMs": 8273.43,
+          "captureMs": 7994.91,
+          "peakJavaRssMiB": 587.55,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 6705.77,
+              "nodes": 1004,
+              "edges": 2500,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1841280,
+                "parserFailures": 0,
+                "unresolved": 1000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 427,
+                "p95Ms": 4.71,
+                "maxMs": 13.62
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 2086.78,
+              "nodes": 1004,
+              "edges": 2500,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1841280,
+                "parserFailures": 0,
+                "unresolved": 1000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 133,
+                "p95Ms": 2.7,
+                "maxMs": 7.15
+              }
+            }
+          ]
+        },
+        {
+          "repetition": 3,
+          "startupMs": 6641.22,
+          "captureMs": 7113,
+          "peakJavaRssMiB": 486.23,
+          "scans": [
+            {
+              "cache": "cold-artifact-cache",
+              "elapsedMs": 6028.53,
+              "nodes": 1004,
+              "edges": 2500,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1841280,
+                "parserFailures": 0,
+                "unresolved": 1000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 383,
+                "p95Ms": 4.74,
+                "maxMs": 7.51
+              }
+            },
+            {
+              "cache": "warm-artifact-cache",
+              "elapsedMs": 2209.33,
+              "nodes": 1004,
+              "edges": 2500,
+              "coverage": {
+                "listed": 1000,
+                "eligible": 1000,
+                "scanned": 1000,
+                "skipped": 0,
+                "bytes": 1841280,
+                "parserFailures": 0,
+                "unresolved": 1000,
+                "incoming": "scanned sources only",
+                "complete": true,
+                "omissions": [],
+                "warnings": [
+                  "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+                ]
+              },
+              "responsiveness": {
+                "samples": 139,
+                "p95Ms": 3.22,
+                "maxMs": 6.46
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

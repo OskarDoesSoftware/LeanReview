@@ -2,6 +2,7 @@ import { dataset } from "./benchmark-backend";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import { createHash } from "node:crypto";
 import { spawn, spawnSync, execFileSync } from "node:child_process";
 import { createServer } from "node:net";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -89,8 +90,12 @@ for (const kind of ["typescript", "java", "mixed"]) {
           body: body ? JSON.stringify(body) : undefined,
           signal: AbortSignal.timeout(120000),
         });
-        if (!response.ok)
-          throw new Error("Java benchmark request failed: " + route);
+        if (!response.ok) {
+          const failure = await response.json();
+          throw new Error(
+            "Java benchmark request failed: " + route + ": " + failure.error,
+          );
+        }
         return response.json();
       };
       const captureStart = performance.now();
@@ -114,14 +119,28 @@ for (const kind of ["typescript", "java", "mixed"]) {
         const scanStarted = performance.now();
         let view;
         try {
-          await request(`/sessions/${review.snapshot.sessionId}/graph`, {
-            snapshotId: review.snapshot.id,
-            options: {
-              side: "after",
-              maxFiles: 10000,
-              maxBytes: 20 * 1024 * 1024,
-            },
-          });
+          const cleanupDeadline = Date.now() + 10000;
+          for (;;) {
+            try {
+              await request(`/sessions/${review.snapshot.sessionId}/graph`, {
+                snapshotId: review.snapshot.id,
+                options: {
+                  side: "after",
+                  maxFiles: 10000,
+                  maxBytes: 20 * 1024 * 1024,
+                },
+              });
+              break;
+            } catch (failure) {
+              if (
+                !(failure instanceof Error) ||
+                !failure.message.includes("A graph scan is already running") ||
+                Date.now() >= cleanupDeadline
+              )
+                throw failure;
+              await sleep(50);
+            }
+          }
           do {
             if (performance.now() - scanStarted > 120000)
               throw new Error("Java graph benchmark timeout.");
@@ -199,6 +218,24 @@ await fs.writeFile(
         platform: process.platform,
         cpu: os.cpus()[0]?.model,
         java: spawnSync(java, ["-version"], { encoding: "utf8" }).stderr.trim(),
+      },
+      source: {
+        commit: execFileSync("git", ["rev-parse", "HEAD"], {
+          encoding: "utf8",
+        }).trim(),
+        workingTree: execFileSync("git", ["status", "--short"], {
+          encoding: "utf8",
+        }).trim(),
+        jarSha256: createHash("sha256")
+          .update(
+            await fs.readFile(
+              "backend-java/target/leanreview-backend-0.1.0-SNAPSHOT.jar",
+            ),
+          )
+          .digest("hex"),
+        helperSha256: createHash("sha256")
+          .update(await fs.readFile("backend-java/helper/dist/index.js"))
+          .digest("hex"),
       },
       methodology: {
         scope:
