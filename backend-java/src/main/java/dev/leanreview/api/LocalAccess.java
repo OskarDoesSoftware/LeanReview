@@ -152,8 +152,16 @@ public class LocalAccess extends OncePerRequestFilter {
       return;
     }
     if (!Set.of("GET", "HEAD").contains(request.getMethod())) {
-      byte[] body = request.getInputStream().readNBytes(1024 * 1024 + 1);
-      if (body.length > 1024 * 1024) {
+      boolean coverageImport =
+          request.getRequestURI().matches("/api/sessions/[^/]+/coverage/import")
+              && "application/vnd.leanreview.coverage+json"
+                  .equalsIgnoreCase(
+                      java.util.Objects.toString(request.getContentType(), "")
+                          .split(";", 2)[0]
+                          .strip());
+      int limit = coverageImport ? 20 * 1024 * 1024 : 1024 * 1024;
+      byte[] body = request.getInputStream().readNBytes(limit + 1);
+      if (body.length > limit) {
         reject(response, 413, "Request body is too large.");
         return;
       }

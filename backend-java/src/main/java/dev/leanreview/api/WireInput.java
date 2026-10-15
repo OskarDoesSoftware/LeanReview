@@ -16,8 +16,12 @@ public final class WireInput {
   private WireInput() {}
 
   public static JsonNode body(HttpServletRequest request) throws IOException {
-    byte[] bytes = request.getInputStream().readNBytes(1024 * 1024 + 1);
-    if (bytes.length > 1024 * 1024) throw new IllegalArgumentException("request entity too large");
+    return body(request, 1024 * 1024);
+  }
+
+  public static JsonNode body(HttpServletRequest request, int limit) throws IOException {
+    byte[] bytes = request.getInputStream().readNBytes(limit + 1);
+    if (bytes.length > limit) throw new IllegalArgumentException("request entity too large");
     if (bytes.length == 0) return MissingNode.getInstance();
     try {
       return JSON.readTree(bytes);

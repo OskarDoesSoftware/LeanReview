@@ -34,7 +34,11 @@ class CoreApiTest {
             body == null
                 ? HttpRequest.BodyPublishers.noBody()
                 : HttpRequest.BodyPublishers.ofString(body.toString()))
-        .header("Content-Type", "application/json");
+        .header(
+            "Content-Type",
+            route.endsWith("/coverage/import")
+                ? "application/vnd.leanreview.coverage+json"
+                : "application/json");
     var response = client.send(request.build(), HttpResponse.BodyHandlers.ofString());
     if (response.headers().firstValue("Set-Cookie").isPresent())
       cookie = response.headers().firstValue("Set-Cookie").get().split(";")[0];
@@ -123,6 +127,21 @@ class CoreApiTest {
               "mark progress",
               "accept grouping",
               "invalid grouping",
+              "coverage",
+              "coverage artifact",
+              "missing coverage artifact",
+              "import unaligned coverage",
+              "set test config",
+              "reject unconfirmed tests",
+              "cancel interrupted tests",
+              "recovered partial graph",
+              "graph status only",
+              "missing graph source",
+              "invalid graph options",
+              "cancel idle graph",
+              "start capped graph",
+              "completed capped graph",
+              "captured graph source",
               "invalid draft coordinates");
       for (JsonNode example :
           json.readTree(Path.of("../tests/fixtures/backend-compatibility/http.json").toFile())) {
@@ -133,6 +152,14 @@ class CoreApiTest {
                 request.path("method").asText(),
                 request.path("path").asText(),
                 request.has("body") ? request.path("body") : null);
+        if (example.path("name").asText().equals("completed capped graph")) {
+          long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(15);
+          while (actual.body.path("run").path("status").asText().equals("running")
+              && System.nanoTime() < deadline) {
+            Thread.sleep(20);
+            actual = call("GET", request.path("path").asText(), null);
+          }
+        }
         assertThat(actual.status)
             .as(example.path("name").asText())
             .isEqualTo(example.path("response").path("status").asInt());
@@ -172,6 +199,11 @@ class CoreApiTest {
   }
 
   private JsonNode normalize(JsonNode node, String key) {
+    if (node.isNumber()
+        && node.asDouble() == Math.floor(node.asDouble())
+        && node.asDouble() >= Integer.MIN_VALUE
+        && node.asDouble() <= Integer.MAX_VALUE)
+      return json.getNodeFactory().numberNode(node.asInt());
     if (node.isObject()) {
       ObjectNode result = json.createObjectNode();
       node.fields()

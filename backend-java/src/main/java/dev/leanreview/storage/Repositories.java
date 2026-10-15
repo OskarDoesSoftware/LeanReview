@@ -24,7 +24,12 @@ public final class Repositories {
 
   public interface CoverageReports extends JpaRepository<Rows.Coverage, Rows.CoverageKey> {}
 
-  public interface TestRuns extends JpaRepository<Rows.TestRun, String> {}
+  public interface TestRuns extends JpaRepository<Rows.TestRun, String> {
+    @Query(
+        value = "SELECT * FROM test_runs WHERE snapshot_id=:snapshot ORDER BY rowid DESC LIMIT 1",
+        nativeQuery = true)
+    List<Rows.TestRun> latest(@Param("snapshot") String snapshot);
+  }
 
   public interface Graphs extends JpaRepository<Rows.Graph, Rows.GraphKey> {}
 }

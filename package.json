@@ -15,6 +15,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "vite build --config frontend/vite.config.ts && tsup backend/src/index.ts --format esm --out-dir backend/dist --platform node --external better-sqlite3 --external @napi-rs/keyring --external web-tree-sitter",
+    "build:analysis-helper": "node scripts/build-analysis-helper.mjs",
     "start": "node backend/dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

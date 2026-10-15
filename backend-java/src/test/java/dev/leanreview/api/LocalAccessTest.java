@@ -42,6 +42,29 @@ class LocalAccessTest {
   }
 
   @Test
+  void coverageImportHasASeparateAuthenticatedBoundWithoutWideningOtherRoutes() throws Exception {
+    var access = access();
+    String cookie = call(access, bootstrap()).getHeader("Set-Cookie").split(";")[0];
+    var imported =
+        request("POST", "/api/sessions/fixture/coverage/import", "127.0.0.1:4318", ORIGIN);
+    imported.setContentType("application/vnd.leanreview.coverage+json");
+    imported.setContent(new byte[2 * 1024 * 1024]);
+    assertThat(call(access, imported).getStatus()).isEqualTo(401);
+    imported.addHeader("Cookie", cookie);
+    assertThat(call(access, imported).getContentAsString()).isEqualTo("allowed");
+    imported.setContent(new byte[20 * 1024 * 1024 + 1]);
+    assertThat(call(access, imported).getStatus()).isEqualTo(413);
+    imported.setContent(new byte[2 * 1024 * 1024]);
+    imported.setContentType("application/json");
+    assertThat(call(access, imported).getStatus()).isEqualTo(413);
+    var other = request("POST", "/api/sessions", "127.0.0.1:4318", ORIGIN);
+    other.addHeader("Cookie", cookie);
+    other.setContentType("application/vnd.leanreview.coverage+json");
+    other.setContent(new byte[2 * 1024 * 1024]);
+    assertThat(call(access, other).getStatus()).isEqualTo(413);
+  }
+
+  @Test
   void sessionIsSingleUseAndOnlyValidForItsLaunch() throws Exception {
     var access = access();
     var response = call(access, bootstrap());

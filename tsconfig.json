@@ -16,6 +16,7 @@
   },
   "include": [
     "backend/src",
+    "backend-java/helper",
     "frontend/src",
     "packages/contracts/src",
     "tests",

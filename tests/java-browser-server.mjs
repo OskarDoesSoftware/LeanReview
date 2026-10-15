@@ -2,6 +2,22 @@ import { mkdtemp, mkdir, writeFile, cp } from "node:fs/promises";
 import { execFileSync, spawn } from "node:child_process";
 import path from "node:path";
 import { createServer } from "node:http";
+import { build } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
+await build({
+  configFile: false,
+  root: path.resolve("tests/browser-java"),
+  base: "/assets/java-analysis/",
+  plugins: [react(), tailwindcss()],
+  resolve: { alias: { "@": path.resolve("frontend/src") } },
+  build: {
+    outDir: path.resolve("frontend/dist/assets/java-analysis"),
+    emptyOutDir: true,
+    rollupOptions: { input: path.resolve("tests/browser-java/analysis.html") },
+  },
+});
 
 await mkdir(".leanreview-test", { recursive: true });
 const directory = await mkdtemp(path.resolve(".leanreview-test/java-browser-"));
@@ -20,8 +36,14 @@ git("config", "core.autocrlf", "false");
 await writeFile(path.join(root, "first.ts"), "export const first = 1;\n");
 git("add", ".");
 git("commit", "--no-gpg-sign", "-m", "fixture");
-await writeFile(path.join(root, "first.ts"), "export const first = 2;\n");
-await writeFile(path.join(root, "second.ts"), "export const second = true;\n");
+await writeFile(
+  path.join(root, "first.ts"),
+  "export function first(x: number) { if (x) return 2; return 0; }\n",
+);
+await writeFile(
+  path.join(root, "second.ts"),
+  "import { first } from './first'; export const second = first(1);\n",
+);
 const data = path.join(directory, "data");
 const provider = createServer(async (request, response) => {
   let body = "";
@@ -75,6 +97,8 @@ const child = spawn(
     "--leanreview.origin=http://127.0.0.1:4324",
     `--leanreview.data-directory=${data}`,
     `--leanreview.frontend-directory=${path.resolve("frontend/dist")}`,
+    `--leanreview.analysis.helper=${path.resolve("backend-java/helper/dist/index.js")}`,
+    `--leanreview.analysis.node=${process.execPath}`,
     "--logging.level.root=ERROR",
     "--spring.main.banner-mode=off",
   ],

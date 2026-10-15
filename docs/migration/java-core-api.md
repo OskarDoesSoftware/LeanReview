@@ -39,4 +39,4 @@ The Java tests exercise real SQLite and Git repositories, loopback HTTP requests
 
 The separate Playwright configuration starts the packaged Java server on port 4324 with an isolated copy of the frozen database/cache. It opens a migrated review and creates a new review through React, saves progress and a draft, changes a manual cohort name, reloads, refreshes changed content, and opens read-only history. The normal Node launcher and its data directory are not used by this test.
 
-Runtime verification is Windows x64 only. Other platforms, complete frontend flows for analysis/graphs/coverage, default launcher changes, paired-data restore drills, and performance acceptance remain in the later migration issues. No large-repository performance improvement is claimed by this milestone.
+Runtime verification is Windows x64 only. Analysis and graph/coverage ports are documented in `java-review-analysis.md` and `java-graph-coverage.md`. Other platforms, default launcher changes, paired-data restore drills, and performance acceptance remain in later migration issues. No large-repository performance improvement is claimed by this milestone.

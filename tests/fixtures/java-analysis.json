@@ -1,0 +1,901 @@
+{
+  "snapshot": {
+    "id": "analysis-fixture",
+    "sessionId": "session-analysis",
+    "root": "/fixture",
+    "head": "abc",
+    "capturedAt": "2026-01-01T00:00:00.000Z",
+    "graphContext": {
+      "before": {
+        "complete": true,
+        "entries": [
+          {
+            "path": "src/A.java",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/B.java",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/Bad.ts",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/a.ts",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/b.ts",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "tsconfig.json",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      "after": {
+        "complete": true,
+        "entries": [
+          {
+            "path": "src/A.java",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/B.java",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/Bad.ts",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/a.ts",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "src/b.ts",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "path": "tsconfig.json",
+            "mode": "100644",
+            "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      }
+    },
+    "files": [
+      {
+        "id": "file-0",
+        "fingerprint": "bbd0e4c9d672cf29ae1a1a817b222477eb67e85d1a7ce4ac77da43036bc41207",
+        "path": "tsconfig.json",
+        "oldPath": "tsconfig.json",
+        "status": "modified",
+        "before": {
+          "kind": "text",
+          "text": "{\"compilerOptions\":{\"baseUrl\":\".\",\"paths\":{\"@app/*\":[\"src/*\"]}}}"
+        },
+        "after": {
+          "kind": "text",
+          "text": "{\"compilerOptions\":{\"baseUrl\":\".\",\"paths\":{\"@app/*\":[\"src/*\"]}}}"
+        }
+      },
+      {
+        "id": "file-1",
+        "fingerprint": "9624e0e4232e190215be633f4c5a706086883e2e413ec3ed771eec9e08aa6baa",
+        "path": "src/a.ts",
+        "oldPath": "src/a.ts",
+        "status": "modified",
+        "before": {
+          "kind": "text",
+          "text": "import { b } from '@app/b';\nexport function a(x: number) { if (x) return b(); return 0; }\n"
+        },
+        "after": {
+          "kind": "text",
+          "text": "import { b } from '@app/b';\nexport function a(x: number) { if (x) return b(); return 0; }\n"
+        }
+      },
+      {
+        "id": "file-2",
+        "fingerprint": "31d262884d381df5831fdabeeec78cf3462eb610c3edc816e6cea17f79c7b7c6",
+        "path": "src/b.ts",
+        "oldPath": "src/b.ts",
+        "status": "modified",
+        "before": {
+          "kind": "text",
+          "text": "import { a } from './a'; export function b() { return a(0); }\n"
+        },
+        "after": {
+          "kind": "text",
+          "text": "import { a } from './a'; export function b() { return a(0); }\n"
+        }
+      },
+      {
+        "id": "file-3",
+        "fingerprint": "447efb0b9de9403014c5cbc38572b51c1b5712bdd97e582834d0fd3a3746c202",
+        "path": "src/Bad.ts",
+        "oldPath": "src/Bad.ts",
+        "status": "modified",
+        "before": {
+          "kind": "text",
+          "text": "export function broken( {"
+        },
+        "after": {
+          "kind": "text",
+          "text": "export function broken( {"
+        }
+      },
+      {
+        "id": "file-4",
+        "fingerprint": "2d518cc0358478389e10b473e75ea15d3f9f2e5150ce74094c67d77a61d76a51",
+        "path": "src/A.java",
+        "oldPath": "src/A.java",
+        "status": "modified",
+        "before": {
+          "kind": "text",
+          "text": "package demo; import java.util.List; class A { B b; List<String> names; }"
+        },
+        "after": {
+          "kind": "text",
+          "text": "package demo; import java.util.List; class A { B b; List<String> names; }"
+        }
+      },
+      {
+        "id": "file-5",
+        "fingerprint": "0105a0610c0451b44a1d8c5a4c6dc02ee6905ad21f74391afe0db103374c4a1f",
+        "path": "src/B.java",
+        "oldPath": "src/B.java",
+        "status": "modified",
+        "before": {
+          "kind": "text",
+          "text": "package demo; class B { A a; }"
+        },
+        "after": {
+          "kind": "text",
+          "text": "package demo; class B { A a; }"
+        }
+      }
+    ]
+  },
+  "graphs": [
+    {
+      "version": 1,
+      "snapshotId": "analysis-fixture",
+      "side": "after",
+      "revision": "ad7f99d883e3ed43c86fddf9e3a1bd8b9641b9b25d159bb9fa95b13d3fbadba0",
+      "capturedAt": "<timestamp>",
+      "options": {
+        "side": "after",
+        "maxFiles": 10000,
+        "maxBytes": 20971520
+      },
+      "nodes": [
+        {
+          "id": "3adf4cd9e97b9fdcaa577404",
+          "label": "demo.A",
+          "kind": "class",
+          "language": "java",
+          "path": "src/A.java",
+          "fileId": "file-4",
+          "changed": true,
+          "line": 1,
+          "packageId": "8ed0b86995987539c16da9c3"
+        },
+        {
+          "id": "8ed0b86995987539c16da9c3",
+          "label": "demo",
+          "kind": "package",
+          "language": "java",
+          "changed": true
+        },
+        {
+          "id": "80f8c260fa7a661df9e6cd88",
+          "label": "demo.B",
+          "kind": "class",
+          "language": "java",
+          "path": "src/B.java",
+          "fileId": "file-5",
+          "changed": true,
+          "line": 1,
+          "packageId": "8ed0b86995987539c16da9c3"
+        },
+        {
+          "id": "5a00ef98cc2229d53b833019",
+          "label": "src/Bad.ts",
+          "kind": "module",
+          "language": "ts/js",
+          "path": "src/Bad.ts",
+          "fileId": "file-3",
+          "changed": true
+        },
+        {
+          "id": "b6cfee696aaddef0b4d70784",
+          "label": "src/a.ts",
+          "kind": "module",
+          "language": "ts/js",
+          "path": "src/a.ts",
+          "fileId": "file-1",
+          "changed": true
+        },
+        {
+          "id": "76d3c7132ca0e425a781d3db",
+          "label": "src/b.ts",
+          "kind": "module",
+          "language": "ts/js",
+          "path": "src/b.ts",
+          "fileId": "file-2",
+          "changed": true
+        },
+        {
+          "id": "740085893d4a007e1d4f9517",
+          "label": "java.util.List",
+          "kind": "external",
+          "language": "java",
+          "changed": false
+        },
+        {
+          "id": "bf976061227a5ed35b7c3ff6",
+          "label": "List",
+          "kind": "unresolved",
+          "language": "java",
+          "changed": false
+        },
+        {
+          "id": "69556167f946e83dd15d17cf",
+          "label": "String",
+          "kind": "unresolved",
+          "language": "java",
+          "changed": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "47abb9cf3815565fd49e015e",
+          "source": "b6cfee696aaddef0b4d70784",
+          "target": "76d3c7132ca0e425a781d3db",
+          "kind": "import",
+          "typeOnly": false,
+          "status": "resolved",
+          "path": "src/a.ts",
+          "line": 1,
+          "specifier": "@app/b",
+          "resolver": "TypeScript 6.0.3 captured-config module resolution"
+        },
+        {
+          "id": "7fcc4a4956dd59714e4751cb",
+          "source": "76d3c7132ca0e425a781d3db",
+          "target": "b6cfee696aaddef0b4d70784",
+          "kind": "import",
+          "typeOnly": false,
+          "status": "resolved",
+          "path": "src/b.ts",
+          "line": 1,
+          "specifier": "./a",
+          "resolver": "TypeScript 6.0.3 captured-config module resolution"
+        },
+        {
+          "id": "e9855aa1f47603f735024c15",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "740085893d4a007e1d4f9517",
+          "kind": "import",
+          "typeOnly": false,
+          "status": "external",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "java.util.List",
+          "resolver": "Declared platform dependency; classpath not inspected"
+        },
+        {
+          "id": "9702d66b69b418b279dbd7e2",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "80f8c260fa7a661df9e6cd88",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "resolved",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "B",
+          "resolver": "Tree-sitter Java source declarations, package/import/type context"
+        },
+        {
+          "id": "77c93b48cae00e306744355f",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "bf976061227a5ed35b7c3ff6",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "unresolved",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "List",
+          "resolver": "Unresolved or ambiguous Java source reference; no classpath execution"
+        },
+        {
+          "id": "d18a76ac322e9157bac46c5d",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "69556167f946e83dd15d17cf",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "unresolved",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "String",
+          "resolver": "Unresolved or ambiguous Java source reference; no classpath execution"
+        },
+        {
+          "id": "c0ef0e9c585fa23cc89a83ed",
+          "source": "80f8c260fa7a661df9e6cd88",
+          "target": "3adf4cd9e97b9fdcaa577404",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "resolved",
+          "path": "src/B.java",
+          "line": 1,
+          "specifier": "A",
+          "resolver": "Tree-sitter Java source declarations, package/import/type context"
+        }
+      ],
+      "cycles": [
+        [
+          "76d3c7132ca0e425a781d3db",
+          "b6cfee696aaddef0b4d70784"
+        ],
+        [
+          "3adf4cd9e97b9fdcaa577404",
+          "80f8c260fa7a661df9e6cd88"
+        ]
+      ],
+      "coverage": {
+        "listed": 6,
+        "eligible": 5,
+        "scanned": 4,
+        "skipped": 1,
+        "bytes": 280,
+        "parserFailures": 1,
+        "unresolved": 2,
+        "incoming": "scanned sources only",
+        "complete": false,
+        "omissions": [
+          {
+            "path": "src/Bad.ts",
+            "reason": "TypeScript/JavaScript parse failure"
+          }
+        ],
+        "warnings": [
+          "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+        ]
+      },
+      "provenance": {
+        "typescript": "TypeScript 6.0.3 source/module resolver",
+        "java": "Tree-sitter Java 0.20.2 grammar via tree-sitter-wasms 0.1.13 / runtime 0.20.8",
+        "configuration": [
+          "tsconfig.json"
+        ]
+      }
+    },
+    {
+      "version": 1,
+      "snapshotId": "analysis-fixture",
+      "side": "before",
+      "revision": "ea24c19e9ffc251712d44a2cf210d14f82985b5399c3b1bc34695fa74e753a2f",
+      "capturedAt": "<timestamp>",
+      "options": {
+        "side": "before",
+        "maxFiles": 2,
+        "maxBytes": 1024
+      },
+      "nodes": [
+        {
+          "id": "3adf4cd9e97b9fdcaa577404",
+          "label": "demo.A",
+          "kind": "class",
+          "language": "java",
+          "path": "src/A.java",
+          "fileId": "file-4",
+          "changed": true,
+          "line": 1,
+          "packageId": "8ed0b86995987539c16da9c3"
+        },
+        {
+          "id": "8ed0b86995987539c16da9c3",
+          "label": "demo",
+          "kind": "package",
+          "language": "java",
+          "changed": true
+        },
+        {
+          "id": "80f8c260fa7a661df9e6cd88",
+          "label": "demo.B",
+          "kind": "class",
+          "language": "java",
+          "path": "src/B.java",
+          "fileId": "file-5",
+          "changed": true,
+          "line": 1,
+          "packageId": "8ed0b86995987539c16da9c3"
+        },
+        {
+          "id": "740085893d4a007e1d4f9517",
+          "label": "java.util.List",
+          "kind": "external",
+          "language": "java",
+          "changed": false
+        },
+        {
+          "id": "bf976061227a5ed35b7c3ff6",
+          "label": "List",
+          "kind": "unresolved",
+          "language": "java",
+          "changed": false
+        },
+        {
+          "id": "69556167f946e83dd15d17cf",
+          "label": "String",
+          "kind": "unresolved",
+          "language": "java",
+          "changed": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "e9855aa1f47603f735024c15",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "740085893d4a007e1d4f9517",
+          "kind": "import",
+          "typeOnly": false,
+          "status": "external",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "java.util.List",
+          "resolver": "Declared platform dependency; classpath not inspected"
+        },
+        {
+          "id": "9702d66b69b418b279dbd7e2",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "80f8c260fa7a661df9e6cd88",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "resolved",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "B",
+          "resolver": "Tree-sitter Java source declarations, package/import/type context"
+        },
+        {
+          "id": "77c93b48cae00e306744355f",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "bf976061227a5ed35b7c3ff6",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "unresolved",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "List",
+          "resolver": "Unresolved or ambiguous Java source reference; no classpath execution"
+        },
+        {
+          "id": "d18a76ac322e9157bac46c5d",
+          "source": "3adf4cd9e97b9fdcaa577404",
+          "target": "69556167f946e83dd15d17cf",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "unresolved",
+          "path": "src/A.java",
+          "line": 1,
+          "specifier": "String",
+          "resolver": "Unresolved or ambiguous Java source reference; no classpath execution"
+        },
+        {
+          "id": "c0ef0e9c585fa23cc89a83ed",
+          "source": "80f8c260fa7a661df9e6cd88",
+          "target": "3adf4cd9e97b9fdcaa577404",
+          "kind": "type-reference",
+          "typeOnly": false,
+          "status": "resolved",
+          "path": "src/B.java",
+          "line": 1,
+          "specifier": "A",
+          "resolver": "Tree-sitter Java source declarations, package/import/type context"
+        }
+      ],
+      "cycles": [
+        [
+          "3adf4cd9e97b9fdcaa577404",
+          "80f8c260fa7a661df9e6cd88"
+        ]
+      ],
+      "coverage": {
+        "listed": 6,
+        "eligible": 5,
+        "scanned": 2,
+        "skipped": 3,
+        "bytes": 103,
+        "parserFailures": 0,
+        "unresolved": 2,
+        "incoming": "scanned sources only",
+        "complete": false,
+        "omissions": [
+          {
+            "path": "src/Bad.ts",
+            "reason": "Source file scan cap reached"
+          },
+          {
+            "path": "src/a.ts",
+            "reason": "Source file scan cap reached"
+          },
+          {
+            "path": "src/b.ts",
+            "reason": "Source file scan cap reached"
+          }
+        ],
+        "warnings": [
+          "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness."
+        ]
+      },
+      "provenance": {
+        "typescript": "TypeScript 6.0.3 source/module resolver",
+        "java": "Tree-sitter Java 0.20.2 grammar via tree-sitter-wasms 0.1.13 / runtime 0.20.8",
+        "configuration": [
+          "tsconfig.json"
+        ]
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "format": "istanbul",
+      "report": "{\"src/a.ts\":{\"statementMap\":{\"0\":{\"start\":{\"line\":2,\"column\":31},\"end\":{\"line\":2,\"column\":51}},\"1\":{\"start\":{\"line\":2,\"column\":52},\"end\":{\"line\":2,\"column\":61}}},\"s\":{\"0\":1,\"1\":0}}}",
+      "provenance": null,
+      "metrics": {
+        "snapshotId": "analysis-fixture",
+        "format": "istanbul",
+        "capturedAt": "<timestamp>",
+        "reportHash": "f39befd281b9e2af6daef58d095853625e047bcf4bd5710ed2cc2b5e6a5de1f7",
+        "aligned": false,
+        "files": [
+          {
+            "fileId": "file-1",
+            "path": "src/a.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "83705cd8b52745681fe199c3",
+                "name": "a",
+                "line": 2,
+                "complexity": 2,
+                "coverage": null,
+                "crap": null,
+                "reason": "Missing/stale source provenance"
+              }
+            ]
+          },
+          {
+            "fileId": "file-2",
+            "path": "src/b.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "f3b116d68a36b4c40e0d61fc",
+                "name": "b",
+                "line": 1,
+                "complexity": 1,
+                "coverage": null,
+                "crap": null,
+                "reason": "No matching Istanbul source coverage"
+              }
+            ]
+          },
+          {
+            "fileId": "file-3",
+            "path": "src/Bad.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [],
+            "reason": "Unsupported or invalid source syntax."
+          },
+          {
+            "fileId": "file-4",
+            "path": "src/A.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          },
+          {
+            "fileId": "file-5",
+            "path": "src/B.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          }
+        ],
+        "warnings": [
+          "Report fingerprint/source provenance is missing or mismatched. CRAP is unavailable until an aligned report is supplied."
+        ],
+        "threshold": 8,
+        "highest": null,
+        "measured": 0,
+        "missing": 2,
+        "aboveThreshold": 0
+      }
+    },
+    {
+      "format": "istanbul",
+      "report": "{\"src/a.ts\":{\"statementMap\":{\"0\":{\"start\":{\"line\":2,\"column\":31},\"end\":{\"line\":2,\"column\":51}},\"1\":{\"start\":{\"line\":2,\"column\":52},\"end\":{\"line\":2,\"column\":61}}},\"s\":{\"0\":1,\"1\":0}}}",
+      "provenance": {
+        "version": 1,
+        "reportHash": "f39befd281b9e2af6daef58d095853625e047bcf4bd5710ed2cc2b5e6a5de1f7",
+        "sourceHashes": {
+          "tsconfig.json": "bbd0e4c9d672cf29ae1a1a817b222477eb67e85d1a7ce4ac77da43036bc41207",
+          "src/a.ts": "9624e0e4232e190215be633f4c5a706086883e2e413ec3ed771eec9e08aa6baa",
+          "src/b.ts": "31d262884d381df5831fdabeeec78cf3462eb610c3edc816e6cea17f79c7b7c6",
+          "src/Bad.ts": "447efb0b9de9403014c5cbc38572b51c1b5712bdd97e582834d0fd3a3746c202",
+          "src/A.java": "2d518cc0358478389e10b473e75ea15d3f9f2e5150ce74094c67d77a61d76a51",
+          "src/B.java": "0105a0610c0451b44a1d8c5a4c6dc02ee6905ad21f74391afe0db103374c4a1f"
+        },
+        "head": "abc",
+        "tool": "fixture",
+        "capturedAt": "2026-01-01"
+      },
+      "metrics": {
+        "snapshotId": "analysis-fixture",
+        "format": "istanbul",
+        "capturedAt": "<timestamp>",
+        "reportHash": "f39befd281b9e2af6daef58d095853625e047bcf4bd5710ed2cc2b5e6a5de1f7",
+        "aligned": true,
+        "files": [
+          {
+            "fileId": "file-1",
+            "path": "src/a.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "83705cd8b52745681fe199c3",
+                "name": "a",
+                "line": 2,
+                "complexity": 2,
+                "coverage": 0.5,
+                "crap": 2.5
+              }
+            ]
+          },
+          {
+            "fileId": "file-2",
+            "path": "src/b.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "f3b116d68a36b4c40e0d61fc",
+                "name": "b",
+                "line": 1,
+                "complexity": 1,
+                "coverage": null,
+                "crap": null,
+                "reason": "No matching Istanbul source coverage"
+              }
+            ]
+          },
+          {
+            "fileId": "file-3",
+            "path": "src/Bad.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [],
+            "reason": "Unsupported or invalid source syntax."
+          },
+          {
+            "fileId": "file-4",
+            "path": "src/A.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          },
+          {
+            "fileId": "file-5",
+            "path": "src/B.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          }
+        ],
+        "warnings": [],
+        "threshold": 8,
+        "highest": 2.5,
+        "measured": 1,
+        "missing": 1,
+        "aboveThreshold": 0
+      }
+    },
+    {
+      "format": "jacoco",
+      "report": "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\"><report><package name=\"demo\"><class name=\"demo/A\" sourcefilename=\"A.java\"><method name=\"work\" desc=\"()V\" line=\"1\"><counter type=\"COMPLEXITY\" missed=\"1\" covered=\"2\"/><counter type=\"INSTRUCTION\" missed=\"1\" covered=\"3\"/></method></class></package></report>",
+      "provenance": null,
+      "metrics": {
+        "snapshotId": "analysis-fixture",
+        "format": "jacoco",
+        "capturedAt": "<timestamp>",
+        "reportHash": "5abe1fb61b3c98b4bd76417c9d795b795a0e9699980ecba17ac95206ff3b29f3",
+        "aligned": false,
+        "files": [
+          {
+            "fileId": "file-1",
+            "path": "src/a.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "83705cd8b52745681fe199c3",
+                "name": "a",
+                "line": 2,
+                "complexity": 2,
+                "coverage": null,
+                "crap": null,
+                "reason": "No matching Istanbul source coverage"
+              }
+            ]
+          },
+          {
+            "fileId": "file-2",
+            "path": "src/b.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "f3b116d68a36b4c40e0d61fc",
+                "name": "b",
+                "line": 1,
+                "complexity": 1,
+                "coverage": null,
+                "crap": null,
+                "reason": "No matching Istanbul source coverage"
+              }
+            ]
+          },
+          {
+            "fileId": "file-3",
+            "path": "src/Bad.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [],
+            "reason": "Unsupported or invalid source syntax."
+          },
+          {
+            "fileId": "file-4",
+            "path": "src/A.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          },
+          {
+            "fileId": "file-5",
+            "path": "src/B.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          }
+        ],
+        "warnings": [
+          "Report fingerprint/source provenance is missing or mismatched. CRAP is unavailable until an aligned report is supplied."
+        ],
+        "threshold": 8,
+        "highest": null,
+        "measured": 0,
+        "missing": 2,
+        "aboveThreshold": 0
+      }
+    },
+    {
+      "format": "jacoco",
+      "report": "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\"><report><package name=\"demo\"><class name=\"demo/A\" sourcefilename=\"A.java\"><method name=\"work\" desc=\"()V\" line=\"1\"><counter type=\"COMPLEXITY\" missed=\"1\" covered=\"2\"/><counter type=\"INSTRUCTION\" missed=\"1\" covered=\"3\"/></method></class></package></report>",
+      "provenance": {
+        "version": 1,
+        "reportHash": "5abe1fb61b3c98b4bd76417c9d795b795a0e9699980ecba17ac95206ff3b29f3",
+        "sourceHashes": {
+          "tsconfig.json": "bbd0e4c9d672cf29ae1a1a817b222477eb67e85d1a7ce4ac77da43036bc41207",
+          "src/a.ts": "9624e0e4232e190215be633f4c5a706086883e2e413ec3ed771eec9e08aa6baa",
+          "src/b.ts": "31d262884d381df5831fdabeeec78cf3462eb610c3edc816e6cea17f79c7b7c6",
+          "src/Bad.ts": "447efb0b9de9403014c5cbc38572b51c1b5712bdd97e582834d0fd3a3746c202",
+          "src/A.java": "2d518cc0358478389e10b473e75ea15d3f9f2e5150ce74094c67d77a61d76a51",
+          "src/B.java": "0105a0610c0451b44a1d8c5a4c6dc02ee6905ad21f74391afe0db103374c4a1f"
+        },
+        "head": "abc",
+        "tool": "fixture",
+        "capturedAt": "2026-01-01"
+      },
+      "metrics": {
+        "snapshotId": "analysis-fixture",
+        "format": "jacoco",
+        "capturedAt": "<timestamp>",
+        "reportHash": "5abe1fb61b3c98b4bd76417c9d795b795a0e9699980ecba17ac95206ff3b29f3",
+        "aligned": true,
+        "files": [
+          {
+            "fileId": "file-1",
+            "path": "src/a.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "83705cd8b52745681fe199c3",
+                "name": "a",
+                "line": 2,
+                "complexity": 2,
+                "coverage": null,
+                "crap": null,
+                "reason": "No matching Istanbul source coverage"
+              }
+            ]
+          },
+          {
+            "fileId": "file-2",
+            "path": "src/b.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "f3b116d68a36b4c40e0d61fc",
+                "name": "b",
+                "line": 1,
+                "complexity": 1,
+                "coverage": null,
+                "crap": null,
+                "reason": "No matching Istanbul source coverage"
+              }
+            ]
+          },
+          {
+            "fileId": "file-3",
+            "path": "src/Bad.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [],
+            "reason": "Unsupported or invalid source syntax."
+          },
+          {
+            "fileId": "file-4",
+            "path": "src/A.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          },
+          {
+            "fileId": "file-5",
+            "path": "src/B.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          }
+        ],
+        "warnings": [],
+        "threshold": 8,
+        "highest": null,
+        "measured": 0,
+        "missing": 2,
+        "aboveThreshold": 0
+      }
+    }
+  ]
+}

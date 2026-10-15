@@ -82,7 +82,7 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
     .getByRole("button", { name: "Accept proposal", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "AI fixture", exact: true }),
+    page.getByRole("heading", { name: "AI fixture", exact: true, level: 3 }),
   ).toBeVisible();
   await expect(page.locator(".progress-summary")).toContainText(
     "1 / 2 reviewed",
@@ -117,15 +117,87 @@ test("React reviews migrated and Java-created snapshots and persists manual edit
   expect(grouping.ok()).toBe(true);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Manual review", exact: true }),
+    page.getByRole("heading", { name: "Manual review", exact: true, level: 3 }),
   ).toBeVisible();
   page.once("dialog", (dialog) => dialog.accept("Manual edits"));
   await page
     .getByRole("button", { name: "Rename Manual review", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Manual edits", exact: true }),
+    page.getByRole("heading", { name: "Manual edits", exact: true, level: 3 }),
   ).toBeVisible();
+  await page.goto(`/assets/java-analysis/analysis.html?session=${session}`);
+  await expect(
+    page.getByRole("heading", { name: "Java analysis acceptance" }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Repository graph", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Scan pinned sources", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Rescan pinned sources", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".react-flow__node").first()).toBeVisible();
+  await page.getByRole("button", { name: "Close graph", exact: true }).click();
+  const base = `/api/sessions/${session}/coverage`;
+  const headers = { Origin: "http://127.0.0.1:4324" };
+  const report = {
+    "first.ts": {
+      statementMap: {
+        "0": { start: { line: 1, column: 34 }, end: { line: 1, column: 49 } },
+        "1": { start: { line: 1, column: 50 }, end: { line: 1, column: 59 } },
+      },
+      s: { "0": 1, "1": 0 },
+    },
+  };
+  const configuredTests = await page.request.post(base + "/config", {
+    headers,
+    data: {
+      snapshotId: review.snapshot.id,
+      config: {
+        format: "istanbul",
+        cwd: ".",
+        reportPath: "coverage.json",
+        timeoutSeconds: 30,
+        threshold: 8,
+        steps: [
+          {
+            executable: process.execPath,
+            args: [
+              "-e",
+              `require('node:fs').writeFileSync('coverage.json', ${JSON.stringify(JSON.stringify(report))})`,
+            ],
+            shell: false,
+          },
+        ],
+      },
+    },
+  });
+  expect(configuredTests.ok()).toBe(true);
+  await page.reload();
+  await expect(page.locator(".function-metric")).toContainText("first");
+  await page
+    .getByRole("button", { name: "Run tests & coverage", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "Run tests and measure coverage?" }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Confirm & run tests", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Test run · succeeded", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".function-metric")).toContainText("first");
+  const artifact = await page.request.get(base + "/artifact?format=istanbul");
+  expect(artifact.ok()).toBe(true);
+  expect(JSON.parse((await artifact.json()).report)).toEqual(report);
+  await page.goto("/");
+  await expect(
+    page.getByRole("combobox", { name: "Saved reviews" }),
+  ).toHaveValue(session);
   await writeFile(path.join(root, "first.ts"), "export const first = 3;\n");
   const refreshed = page.waitForResponse((response) =>
     new URL(response.url()).pathname.endsWith("/refresh"),
