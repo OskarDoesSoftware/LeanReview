@@ -45,3 +45,11 @@ Current execution evidence is Windows x64. Cross-platform release acceptance and
 On the development Windows machine, a 20-file/810-byte pinned fixture took 13,262 ms with two Git processes per file. The batch reader took 293 ms for the same scan. A separate probe measured 11,226 ms for old source reads versus 16 ms for parsing/resolution from memory. Replaying the reported 43-file/295,530-byte snapshot took 711 ms for extraction and 799 ms including isolated cache/SQLite persistence, with identical dependency evidence. These are local measurements, not platform-wide performance guarantees.
 
 `npm run benchmark:graph` recreates/reuses the isolated 20-file fixture and checks a two-second scan budget. The regular tests use Git's structured trace to verify one batch process for a multi-file cold scan, and cover empty/binary/oversized/missing objects plus cancellation. Browser verification uses a 46-source-file fixture and checks grouping, folder drill-down, minimum readable zoom, label size, focused edges, Java navigation, and safe labels.
+
+## Large projects
+
+Java overviews with more than 40 packages group at the first branching namespace. Double-click a namespace or choose Open namespace to explore its packages; package drill-down shows its classes and direct scanned neighbors. Back to packages returns to the overview. Search matches full package/class labels within the current scope.
+
+Connections defaults to Automatic. Small graphs show all connections. Views with at least 60 nodes or more than max(24, three times the node count) relationships use a grid and show connections for the selected module. Automatic rendering draws at most 160 relationships; the count beside the controls reports how many are drawn out of the available relationships. Choose All connections explicitly for a dense overview. Large layouts bypass ELK, and offscreen diagram elements are not rendered. Source evidence remains available in the inspector.
+
+These limits apply to visualization. Source scanning retains its file/byte caps and partial-scan reporting. A faster graph view does not establish faster Java parsing or classpath-complete resolution.

@@ -28,9 +28,9 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   ).toBeVisible();
   const stagedSessions = await (await page.request.get("/api/sessions")).json();
   await page.reload();
-  await page
-    .getByRole("combobox", { name: "Saved reviews" })
-    .selectOption(stagedSessions[0].id);
+  await expect(
+    page.getByRole("combobox", { name: "Saved reviews" }),
+  ).toHaveValue(stagedSessions[0].id);
   await expect(
     page.getByRole("combobox", { name: "Comparison mode" }),
   ).toHaveValue("staged");
@@ -62,6 +62,13 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   );
   await expect(page.locator(".file-heading strong")).toHaveText(
     "src/auth/types.ts",
+  );
+  await page.reload();
+  await expect(page.locator(".file-heading strong")).toHaveText(
+    "src/auth/types.ts",
+  );
+  await expect(page.locator(".progress-summary")).toContainText(
+    "1 / 2 reviewed",
   );
   await page.getByRole("button", { name: /validatePassword.ts/ }).click();
   await page
@@ -280,7 +287,7 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   await expect(graph.getByLabel("Group TS/JS folders")).toBeChecked();
   await expect(graph.locator(".graph-node-list button")).toHaveCount(5);
   await expect(graph.locator(".react-flow__edge")).not.toHaveCount(0);
-  await expect(graph.getByLabel("Graph connections")).toHaveValue("all");
+  await expect(graph.getByLabel("Graph connections")).toHaveValue("auto");
   await graph.getByLabel("External / unresolved").check();
   await expect(
     graph.getByRole("button", {

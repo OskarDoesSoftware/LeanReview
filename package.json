@@ -19,7 +19,10 @@
     "test": "vitest run",
     "test:prepare-java": "node scripts/prepare-java-fixture.mjs",
     "test:browser": "playwright test",
-    "benchmark:graph": "node --import tsx scripts/benchmark-graph.mjs"
+    "benchmark:graph": "node --import tsx scripts/benchmark-graph.mjs",
+    "compatibility:freeze": "node --import tsx scripts/freeze-backend-compatibility.ts --write",
+    "test:compatibility": "vitest run tests/backend-compatibility.test.ts",
+    "benchmark:backend": "node --import tsx scripts/benchmark-backend.ts"
   },
   "dependencies": {
     "@napi-rs/keyring": "2.1.1",

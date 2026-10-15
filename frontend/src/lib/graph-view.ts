@@ -46,6 +46,78 @@ export function graphView(
         selected.add(edge.target);
       }
   }
+  // Collapse large Java projects at the first branching namespace, then drill down.
+  const namespace = options.javaPackage?.startsWith("namespace:")
+    ? options.javaPackage.slice("namespace:".length)
+    : null;
+  const packages = graph.nodes.filter(
+    (n) =>
+      n.kind === "package" &&
+      n.language === "java" &&
+      (!namespace ||
+        n.label === namespace ||
+        n.label.startsWith(namespace + ".")) &&
+      selected.has(n.id),
+  );
+  if (namespace) {
+    const packageIds = new Set(packages.map((n) => n.id));
+    selected = new Set(
+      graph.nodes
+        .filter(
+          (n) =>
+            packageIds.has(n.id) ||
+            (!!n.packageId && packageIds.has(n.packageId)),
+        )
+        .map((n) => n.id),
+    );
+  }
+  if (options.javaPackage && !namespace) {
+    const inside = new Set(
+      graph.nodes
+        .filter((n) => n.packageId === options.javaPackage)
+        .map((n) => n.id),
+    );
+    selected = new Set(inside);
+    for (const edge of graph.edges)
+      if (inside.has(edge.source) || inside.has(edge.target)) {
+        selected.add(edge.source);
+        selected.add(edge.target);
+      }
+  }
+  const javaGroups = new Map<string, GraphNode>();
+  if (packages.length > 40 && (!options.javaPackage || !!namespace)) {
+    const labels = packages.map((n) => n.label.split("."));
+    let depth = 0;
+    while (
+      labels.every(
+        (parts) => parts.length > depth && parts[depth] === labels[0][depth],
+      )
+    )
+      depth++;
+    const buckets = new Map<string, GraphNode[]>();
+    for (const pkg of packages) {
+      const prefix = pkg.label
+        .split(".")
+        .slice(0, depth + 1)
+        .join(".");
+      const bucket = buckets.get(prefix) ?? [];
+      bucket.push(pkg);
+      buckets.set(prefix, bucket);
+    }
+    for (const [prefix, bucket] of buckets) {
+      const group: GraphNode =
+        bucket.length === 1
+          ? bucket[0]
+          : {
+              id: "namespace:" + prefix,
+              label: prefix,
+              kind: "folder",
+              language: "java",
+              changed: bucket.some((n) => n.changed),
+            };
+      for (const pkg of bucket) javaGroups.set(pkg.id, group);
+    }
+  }
   const projection = new Map<string, string>(),
     groups = new Map<string, GraphNode>();
   for (const node of graph.nodes) {
@@ -82,13 +154,24 @@ export function graphView(
         continue;
       }
     }
-    const id =
-      node.kind === "class" && node.packageId !== options.javaPackage
+    const packageId =
+      node.kind === "class"
+        ? node.packageId
+        : node.kind === "package"
+          ? node.id
+          : undefined;
+    const javaGroup =
+      packageId && node.packageId !== options.javaPackage
+        ? javaGroups.get(packageId)
+        : undefined;
+    const id = javaGroup
+      ? javaGroup.id
+      : node.kind === "class" && node.packageId !== options.javaPackage
         ? node.packageId!
         : node.id;
     projection.set(node.id, id);
     if (id !== node.id) {
-      const pkg = all.get(id)!;
+      const pkg = javaGroup || all.get(id)!;
       groups.set(id, pkg);
     } else if (node.kind !== "package" || node.id !== options.javaPackage)
       groups.set(id, node);
@@ -167,6 +250,14 @@ export function graphView(
         originalIds: [edge.id],
       });
   }
+  const members = new Map<string, string[]>();
+  for (const node of graph.nodes) {
+    if (node.kind === "package") continue;
+    const id = projection.get(node.id)!;
+    const list = members.get(id) ?? [];
+    list.push(node.id);
+    members.set(id, list);
+  }
   const edgeValues = [...edgeMap.values()];
   return {
     nodes,
@@ -174,5 +265,28 @@ export function graphView(
     totalEdges: edgeValues.length,
     total: matching.length,
     projection,
+    members,
+  };
+}
+
+export function graphRenderPlan<T extends { source: string; target: string }>(
+  nodes: { id: string }[],
+  edges: T[],
+  connections: "auto" | "selected" | "all",
+  selected: string | null,
+) {
+  const dense =
+    nodes.length >= 60 || edges.length > Math.max(24, nodes.length * 3);
+  const focused =
+    connections === "selected" || (connections === "auto" && dense);
+  const candidates = focused
+    ? edges.filter((e) => e.source === selected || e.target === selected)
+    : edges;
+  return {
+    dense,
+    focused,
+    grid: dense,
+    edges: connections === "all" ? candidates : candidates.slice(0, 160),
+    matchingEdges: candidates.length,
   };
 }

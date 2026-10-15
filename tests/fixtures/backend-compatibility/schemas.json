@@ -1,0 +1,401 @@
+{
+  "analysisSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "cohorts": {
+        "minItems": 1,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "explanation": {
+              "type": "string",
+              "maxLength": 2000
+            },
+            "layers": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "explanation": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "fileIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "explanation",
+                  "fileIds"
+                ]
+              }
+            }
+          },
+          "required": [
+            "name",
+            "explanation",
+            "layers"
+          ]
+        }
+      },
+      "findings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "fileId": {
+              "type": "string"
+            },
+            "line": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "bug",
+                "security",
+                "performance",
+                "improvement"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "fileId",
+            "line",
+            "kind",
+            "message"
+          ]
+        }
+      }
+    },
+    "required": [
+      "cohorts",
+      "findings"
+    ]
+  },
+  "comparisonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "mode": {
+        "type": "string",
+        "enum": [
+          "unstaged",
+          "staged",
+          "all",
+          "branch"
+        ]
+      },
+      "base": {
+        "default": "main",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "required": [
+      "mode"
+    ]
+  },
+  "layerSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "explanation": {
+        "type": "string",
+        "maxLength": 2000
+      },
+      "fileIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "name",
+      "explanation",
+      "fileIds"
+    ]
+  },
+  "providerSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "provider": {
+        "type": "string",
+        "enum": [
+          "ollama",
+          "openai",
+          "anthropic"
+        ]
+      },
+      "endpoint": {
+        "type": "string",
+        "format": "uri"
+      },
+      "model": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "contextWindow": {
+        "type": "integer",
+        "minimum": 1024,
+        "maximum": 2000000
+      },
+      "maxOutput": {
+        "type": "integer",
+        "minimum": 256,
+        "maximum": 128000
+      },
+      "localOnly": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "provider",
+      "endpoint",
+      "model",
+      "contextWindow",
+      "maxOutput"
+    ]
+  },
+  "provenanceSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "number",
+        "const": 1
+      },
+      "reportHash": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "sourceHashes": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "tool": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "capturedAt": {
+        "type": "string"
+      },
+      "head": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "version",
+      "reportHash",
+      "sourceHashes",
+      "tool",
+      "capturedAt",
+      "head"
+    ]
+  },
+  "testConfigSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "format": {
+        "type": "string",
+        "enum": [
+          "istanbul",
+          "jacoco"
+        ]
+      },
+      "cwd": {
+        "default": ".",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "reportPath": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "timeoutSeconds": {
+        "default": 600,
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 3600
+      },
+      "threshold": {
+        "default": 8,
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1000000
+      },
+      "steps": {
+        "minItems": 1,
+        "maxItems": 6,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "executable": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "args": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
+            "shell": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "executable",
+            "args"
+          ]
+        }
+      }
+    },
+    "required": [
+      "format",
+      "reportPath",
+      "steps"
+    ]
+  },
+  "testStepSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "executable": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      },
+      "args": {
+        "maxItems": 100,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "shell": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "executable",
+      "args"
+    ]
+  },
+  "graphOptionsSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "side": {
+        "default": "after",
+        "type": "string",
+        "enum": [
+          "before",
+          "after"
+        ]
+      },
+      "maxFiles": {
+        "default": 10000,
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 50000
+      },
+      "maxBytes": {
+        "default": 20971520,
+        "type": "integer",
+        "minimum": 1024,
+        "maximum": 104857600
+      }
+    }
+  },
+  "editorSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "executable": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "args": {
+        "maxItems": 32,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      }
+    },
+    "required": [
+      "name",
+      "executable",
+      "args"
+    ]
+  }
+}

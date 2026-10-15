@@ -1,3 +1,5 @@
+import { changeTarget } from "./lib/change-navigation";
+import { rememberWorkspace, restoreWorkspace } from "./lib/workspace";
 import { Card, CardContent } from "./components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import { Input } from "./components/ui/input";
@@ -66,6 +68,19 @@ function App({ startupError }: { startupError?: string }) {
     "review" | "repository" | null
   >(null);
   const [split, setSplit] = React.useState(true);
+  const diffEditor = React.useRef<monaco.editor.IStandaloneDiffEditor | null>(
+    null,
+  );
+  const [diffChanges, setDiffChanges] = React.useState<{
+    key: string;
+    count: number;
+    starts: number[];
+    line: number;
+  } | null>(null);
+  const pendingChange = React.useRef<{
+    key: string;
+    direction: "next" | "previous";
+  } | null>(null);
   const [error, setError] = React.useState(startupError ?? "");
   const reportNavigationError = React.useCallback(
     (error: Error) => setError(error.message),
@@ -80,7 +95,10 @@ function App({ startupError }: { startupError?: string }) {
     navigating,
     navigation,
   } = useReviewNavigation(reportNavigationError);
-  const setSelected = (id: string) => navigation.selectFile(id);
+  const setSelected = (id: string) => {
+    pendingChange.current = null;
+    navigation.selectFile(id);
+  };
   const setAnchor = (value: typeof anchor) => navigation.setAnchor(value);
   const setComment = (value: string) => navigation.setComment(value);
   const [busy, setBusy] = React.useState(false);
@@ -118,7 +136,19 @@ function App({ startupError }: { startupError?: string }) {
       setBusy(false);
     }
   };
-  const loadSessions = async () => setSessions(await api("/sessions"));
+  const loadSessions = async () => {
+    const saved = await api<SessionSummary[]>("/sessions");
+    setSessions(saved);
+    return saved;
+  };
+  React.useEffect(() => {
+    if (!review || navigating) return;
+    rememberWorkspace({
+      sessionId: review.snapshot.sessionId,
+      snapshotId: review.snapshot.id,
+      fileId: selected,
+    });
+  }, [review?.snapshot.id, selected, navigating]);
   React.useEffect(() => {
     if (!review) return;
     setRoot(review.snapshot.root);
@@ -128,7 +158,8 @@ function App({ startupError }: { startupError?: string }) {
   React.useEffect(() => {
     if (startupError) return;
     void run(async () => {
-      await loadSessions();
+      const sessions = await loadSessions();
+      await restoreWorkspace(sessions, navigation);
       const saved = await api<ProviderConfig | null>("/provider");
       if (saved) setConfig(saved);
       const editors = await api<{
@@ -156,6 +187,41 @@ function App({ startupError }: { startupError?: string }) {
   const percent = review?.snapshot.files.length
     ? Math.round((reviewed.length / review.snapshot.files.length) * 100)
     : 0;
+  const currentDiff =
+    diffChanges?.key === review?.snapshot.id + ":" + file?.id
+      ? diffChanges
+      : null;
+  const getChangeTarget = (direction: "next" | "previous") =>
+    review &&
+    file &&
+    !navigating &&
+    (currentDiff ||
+      ![file.before.kind, file.after.kind].every(
+        (kind) => kind === "text" || kind === "absent",
+      ))
+      ? changeTarget(
+          review,
+          file.id,
+          currentDiff?.starts ?? [],
+          currentDiff?.line ?? 1,
+          direction,
+        )
+      : null;
+  const navigateChange = (direction: "next" | "previous") => {
+    const target = getChangeTarget(direction);
+    if (!target || !review) return;
+    if (target.line !== null) {
+      const source = diffEditor.current?.getModifiedEditor();
+      source?.setPosition({ lineNumber: target.line, column: 1 });
+      source?.revealLineInCenter(target.line);
+    } else {
+      pendingChange.current = {
+        key: review.snapshot.id + ":" + target.fileId,
+        direction,
+      };
+      navigation.selectFile(target.fileId);
+    }
+  };
   const selectedLayer = review?.state.accepted?.cohorts
     .flatMap((c) => c.layers)
     .find((l) => l.fileIds.includes(file?.id ?? ""));
@@ -682,7 +748,27 @@ function App({ startupError }: { startupError?: string }) {
                         <p className="small muted">From {file.oldPath}</p>
                       )}
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label="Previous change"
+                        title="Previous change"
+                        disabled={!getChangeTarget("previous")}
+                        onClick={() => navigateChange("previous")}
+                      >
+                        <ArrowUp size={15} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label="Next change"
+                        title="Next change"
+                        disabled={!getChangeTarget("next")}
+                        onClick={() => navigateChange("next")}
+                      >
+                        <ArrowDown size={15} />
+                      </Button>
                       <Button
                         size="sm"
                         variant={split ? "outline" : "ghost"}
@@ -732,6 +818,7 @@ function App({ startupError }: { startupError?: string }) {
                       (k) => k === "text" || k === "absent",
                     ) ? (
                       <DiffEditor
+                        editorRef={diffEditor}
                         key={`${review.snapshot.id}:${file.id}`}
                         height="540px"
                         language={language}
@@ -754,6 +841,54 @@ function App({ startupError }: { startupError?: string }) {
                           glyphMargin: true,
                         }}
                         onMount={(editor) => {
+                          const key = review.snapshot.id + ":" + file.id;
+                          const updateChanges = () => {
+                            const changes = editor.getLineChanges();
+                            if (!changes) return;
+                            const starts = changes.map((change) =>
+                              Math.min(
+                                editor
+                                  .getModifiedEditor()
+                                  .getModel()!
+                                  .getLineCount(),
+                                Math.max(
+                                  1,
+                                  change.modifiedEndLineNumber === 0
+                                    ? change.modifiedStartLineNumber + 1
+                                    : change.modifiedStartLineNumber,
+                                ),
+                              ),
+                            );
+                            if (pendingChange.current?.key === key) {
+                              const direction = pendingChange.current.direction;
+                              pendingChange.current = null;
+                              const line =
+                                direction === "next"
+                                  ? starts[0]
+                                  : starts.at(-1);
+                              if (line !== undefined) {
+                                const source = editor.getModifiedEditor();
+                                source.setPosition({
+                                  lineNumber: line,
+                                  column: 1,
+                                });
+                                source.revealLineInCenter(line);
+                              }
+                            }
+                            setDiffChanges({
+                              key,
+                              count: changes.length,
+                              starts,
+                              line:
+                                editor.getModifiedEditor().getPosition()
+                                  ?.lineNumber ?? 1,
+                            });
+                          };
+                          editor.onDidUpdateDiff(updateChanges);
+                          editor
+                            .getModifiedEditor()
+                            .onDidChangeCursorPosition(updateChanges);
+                          updateChanges();
                           for (const [side, source] of [
                             ["before", editor.getOriginalEditor()],
                             ["after", editor.getModifiedEditor()],

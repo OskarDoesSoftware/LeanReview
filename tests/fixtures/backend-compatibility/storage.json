@@ -1,0 +1,218 @@
+{
+  "v1": {
+    "userVersion": 1,
+    "tables": [
+      {
+        "name": "sessions",
+        "sql": "CREATE TABLE sessions (id TEXT PRIMARY KEY, name TEXT NOT NULL, root TEXT NOT NULL, active_snapshot TEXT, updated_at TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "session-fixture",
+            "name": "leanreview",
+            "root": "/fixture/leanreview",
+            "active_snapshot": "snapshot-current",
+            "updated_at": "2026-10-15T10:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "name": "settings",
+        "sql": "CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "key": "provider",
+            "value": "{\"provider\":\"ollama\",\"endpoint\":\"http://127.0.0.1:11434\",\"model\":\"fixture\",\"contextWindow\":8192,\"maxOutput\":2048,\"localOnly\":true}"
+          }
+        ]
+      },
+      {
+        "name": "snapshots",
+        "sql": "CREATE TABLE snapshots (id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, data TEXT NOT NULL, state TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "snapshot-history",
+            "session_id": "session-fixture",
+            "data": "{\"id\":\"snapshot-history\",\"sessionId\":\"session-fixture\",\"capturedAt\":\"2026-10-14T10:00:00.000Z\",\"root\":\"/fixture/leanreview\",\"comparison\":{\"mode\":\"all\",\"base\":\"main\"},\"head\":null,\"base\":null,\"files\":[{\"id\":\"file-ts\",\"path\":\"src/choose.ts\",\"oldPath\":\"src/choose.ts\",\"status\":\"modified\",\"fingerprint\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\",\"before\":{\"kind\":\"text\",\"hash\":\"5cdb8619e6b2e9bdd28a24d6edcf0c9b613459270aa3943b660c1183689ecfb2\"},\"after\":{\"kind\":\"text\",\"hash\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"patchHash\":\"8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd\"},{\"id\":\"file-java\",\"path\":\"src/Choose.java\",\"oldPath\":\"src/Old.java\",\"status\":\"renamed\",\"fingerprint\":\"java-fingerprint\",\"before\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"after\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"patchHash\":\"35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18\"},{\"id\":\"file-binary\",\"path\":\"binary.dat\",\"oldPath\":\"binary.dat\",\"status\":\"modified\",\"fingerprint\":\"binary\",\"before\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"after\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-oversized\",\"path\":\"oversized.dat\",\"oldPath\":\"oversized.dat\",\"status\":\"modified\",\"fingerprint\":\"oversized\",\"before\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"after\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-unavailable\",\"path\":\"unavailable.dat\",\"oldPath\":\"unavailable.dat\",\"status\":\"modified\",\"fingerprint\":\"unavailable\",\"before\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"after\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-deleted\",\"path\":\"deleted.ts\",\"oldPath\":\"deleted.ts\",\"status\":\"deleted\",\"fingerprint\":\"deleted\",\"before\":{\"kind\":\"text\",\"hash\":\"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881\"},\"after\":{\"kind\":\"absent\"},\"patchHash\":\"c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb\"}],\"complete\":true}",
+            "state": "{\"reviewed\":[],\"accepted\":null,\"proposal\":null,\"drafts\":[],\"analysisStatus\":\"idle\"}"
+          },
+          {
+            "_rowid_": 2,
+            "id": "snapshot-current",
+            "session_id": "session-fixture",
+            "data": "{\"id\":\"snapshot-current\",\"sessionId\":\"session-fixture\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"root\":\"/fixture/leanreview\",\"comparison\":{\"mode\":\"all\",\"base\":\"main\"},\"head\":null,\"base\":null,\"files\":[{\"id\":\"file-ts\",\"path\":\"src/choose.ts\",\"oldPath\":\"src/choose.ts\",\"status\":\"modified\",\"fingerprint\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\",\"before\":{\"kind\":\"text\",\"hash\":\"5cdb8619e6b2e9bdd28a24d6edcf0c9b613459270aa3943b660c1183689ecfb2\"},\"after\":{\"kind\":\"text\",\"hash\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"patchHash\":\"8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd\"},{\"id\":\"file-java\",\"path\":\"src/Choose.java\",\"oldPath\":\"src/Old.java\",\"status\":\"renamed\",\"fingerprint\":\"java-fingerprint\",\"before\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"after\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"patchHash\":\"35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18\"},{\"id\":\"file-binary\",\"path\":\"binary.dat\",\"oldPath\":\"binary.dat\",\"status\":\"modified\",\"fingerprint\":\"binary\",\"before\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"after\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-oversized\",\"path\":\"oversized.dat\",\"oldPath\":\"oversized.dat\",\"status\":\"modified\",\"fingerprint\":\"oversized\",\"before\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"after\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-unavailable\",\"path\":\"unavailable.dat\",\"oldPath\":\"unavailable.dat\",\"status\":\"modified\",\"fingerprint\":\"unavailable\",\"before\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"after\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-deleted\",\"path\":\"deleted.ts\",\"oldPath\":\"deleted.ts\",\"status\":\"deleted\",\"fingerprint\":\"deleted\",\"before\":{\"kind\":\"text\",\"hash\":\"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881\"},\"after\":{\"kind\":\"absent\"},\"patchHash\":\"c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb\"}],\"complete\":true}",
+            "state": "{\"reviewed\":[\"file-ts\"],\"accepted\":null,\"proposal\":null,\"drafts\":[{\"id\":\"draft-saved\",\"fileId\":\"file-ts\",\"path\":\"src/choose.ts\",\"side\":\"after\",\"line\":2,\"text\":\"Synthetic review comment: café\",\"needsReattachment\":false}],\"analysisStatus\":\"running\"}"
+          }
+        ]
+      }
+    ]
+  },
+  "v2": {
+    "userVersion": 2,
+    "tables": [
+      {
+        "name": "coverage_reports",
+        "sql": "CREATE TABLE coverage_reports (snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, format TEXT NOT NULL, data TEXT NOT NULL, raw_hash TEXT NOT NULL, provenance TEXT, PRIMARY KEY(snapshot_id,format))",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "snapshot_id": "snapshot-current",
+            "format": "istanbul",
+            "data": "{\"snapshotId\":\"snapshot-current\",\"format\":\"istanbul\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"reportHash\":\"8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672\",\"aligned\":false,\"files\":[{\"fileId\":\"file-ts\",\"path\":\"src/choose.ts\",\"language\":\"ts/js\",\"convention\":\"Source classic cyclomatic complexity + per-function statement coverage\",\"functions\":[{\"id\":\"a55b4c47d1cc3c1e3364fb68\",\"name\":\"choose\",\"line\":1,\"complexity\":2,\"coverage\":0.5,\"crap\":2.5}]},{\"fileId\":\"file-java\",\"path\":\"src/Choose.java\",\"language\":\"java\",\"convention\":\"JaCoCo method complexity + instruction coverage\",\"functions\":[],\"reason\":\"No matching JaCoCo methods; method count unknown.\"}],\"warnings\":[],\"threshold\":8,\"highest\":2.5,\"measured\":1,\"missing\":0,\"aboveThreshold\":0}",
+            "raw_hash": "8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672",
+            "provenance": "{\"version\":1,\"reportHash\":\"8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672\",\"sourceHashes\":{\"src/choose.ts\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"tool\":\"synthetic fixture\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"head\":null}"
+          }
+        ]
+      },
+      {
+        "name": "sessions",
+        "sql": "CREATE TABLE sessions (id TEXT PRIMARY KEY, name TEXT NOT NULL, root TEXT NOT NULL, active_snapshot TEXT, updated_at TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "session-fixture",
+            "name": "leanreview",
+            "root": "/fixture/leanreview",
+            "active_snapshot": "snapshot-current",
+            "updated_at": "2026-10-15T10:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "name": "settings",
+        "sql": "CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "key": "provider",
+            "value": "{\"provider\":\"ollama\",\"endpoint\":\"http://127.0.0.1:11434\",\"model\":\"fixture\",\"contextWindow\":8192,\"maxOutput\":2048,\"localOnly\":true}"
+          }
+        ]
+      },
+      {
+        "name": "snapshots",
+        "sql": "CREATE TABLE snapshots (id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, data TEXT NOT NULL, state TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "snapshot-history",
+            "session_id": "session-fixture",
+            "data": "{\"id\":\"snapshot-history\",\"sessionId\":\"session-fixture\",\"capturedAt\":\"2026-10-14T10:00:00.000Z\",\"root\":\"/fixture/leanreview\",\"comparison\":{\"mode\":\"all\",\"base\":\"main\"},\"head\":null,\"base\":null,\"files\":[{\"id\":\"file-ts\",\"path\":\"src/choose.ts\",\"oldPath\":\"src/choose.ts\",\"status\":\"modified\",\"fingerprint\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\",\"before\":{\"kind\":\"text\",\"hash\":\"5cdb8619e6b2e9bdd28a24d6edcf0c9b613459270aa3943b660c1183689ecfb2\"},\"after\":{\"kind\":\"text\",\"hash\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"patchHash\":\"8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd\"},{\"id\":\"file-java\",\"path\":\"src/Choose.java\",\"oldPath\":\"src/Old.java\",\"status\":\"renamed\",\"fingerprint\":\"java-fingerprint\",\"before\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"after\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"patchHash\":\"35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18\"},{\"id\":\"file-binary\",\"path\":\"binary.dat\",\"oldPath\":\"binary.dat\",\"status\":\"modified\",\"fingerprint\":\"binary\",\"before\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"after\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-oversized\",\"path\":\"oversized.dat\",\"oldPath\":\"oversized.dat\",\"status\":\"modified\",\"fingerprint\":\"oversized\",\"before\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"after\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-unavailable\",\"path\":\"unavailable.dat\",\"oldPath\":\"unavailable.dat\",\"status\":\"modified\",\"fingerprint\":\"unavailable\",\"before\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"after\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-deleted\",\"path\":\"deleted.ts\",\"oldPath\":\"deleted.ts\",\"status\":\"deleted\",\"fingerprint\":\"deleted\",\"before\":{\"kind\":\"text\",\"hash\":\"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881\"},\"after\":{\"kind\":\"absent\"},\"patchHash\":\"c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb\"}],\"complete\":true}",
+            "state": "{\"reviewed\":[],\"accepted\":null,\"proposal\":null,\"drafts\":[],\"analysisStatus\":\"idle\"}"
+          },
+          {
+            "_rowid_": 2,
+            "id": "snapshot-current",
+            "session_id": "session-fixture",
+            "data": "{\"id\":\"snapshot-current\",\"sessionId\":\"session-fixture\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"root\":\"/fixture/leanreview\",\"comparison\":{\"mode\":\"all\",\"base\":\"main\"},\"head\":null,\"base\":null,\"files\":[{\"id\":\"file-ts\",\"path\":\"src/choose.ts\",\"oldPath\":\"src/choose.ts\",\"status\":\"modified\",\"fingerprint\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\",\"before\":{\"kind\":\"text\",\"hash\":\"5cdb8619e6b2e9bdd28a24d6edcf0c9b613459270aa3943b660c1183689ecfb2\"},\"after\":{\"kind\":\"text\",\"hash\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"patchHash\":\"8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd\"},{\"id\":\"file-java\",\"path\":\"src/Choose.java\",\"oldPath\":\"src/Old.java\",\"status\":\"renamed\",\"fingerprint\":\"java-fingerprint\",\"before\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"after\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"patchHash\":\"35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18\"},{\"id\":\"file-binary\",\"path\":\"binary.dat\",\"oldPath\":\"binary.dat\",\"status\":\"modified\",\"fingerprint\":\"binary\",\"before\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"after\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-oversized\",\"path\":\"oversized.dat\",\"oldPath\":\"oversized.dat\",\"status\":\"modified\",\"fingerprint\":\"oversized\",\"before\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"after\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-unavailable\",\"path\":\"unavailable.dat\",\"oldPath\":\"unavailable.dat\",\"status\":\"modified\",\"fingerprint\":\"unavailable\",\"before\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"after\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-deleted\",\"path\":\"deleted.ts\",\"oldPath\":\"deleted.ts\",\"status\":\"deleted\",\"fingerprint\":\"deleted\",\"before\":{\"kind\":\"text\",\"hash\":\"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881\"},\"after\":{\"kind\":\"absent\"},\"patchHash\":\"c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb\"}],\"complete\":true}",
+            "state": "{\"reviewed\":[\"file-ts\"],\"accepted\":null,\"proposal\":null,\"drafts\":[{\"id\":\"draft-saved\",\"fileId\":\"file-ts\",\"path\":\"src/choose.ts\",\"side\":\"after\",\"line\":2,\"text\":\"Synthetic review comment: café\",\"needsReattachment\":false}],\"analysisStatus\":\"running\"}"
+          }
+        ]
+      },
+      {
+        "name": "test_runs",
+        "sql": "CREATE TABLE test_runs (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, data TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "test-running",
+            "snapshot_id": "snapshot-current",
+            "data": "{\"id\":\"test-running\",\"snapshotId\":\"snapshot-current\",\"config\":{\"format\":\"istanbul\",\"cwd\":\".\",\"reportPath\":\"coverage/report.json\",\"timeoutSeconds\":5,\"threshold\":8,\"steps\":[{\"executable\":\"fixture-do-not-execute\",\"args\":[],\"shell\":false}]},\"startedAt\":\"2026-10-15T10:00:00.000Z\",\"status\":\"running\",\"log\":\"synthetic output\\n\"}"
+          }
+        ]
+      }
+    ]
+  },
+  "v3": {
+    "userVersion": 3,
+    "tables": [
+      {
+        "name": "coverage_reports",
+        "sql": "CREATE TABLE coverage_reports (snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, format TEXT NOT NULL, data TEXT NOT NULL, raw_hash TEXT NOT NULL, provenance TEXT, PRIMARY KEY(snapshot_id,format))",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "snapshot_id": "snapshot-current",
+            "format": "istanbul",
+            "data": "{\"snapshotId\":\"snapshot-current\",\"format\":\"istanbul\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"reportHash\":\"8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672\",\"aligned\":false,\"files\":[{\"fileId\":\"file-ts\",\"path\":\"src/choose.ts\",\"language\":\"ts/js\",\"convention\":\"Source classic cyclomatic complexity + per-function statement coverage\",\"functions\":[{\"id\":\"a55b4c47d1cc3c1e3364fb68\",\"name\":\"choose\",\"line\":1,\"complexity\":2,\"coverage\":0.5,\"crap\":2.5}]},{\"fileId\":\"file-java\",\"path\":\"src/Choose.java\",\"language\":\"java\",\"convention\":\"JaCoCo method complexity + instruction coverage\",\"functions\":[],\"reason\":\"No matching JaCoCo methods; method count unknown.\"}],\"warnings\":[],\"threshold\":8,\"highest\":2.5,\"measured\":1,\"missing\":0,\"aboveThreshold\":0}",
+            "raw_hash": "8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672",
+            "provenance": "{\"version\":1,\"reportHash\":\"8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672\",\"sourceHashes\":{\"src/choose.ts\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"tool\":\"synthetic fixture\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"head\":null}"
+          }
+        ]
+      },
+      {
+        "name": "graphs",
+        "sql": "CREATE TABLE graphs (snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, side TEXT NOT NULL, artifact TEXT, sources TEXT NOT NULL, run TEXT NOT NULL, PRIMARY KEY(snapshot_id,side))",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "snapshot_id": "snapshot-current",
+            "side": "before",
+            "artifact": "7b0d8c36c253c32145de19a9010c145f471eccce171264225e98743bdda12c98",
+            "sources": "{\"src/choose.ts\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"}",
+            "run": "{\"status\":\"running\",\"startedAt\":\"2026-10-15T10:00:00.000Z\"}"
+          }
+        ]
+      },
+      {
+        "name": "sessions",
+        "sql": "CREATE TABLE sessions (id TEXT PRIMARY KEY, name TEXT NOT NULL, root TEXT NOT NULL, active_snapshot TEXT, updated_at TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "session-fixture",
+            "name": "leanreview",
+            "root": "/fixture/leanreview",
+            "active_snapshot": "snapshot-current",
+            "updated_at": "2026-10-15T10:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "name": "settings",
+        "sql": "CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "key": "provider",
+            "value": "{\"provider\":\"ollama\",\"endpoint\":\"http://127.0.0.1:11434\",\"model\":\"fixture\",\"contextWindow\":8192,\"maxOutput\":2048,\"localOnly\":true}"
+          }
+        ]
+      },
+      {
+        "name": "snapshots",
+        "sql": "CREATE TABLE snapshots (id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, data TEXT NOT NULL, state TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "snapshot-history",
+            "session_id": "session-fixture",
+            "data": "{\"id\":\"snapshot-history\",\"sessionId\":\"session-fixture\",\"capturedAt\":\"2026-10-14T10:00:00.000Z\",\"root\":\"/fixture/leanreview\",\"comparison\":{\"mode\":\"all\",\"base\":\"main\"},\"head\":null,\"base\":null,\"files\":[{\"id\":\"file-ts\",\"path\":\"src/choose.ts\",\"oldPath\":\"src/choose.ts\",\"status\":\"modified\",\"fingerprint\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\",\"before\":{\"kind\":\"text\",\"hash\":\"5cdb8619e6b2e9bdd28a24d6edcf0c9b613459270aa3943b660c1183689ecfb2\"},\"after\":{\"kind\":\"text\",\"hash\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"patchHash\":\"8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd\"},{\"id\":\"file-java\",\"path\":\"src/Choose.java\",\"oldPath\":\"src/Old.java\",\"status\":\"renamed\",\"fingerprint\":\"java-fingerprint\",\"before\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"after\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"patchHash\":\"35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18\"},{\"id\":\"file-binary\",\"path\":\"binary.dat\",\"oldPath\":\"binary.dat\",\"status\":\"modified\",\"fingerprint\":\"binary\",\"before\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"after\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-oversized\",\"path\":\"oversized.dat\",\"oldPath\":\"oversized.dat\",\"status\":\"modified\",\"fingerprint\":\"oversized\",\"before\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"after\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-unavailable\",\"path\":\"unavailable.dat\",\"oldPath\":\"unavailable.dat\",\"status\":\"modified\",\"fingerprint\":\"unavailable\",\"before\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"after\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-deleted\",\"path\":\"deleted.ts\",\"oldPath\":\"deleted.ts\",\"status\":\"deleted\",\"fingerprint\":\"deleted\",\"before\":{\"kind\":\"text\",\"hash\":\"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881\"},\"after\":{\"kind\":\"absent\"},\"patchHash\":\"c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb\"}],\"complete\":true}",
+            "state": "{\"reviewed\":[],\"accepted\":null,\"proposal\":null,\"drafts\":[],\"analysisStatus\":\"idle\"}"
+          },
+          {
+            "_rowid_": 2,
+            "id": "snapshot-current",
+            "session_id": "session-fixture",
+            "data": "{\"id\":\"snapshot-current\",\"sessionId\":\"session-fixture\",\"capturedAt\":\"2026-10-15T10:00:00.000Z\",\"root\":\"/fixture/leanreview\",\"comparison\":{\"mode\":\"all\",\"base\":\"main\"},\"head\":null,\"base\":null,\"files\":[{\"id\":\"file-ts\",\"path\":\"src/choose.ts\",\"oldPath\":\"src/choose.ts\",\"status\":\"modified\",\"fingerprint\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\",\"before\":{\"kind\":\"text\",\"hash\":\"5cdb8619e6b2e9bdd28a24d6edcf0c9b613459270aa3943b660c1183689ecfb2\"},\"after\":{\"kind\":\"text\",\"hash\":\"0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff\"},\"patchHash\":\"8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd\"},{\"id\":\"file-java\",\"path\":\"src/Choose.java\",\"oldPath\":\"src/Old.java\",\"status\":\"renamed\",\"fingerprint\":\"java-fingerprint\",\"before\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"after\":{\"kind\":\"text\",\"hash\":\"413c9266a33606771a5e5bc8cb331bb7762d4d6e9399ce39f2ddc6884f29b158\"},\"patchHash\":\"35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18\"},{\"id\":\"file-binary\",\"path\":\"binary.dat\",\"oldPath\":\"binary.dat\",\"status\":\"modified\",\"fingerprint\":\"binary\",\"before\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"after\":{\"kind\":\"binary\",\"reason\":\"Synthetic binary\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-oversized\",\"path\":\"oversized.dat\",\"oldPath\":\"oversized.dat\",\"status\":\"modified\",\"fingerprint\":\"oversized\",\"before\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"after\":{\"kind\":\"oversized\",\"reason\":\"Synthetic oversized\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-unavailable\",\"path\":\"unavailable.dat\",\"oldPath\":\"unavailable.dat\",\"status\":\"modified\",\"fingerprint\":\"unavailable\",\"before\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"after\":{\"kind\":\"unavailable\",\"reason\":\"Synthetic unavailable\"},\"patchHash\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},{\"id\":\"file-deleted\",\"path\":\"deleted.ts\",\"oldPath\":\"deleted.ts\",\"status\":\"deleted\",\"fingerprint\":\"deleted\",\"before\":{\"kind\":\"text\",\"hash\":\"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881\"},\"after\":{\"kind\":\"absent\"},\"patchHash\":\"c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb\"}],\"complete\":true}",
+            "state": "{\"reviewed\":[\"file-ts\"],\"accepted\":null,\"proposal\":null,\"drafts\":[{\"id\":\"draft-saved\",\"fileId\":\"file-ts\",\"path\":\"src/choose.ts\",\"side\":\"after\",\"line\":2,\"text\":\"Synthetic review comment: café\",\"needsReattachment\":false}],\"analysisStatus\":\"running\"}"
+          }
+        ]
+      },
+      {
+        "name": "test_runs",
+        "sql": "CREATE TABLE test_runs (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, data TEXT NOT NULL)",
+        "rows": [
+          {
+            "_rowid_": 1,
+            "id": "test-running",
+            "snapshot_id": "snapshot-current",
+            "data": "{\"id\":\"test-running\",\"snapshotId\":\"snapshot-current\",\"config\":{\"format\":\"istanbul\",\"cwd\":\".\",\"reportPath\":\"coverage/report.json\",\"timeoutSeconds\":5,\"threshold\":8,\"steps\":[{\"executable\":\"fixture-do-not-execute\",\"args\":[],\"shell\":false}]},\"startedAt\":\"2026-10-15T10:00:00.000Z\",\"status\":\"running\",\"log\":\"synthetic output\\n\"}"
+          }
+        ]
+      }
+    ]
+  }
+}

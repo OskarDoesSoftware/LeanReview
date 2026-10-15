@@ -1,0 +1,142 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/session",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions/:id",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/refresh",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/progress",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/grouping",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/drafts",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/sessions/:id/drafts/:draft",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/provider",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/editor",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/editor",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/open-editor",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/provider",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions/:id/manifest",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/analysis",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/cancel",
+    "source": "backend/src/api/app.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions/:id/coverage",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/coverage/config",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/coverage/import",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions/:id/coverage/artifact",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/coverage/preview",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/coverage/run",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/coverage/cancel",
+    "source": "backend/src/api/coverage.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions/:id/graph",
+    "source": "backend/src/api/graph.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/graph",
+    "source": "backend/src/api/graph.ts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/sessions/:id/graph/cancel",
+    "source": "backend/src/api/graph.ts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/sessions/:id/graph/source",
+    "source": "backend/src/api/graph.ts"
+  }
+]

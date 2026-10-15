@@ -52,6 +52,8 @@ npm run test:browser
 
 Integration tests create isolated fixture repositories/databases under ignored `.leanreview-test/`. Browser verification runs the built UI with a **fixture LLM response server**, not real inference. It exercises actual Git capture, AI input authorization/result validation, Monaco, draft comments, progress, reload, explicit proposal acceptance, refresh, and read-only history. It does not establish model grouping quality or cloud API account access.
 
+The Java backend migration uses [frozen compatibility fixtures and baseline measurements](docs/migration/backend-compatibility.md). Run `npm run test:compatibility` to verify the current backend and `npm run benchmark:backend` to reproduce the synthetic performance baseline.
+
 ## CRAP meter
 
 The CRAP tab supports TS/JS Istanbul JSON and Java JaCoCo XML, coverage report import/export, and explicitly approved local test execution. Results and progress persist locally. See [coverage setup and alignment](docs/coverage.md) for commands, provenance, and verification.

@@ -1,0 +1,120 @@
+{
+  "typescript": {
+    "file": "src/main.ts",
+    "text": "import type { Value } from '@app/value';\nexport { value } from './value';\nconst load = import('./lazy');\nconst computed = import(name);\n",
+    "dependencies": [
+      {
+        "specifier": "@app/value",
+        "line": 1,
+        "kind": "import",
+        "typeOnly": true,
+        "dynamic": false
+      },
+      {
+        "specifier": "./value",
+        "line": 2,
+        "kind": "re-export",
+        "typeOnly": false,
+        "dynamic": false
+      },
+      {
+        "specifier": "./lazy",
+        "line": 3,
+        "kind": "dynamic",
+        "typeOnly": false,
+        "dynamic": false
+      },
+      {
+        "specifier": "<computed dependency>",
+        "line": 4,
+        "kind": "dynamic",
+        "typeOnly": false,
+        "dynamic": true
+      }
+    ],
+    "resolved": [
+      {
+        "specifier": "@app/value",
+        "target": "src/value.ts"
+      },
+      {
+        "specifier": "./value",
+        "target": "src/value.ts"
+      },
+      {
+        "specifier": "./lazy",
+        "target": "src/lazy.ts"
+      },
+      {
+        "specifier": "missing",
+        "target": null
+      }
+    ],
+    "warnings": []
+  },
+  "java": {
+    "text": "package fixture; import java.util.List; class Outer<T> { List<T> values; class Inner { Outer<String> parent; } }",
+    "classes": [
+      {
+        "name": "fixture.Outer",
+        "packageName": "fixture",
+        "line": 1,
+        "references": [
+          {
+            "specifier": "java.util.List",
+            "line": 1,
+            "kind": "import",
+            "typeOnly": false
+          },
+          {
+            "specifier": "List",
+            "line": 1,
+            "kind": "type-reference",
+            "typeOnly": false
+          }
+        ]
+      },
+      {
+        "name": "fixture.Outer.Inner",
+        "packageName": "fixture",
+        "line": 1,
+        "references": [
+          {
+            "specifier": "java.util.List",
+            "line": 1,
+            "kind": "import",
+            "typeOnly": false
+          },
+          {
+            "specifier": "Outer",
+            "line": 1,
+            "kind": "type-reference",
+            "typeOnly": false
+          },
+          {
+            "specifier": "String",
+            "line": 1,
+            "kind": "type-reference",
+            "typeOnly": false
+          }
+        ]
+      }
+    ]
+  },
+  "complexity": {
+    "file": "src/choose.ts",
+    "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n",
+    "units": [
+      {
+        "id": "a55b4c47d1cc3c1e3364fb68",
+        "name": "choose",
+        "line": 1,
+        "complexity": 2,
+        "start": 0,
+        "end": 72,
+        "bodyStart": 34,
+        "bodyEnd": 72
+      }
+    ]
+  }
+}

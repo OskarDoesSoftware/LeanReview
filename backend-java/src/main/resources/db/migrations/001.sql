@@ -1,0 +1,3 @@
+CREATE TABLE sessions (id TEXT PRIMARY KEY, name TEXT NOT NULL, root TEXT NOT NULL, active_snapshot TEXT, updated_at TEXT NOT NULL);
+CREATE TABLE snapshots (id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, data TEXT NOT NULL, state TEXT NOT NULL);
+CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);

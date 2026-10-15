@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import * as monaco from "monaco-editor";
 type Props = {
+  editorRef?: RefObject<monaco.editor.IStandaloneDiffEditor | null>;
   original: string;
   modified: string;
   language: string;
@@ -20,6 +21,7 @@ export function DiffEditor(props: Props) {
       theme: props.theme,
     });
     instance.current = editor;
+    if (props.editorRef) props.editorRef.current = editor;
     editor.setModel({ original: before, modified: after });
     props.onMount(editor);
     return () => {
@@ -29,6 +31,7 @@ export function DiffEditor(props: Props) {
       before.dispose();
       after.dispose();
       instance.current = null;
+      if (props.editorRef?.current === editor) props.editorRef.current = null;
     };
   }, []);
   useEffect(() => {

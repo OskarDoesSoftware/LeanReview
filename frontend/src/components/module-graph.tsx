@@ -1,4 +1,11 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  useDeferredValue,
+} from "react";
 import {
   ReactFlow,
   Background,
@@ -17,7 +24,7 @@ import type {
   ModuleGraph,
   GraphRun,
 } from "../../../packages/contracts/src/graph";
-import { graphView } from "../lib/graph-view";
+import { graphView, graphRenderPlan } from "../lib/graph-view";
 import { api } from "../lib/api";
 import { Button } from "./ui/button";
 import ELK from "elkjs/lib/elk-api.js";
@@ -48,7 +55,9 @@ export function ModuleGraphViewer({
     [selected, setSelected] = useState<string | null>(null);
   const [groupModules, setGroupModules] = useState(true),
     [folder, setFolder] = useState<string | null>(null),
-    [connections, setConnections] = useState<"selected" | "all">("all");
+    [connections, setConnections] = useState<"auto" | "selected" | "all">(
+      "auto",
+    );
   const flow = useRef<ReactFlowInstance | null>(null);
   const [maxFiles, setMaxFiles] = useState(10000),
     [maxMiB, setMaxMiB] = useState(20),
@@ -120,12 +129,13 @@ export function ModuleGraphViewer({
     };
   }, [reload, view.run?.status]);
   const graph = view.graph;
+  const deferredQuery = useDeferredValue(query);
   const display = useMemo(
     () =>
       graph
         ? graphView(graph, {
             scope,
-            query,
+            query: deferredQuery,
             showExternal: external,
             showTypeOnly: typeOnly,
             expanded,
@@ -139,7 +149,7 @@ export function ModuleGraphViewer({
     [
       graph,
       scope,
-      query,
+      deferredQuery,
       external,
       typeOnly,
       expanded,
@@ -150,30 +160,36 @@ export function ModuleGraphViewer({
       folder,
     ],
   );
+  const renderPlan = useMemo(
+    () =>
+      graphRenderPlan(
+        display?.nodes ?? [],
+        display?.edges ?? [],
+        connections,
+        selected,
+      ),
+    [display, connections, selected],
+  );
   useEffect(() => {
     if (!display) {
       setNodes([]);
       return;
     }
     setLayoutNote("Laying out modules…");
-    const members = new Map<string, number>();
-    for (const node of graph?.nodes ?? []) {
-      if (node.kind === "package") continue;
-      const group = display.projection.get(node.id)!;
-      members.set(group, (members.get(group) ?? 0) + 1);
-    }
     const initial: Node[] = display.nodes.map((node, index) => ({
       id: node.id,
       data: {
         label: (
           <div className="graph-node-label">
-            <strong title={node.label}>{node.label.split("/").at(-1)}</strong>
+            <strong title={node.label}>
+              {node.label.split(node.language === "java" ? "." : "/").at(-1)}
+            </strong>
             <span title={node.label}>{node.label}</span>
             <small>
               {node.kind}
               {node.changed ? " · changed" : ""}
               {node.kind === "folder" || node.kind === "package"
-                ? ` · ${members.get(node.id) ?? 0} members`
+                ? ` · ${display.members.get(node.id)?.length ?? 0} members`
                 : ""}
             </small>
           </div>
@@ -196,6 +212,21 @@ export function ModuleGraphViewer({
     setNodes(initial);
     if (!initial.length) {
       setLayoutNote("No modules match this view.");
+      return;
+    }
+    if (graphRenderPlan(display.nodes, display.edges, "auto", null).grid) {
+      setLayoutNote(
+        "Large graph: grid layout. Select a module to show its connections, or narrow the view.",
+      );
+      requestAnimationFrame(
+        () =>
+          void flow.current?.fitView({
+            nodes: initial.slice(0, 4).map((n) => ({ id: n.id })),
+            minZoom: 0.85,
+            maxZoom: 1,
+            padding: 0.2,
+          }),
+      );
       return;
     }
     let live = true;
@@ -269,30 +300,23 @@ export function ModuleGraphViewer({
   }, [display, setNodes]);
   const edges: Edge[] = useMemo(
     () =>
-      display?.edges
-        .filter(
-          (e) =>
-            connections === "all" ||
-            e.source === selected ||
-            e.target === selected,
-        )
-        .map((e) => ({
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          label:
-            selected && (e.source === selected || e.target === selected)
-              ? e.label
-              : undefined,
-          markerEnd: { type: MarkerType.ArrowClosed },
-          style: {
-            stroke: e.unresolved ? "#e09a33" : "var(--primary)",
-            strokeWidth: 2,
-            strokeDasharray: e.typeOnly ? "5 4" : undefined,
-          },
-          data: { originalIds: e.originalIds },
-        })) ?? [],
-    [display, selected, connections],
+      renderPlan.edges.map((e) => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        label:
+          selected && (e.source === selected || e.target === selected)
+            ? e.label
+            : undefined,
+        markerEnd: { type: MarkerType.ArrowClosed },
+        style: {
+          stroke: e.unresolved ? "#e09a33" : "var(--primary)",
+          strokeWidth: 2,
+          strokeDasharray: e.typeOnly ? "5 4" : undefined,
+        },
+        data: { originalIds: e.originalIds },
+      })) ?? [],
+    [renderPlan, selected],
   );
   const action = async (work: () => Promise<void>) => {
     setBusy(true);
@@ -305,26 +329,33 @@ export function ModuleGraphViewer({
       setBusy(false);
     }
   };
-  const originalIds =
-    graph && selected
-      ? [...display!.projection]
-          .filter(([, id]) => id === selected)
-          .map(([id]) => id)
-      : [];
+  const originalIds = useMemo(
+    () => (selected ? (display?.members.get(selected) ?? []) : []),
+    [display, selected],
+  );
+  const originalSet = useMemo(() => new Set(originalIds), [originalIds]);
   const selectedNode = display?.nodes.find((n) => n.id === selected);
   const expandNode = (id: string) => {
     const node = display?.nodes.find((n) => n.id === id);
-    if (node?.kind === "folder") setFolder(id.slice("folder:".length));
+    if (node?.id.startsWith("namespace:")) setJavaPackage(id);
+    else if (node?.kind === "folder") setFolder(id.slice("folder:".length));
     else if (node?.kind === "package" && node.language === "java")
       setJavaPackage(id);
     else return;
     setSelected(null);
     setSource(null);
   };
-  const evidence =
-    graph?.edges.filter(
-      (e) => originalIds.includes(e.source) || originalIds.includes(e.target),
-    ) ?? [];
+  const evidence = useMemo(
+    () =>
+      graph?.edges.filter(
+        (e) => originalSet.has(e.source) || originalSet.has(e.target),
+      ) ?? [],
+    [graph, originalSet],
+  );
+  const renderedNodes = useMemo(
+    () => nodes.map((node) => ({ ...node, selected: node.id === selected })),
+    [nodes, selected],
+  );
   const page = Math.min(
     evidencePage,
     Math.max(0, Math.ceil(evidence.length / 100) - 1),
@@ -501,6 +532,7 @@ export function ModuleGraphViewer({
                   setConnections(e.target.value as typeof connections)
                 }
               >
+                <option value="auto">Automatic</option>
                 <option value="selected">Selected module</option>
                 <option value="all">All connections</option>
               </select>
@@ -592,6 +624,7 @@ export function ModuleGraphViewer({
             <span className="small">
               {display?.nodes.length} / {display?.total} matching nodes shown ·{" "}
               {edges.length} / {display?.totalEdges} relationships drawn
+              {renderPlan.focused && " · selected module connections"}
             </span>
           </div>
           <div className="graph-body">
@@ -600,10 +633,8 @@ export function ModuleGraphViewer({
               aria-label="Interactive dependency diagram"
             >
               <ReactFlow<Node, Edge>
-                nodes={nodes.map((node) => ({
-                  ...node,
-                  selected: node.id === selected,
-                }))}
+                nodes={renderedNodes}
+                onlyRenderVisibleElements
                 edges={edges}
                 onInit={(instance) => {
                   flow.current = instance;
@@ -632,9 +663,11 @@ export function ModuleGraphViewer({
               </ReactFlow>
               {!selectedNode && (
                 <p className="graph-focus-hint">
-                  Arrows show dependencies between folders. Double-click a
-                  folder to explore its files; select a node to inspect source
-                  evidence.
+                  {renderPlan.focused
+                    ? "Select a module to draw its connections. "
+                    : "Arrows show dependencies between groups. "}
+                  Double-click a folder or Java namespace to explore its
+                  contents.
                 </p>
               )}
               {layoutNote && <p className="graph-layout-note">{layoutNote}</p>}
@@ -672,7 +705,9 @@ export function ModuleGraphViewer({
                       size="sm"
                       onClick={() => expandNode(selectedNode.id)}
                     >
-                      Open folder
+                      {selectedNode.language === "java"
+                        ? "Open namespace"
+                        : "Open folder"}
                     </Button>
                   )}
                   <Button

@@ -1,0 +1,2917 @@
+[
+  {
+    "name": "unauthorized POST /api/session",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/session",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions/:id",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions/session-fixture"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/refresh",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/refresh",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/progress",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/progress",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/grouping",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/grouping",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/drafts",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/drafts",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized DELETE /api/sessions/:id/drafts/:draft",
+    "request": {
+      "method": "DELETE",
+      "path": "/api/api/sessions/session-fixture/drafts/draft-saved",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/provider",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/provider"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/editor",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/editor"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/editor",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/editor",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/open-editor",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/open-editor",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/provider",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/provider",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions/:id/manifest",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions/session-fixture/manifest"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/analysis",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/analysis",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/cancel",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/cancel",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions/:id/coverage",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions/session-fixture/coverage"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/coverage/config",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/coverage/config",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/coverage/import",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/coverage/import",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions/:id/coverage/artifact",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions/session-fixture/coverage/artifact"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/coverage/preview",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/coverage/preview",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/coverage/run",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/coverage/run",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/coverage/cancel",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/coverage/cancel",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions/:id/graph",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions/session-fixture/graph"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/graph",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/graph",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized POST /api/sessions/:id/graph/cancel",
+    "request": {
+      "method": "POST",
+      "path": "/api/api/sessions/session-fixture/graph/cancel",
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "unauthorized GET /api/sessions/:id/graph/source",
+    "request": {
+      "method": "GET",
+      "path": "/api/api/sessions/session-fixture/graph/source"
+    },
+    "response": {
+      "status": 401,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Open LeanReview using its startup link to establish a local session."
+      }
+    }
+  },
+  {
+    "name": "bad host",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions",
+      "headers": {
+        "host": "untrusted.invalid"
+      }
+    },
+    "response": {
+      "status": 403,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Invalid local host."
+      }
+    }
+  },
+  {
+    "name": "bad origin",
+    "request": {
+      "method": "POST",
+      "path": "/api/session",
+      "body": {
+        "nonce": "fixture-nonce"
+      },
+      "headers": {
+        "origin": "https://untrusted.invalid"
+      }
+    },
+    "response": {
+      "status": 403,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Cross-origin request rejected."
+      }
+    }
+  },
+  {
+    "name": "missing origin",
+    "request": {
+      "method": "POST",
+      "path": "/api/session",
+      "body": {
+        "nonce": "fixture-nonce"
+      },
+      "headers": {
+        "origin": ""
+      }
+    },
+    "response": {
+      "status": 403,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Same-origin request required."
+      }
+    }
+  },
+  {
+    "name": "bad nonce",
+    "request": {
+      "method": "POST",
+      "path": "/api/session",
+      "body": {
+        "nonce": "wrong"
+      }
+    },
+    "response": {
+      "status": 403,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Startup link expired or already used. Restart LeanReview for a new link."
+      }
+    }
+  },
+  {
+    "name": "bootstrap",
+    "request": {
+      "method": "POST",
+      "path": "/api/session",
+      "body": {
+        "nonce": "fixture-nonce"
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "cookie": {
+        "name": "leanreview",
+        "httpOnly": true,
+        "sameSite": "Strict",
+        "path": "/",
+        "maxAgeSeconds": 43200
+      },
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  {
+    "name": "reused nonce",
+    "request": {
+      "method": "POST",
+      "path": "/api/session",
+      "body": {
+        "nonce": "fixture-nonce"
+      }
+    },
+    "response": {
+      "status": 403,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Startup link expired or already used. Restart LeanReview for a new link."
+      }
+    }
+  },
+  {
+    "name": "unknown route",
+    "request": {
+      "method": "GET",
+      "path": "/api/unknown"
+    },
+    "response": {
+      "status": 404,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "API endpoint not found."
+      }
+    }
+  },
+  {
+    "name": "saved sessions",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": [
+        {
+          "id": "session-fixture",
+          "name": "repository",
+          "root": "<repository>",
+          "updatedAt": "<timestamp>"
+        }
+      ]
+    }
+  },
+  {
+    "name": "recovered review",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "id": "snapshot-current",
+          "sessionId": "session-fixture",
+          "capturedAt": "<timestamp>",
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "head": null,
+          "base": null,
+          "files": [
+            {
+              "id": "file-ts",
+              "path": "src/choose.ts",
+              "oldPath": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "patchHash": "8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd",
+              "patch": "--- a/src/choose.ts\n+++ b/src/choose.ts\n@@ -1 +1,4 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n"
+            },
+            {
+              "id": "file-java",
+              "path": "src/Choose.java",
+              "oldPath": "src/Old.java",
+              "status": "renamed",
+              "fingerprint": "java-fingerprint",
+              "before": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "patchHash": "35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18",
+              "patch": "rename from src/Old.java\nrename to src/Choose.java\n"
+            },
+            {
+              "id": "file-binary",
+              "path": "binary.dat",
+              "oldPath": "binary.dat",
+              "status": "modified",
+              "fingerprint": "binary",
+              "before": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "after": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-oversized",
+              "path": "oversized.dat",
+              "oldPath": "oversized.dat",
+              "status": "modified",
+              "fingerprint": "oversized",
+              "before": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "after": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-unavailable",
+              "path": "unavailable.dat",
+              "oldPath": "unavailable.dat",
+              "status": "modified",
+              "fingerprint": "unavailable",
+              "before": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "after": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-deleted",
+              "path": "deleted.ts",
+              "oldPath": "deleted.ts",
+              "status": "deleted",
+              "fingerprint": "deleted",
+              "before": {
+                "kind": "text",
+                "text": "export {};\n"
+              },
+              "after": {
+                "kind": "absent"
+              },
+              "patchHash": "c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb",
+              "patch": "-export {};\n"
+            }
+          ],
+          "complete": true
+        },
+        "state": {
+          "reviewed": [
+            "file-ts"
+          ],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [
+            {
+              "id": "draft-saved",
+              "fileId": "file-ts",
+              "path": "src/choose.ts",
+              "side": "after",
+              "line": 2,
+              "text": "Synthetic review comment: café",
+              "needsReattachment": false
+            }
+          ],
+          "analysisStatus": "interrupted",
+          "analysisError": "Analysis interrupted by application restart."
+        },
+        "history": [
+          {
+            "id": "snapshot-current",
+            "capturedAt": "<timestamp>"
+          },
+          {
+            "id": "snapshot-history",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "historical review",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture?snapshot=snapshot-history"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "id": "snapshot-history",
+          "sessionId": "session-fixture",
+          "capturedAt": "<timestamp>",
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "head": null,
+          "base": null,
+          "files": [
+            {
+              "id": "file-ts",
+              "path": "src/choose.ts",
+              "oldPath": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "patchHash": "8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd",
+              "patch": "--- a/src/choose.ts\n+++ b/src/choose.ts\n@@ -1 +1,4 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n"
+            },
+            {
+              "id": "file-java",
+              "path": "src/Choose.java",
+              "oldPath": "src/Old.java",
+              "status": "renamed",
+              "fingerprint": "java-fingerprint",
+              "before": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "patchHash": "35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18",
+              "patch": "rename from src/Old.java\nrename to src/Choose.java\n"
+            },
+            {
+              "id": "file-binary",
+              "path": "binary.dat",
+              "oldPath": "binary.dat",
+              "status": "modified",
+              "fingerprint": "binary",
+              "before": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "after": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-oversized",
+              "path": "oversized.dat",
+              "oldPath": "oversized.dat",
+              "status": "modified",
+              "fingerprint": "oversized",
+              "before": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "after": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-unavailable",
+              "path": "unavailable.dat",
+              "oldPath": "unavailable.dat",
+              "status": "modified",
+              "fingerprint": "unavailable",
+              "before": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "after": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-deleted",
+              "path": "deleted.ts",
+              "oldPath": "deleted.ts",
+              "status": "deleted",
+              "fingerprint": "deleted",
+              "before": {
+                "kind": "text",
+                "text": "export {};\n"
+              },
+              "after": {
+                "kind": "absent"
+              },
+              "patchHash": "c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb",
+              "patch": "-export {};\n"
+            }
+          ],
+          "complete": true
+        },
+        "state": {
+          "reviewed": [],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [],
+          "analysisStatus": "idle"
+        },
+        "history": [
+          {
+            "id": "snapshot-current",
+            "capturedAt": "<timestamp>"
+          },
+          {
+            "id": "snapshot-history",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "missing session",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/missing"
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Review session not found."
+      }
+    }
+  },
+  {
+    "name": "missing snapshot",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture?snapshot=missing"
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Snapshot not found."
+      }
+    }
+  },
+  {
+    "name": "invalid create",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions",
+      "body": {}
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"root\"\n    ],\n    \"message\": \"Invalid input: expected string, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"comparison\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]"
+      }
+    }
+  },
+  {
+    "name": "provider",
+    "request": {
+      "method": "GET",
+      "path": "/api/provider"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "provider": "ollama",
+        "endpoint": "http://127.0.0.1:11434",
+        "model": "fixture",
+        "contextWindow": 8192,
+        "maxOutput": 2048,
+        "localOnly": true
+      }
+    }
+  },
+  {
+    "name": "set provider",
+    "request": {
+      "method": "POST",
+      "path": "/api/provider",
+      "body": {
+        "config": {
+          "provider": "ollama",
+          "endpoint": "http://127.0.0.1:11434",
+          "model": "fixture",
+          "contextWindow": 8192,
+          "maxOutput": 2048,
+          "localOnly": true
+        },
+        "persist": false
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "config": {
+          "provider": "ollama",
+          "endpoint": "http://127.0.0.1:11434",
+          "model": "fixture",
+          "contextWindow": 8192,
+          "maxOutput": 2048,
+          "localOnly": true
+        }
+      }
+    }
+  },
+  {
+    "name": "invalid provider budget",
+    "request": {
+      "method": "POST",
+      "path": "/api/provider",
+      "body": {
+        "config": {
+          "provider": "ollama",
+          "endpoint": "http://127.0.0.1:11434",
+          "model": "fixture",
+          "contextWindow": 8192,
+          "maxOutput": 8192,
+          "localOnly": true
+        },
+        "persist": false
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Output reservation must be smaller than the context window."
+      }
+    }
+  },
+  {
+    "name": "invalid local provider",
+    "request": {
+      "method": "POST",
+      "path": "/api/provider",
+      "body": {
+        "config": {
+          "provider": "ollama",
+          "endpoint": "https://example.invalid",
+          "model": "fixture",
+          "contextWindow": 8192,
+          "maxOutput": 2048,
+          "localOnly": true
+        },
+        "persist": false
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Local-only mode requires loopback Ollama and a local model with cloud features disabled."
+      }
+    }
+  },
+  {
+    "name": "set editor",
+    "request": {
+      "method": "POST",
+      "path": "/api/editor",
+      "body": {
+        "name": "Fixture",
+        "executable": "fixture-do-not-execute",
+        "args": [
+          "{file}"
+        ]
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "name": "Fixture",
+        "executable": "fixture-do-not-execute",
+        "args": [
+          "{file}"
+        ]
+      }
+    }
+  },
+  {
+    "name": "reject editor missing file",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/open-editor",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "fileId": "missing",
+        "side": "after",
+        "line": 1
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "This snapshot has no editable working-file text."
+      }
+    }
+  },
+  {
+    "name": "manifest",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/manifest"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "id": "7efa4c0ead49b847bb39c1dc25dffcf94e7c376ff35b59d1389cd9534605bc52",
+        "snapshotId": "snapshot-current",
+        "config": {
+          "provider": "ollama",
+          "endpoint": "http://127.0.0.1:11434",
+          "model": "fixture",
+          "contextWindow": 8192,
+          "maxOutput": 2048,
+          "localOnly": true
+        },
+        "files": [
+          {
+            "id": "file-ts",
+            "path": "src/choose.ts",
+            "included": true
+          },
+          {
+            "id": "file-java",
+            "path": "src/Choose.java",
+            "included": true
+          },
+          {
+            "id": "file-binary",
+            "path": "binary.dat",
+            "included": false,
+            "reason": "No text diff"
+          },
+          {
+            "id": "file-oversized",
+            "path": "oversized.dat",
+            "included": false,
+            "reason": "No text diff"
+          },
+          {
+            "id": "file-unavailable",
+            "path": "unavailable.dat",
+            "included": false,
+            "reason": "No text diff"
+          },
+          {
+            "id": "file-deleted",
+            "path": "deleted.ts",
+            "included": true
+          }
+        ],
+        "estimatedTokens": 1011,
+        "inputBudget": 5120
+      }
+    }
+  },
+  {
+    "name": "unauthorized analysis",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/analysis",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "manifestId": "wrong",
+        "authorize": false
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Confirm this run’s input manifest before sending repository data."
+      }
+    }
+  },
+  {
+    "name": "stale manifest",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/analysis",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "manifestId": "wrong",
+        "authorize": true
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Provider configuration or snapshot changed. Preview and authorize again."
+      }
+    }
+  },
+  {
+    "name": "cancel idle analysis",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/cancel",
+      "body": {
+        "snapshotId": "snapshot-current"
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  {
+    "name": "stale progress",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/progress",
+      "body": {
+        "snapshotId": "snapshot-history",
+        "fileIds": [],
+        "reviewed": true
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Snapshot changed. Reload this review before editing."
+      }
+    }
+  },
+  {
+    "name": "unknown progress file",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/progress",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "fileIds": [
+          "missing"
+        ],
+        "reviewed": true
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Unknown file in progress update."
+      }
+    }
+  },
+  {
+    "name": "mark progress",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/progress",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "fileIds": [
+          "file-java"
+        ],
+        "reviewed": true
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "id": "snapshot-current",
+          "sessionId": "session-fixture",
+          "capturedAt": "<timestamp>",
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "head": null,
+          "base": null,
+          "files": [
+            {
+              "id": "file-ts",
+              "path": "src/choose.ts",
+              "oldPath": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "patchHash": "8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd",
+              "patch": "--- a/src/choose.ts\n+++ b/src/choose.ts\n@@ -1 +1,4 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n"
+            },
+            {
+              "id": "file-java",
+              "path": "src/Choose.java",
+              "oldPath": "src/Old.java",
+              "status": "renamed",
+              "fingerprint": "java-fingerprint",
+              "before": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "patchHash": "35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18",
+              "patch": "rename from src/Old.java\nrename to src/Choose.java\n"
+            },
+            {
+              "id": "file-binary",
+              "path": "binary.dat",
+              "oldPath": "binary.dat",
+              "status": "modified",
+              "fingerprint": "binary",
+              "before": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "after": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-oversized",
+              "path": "oversized.dat",
+              "oldPath": "oversized.dat",
+              "status": "modified",
+              "fingerprint": "oversized",
+              "before": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "after": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-unavailable",
+              "path": "unavailable.dat",
+              "oldPath": "unavailable.dat",
+              "status": "modified",
+              "fingerprint": "unavailable",
+              "before": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "after": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-deleted",
+              "path": "deleted.ts",
+              "oldPath": "deleted.ts",
+              "status": "deleted",
+              "fingerprint": "deleted",
+              "before": {
+                "kind": "text",
+                "text": "export {};\n"
+              },
+              "after": {
+                "kind": "absent"
+              },
+              "patchHash": "c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb",
+              "patch": "-export {};\n"
+            }
+          ],
+          "complete": true
+        },
+        "state": {
+          "reviewed": [
+            "file-ts",
+            "file-java"
+          ],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [
+            {
+              "id": "draft-saved",
+              "fileId": "file-ts",
+              "path": "src/choose.ts",
+              "side": "after",
+              "line": 2,
+              "text": "Synthetic review comment: café",
+              "needsReattachment": false
+            }
+          ],
+          "analysisStatus": "interrupted",
+          "analysisError": "Analysis interrupted by application restart."
+        },
+        "history": [
+          {
+            "id": "snapshot-current",
+            "capturedAt": "<timestamp>"
+          },
+          {
+            "id": "snapshot-history",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "accept grouping",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/grouping",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "analysis": {
+          "cohorts": [
+            {
+              "name": "Fixture",
+              "explanation": "Synthetic cohort",
+              "layers": [
+                {
+                  "name": "Read",
+                  "explanation": "Synthetic layer",
+                  "fileIds": [
+                    "file-ts",
+                    "file-java",
+                    "file-binary",
+                    "file-oversized",
+                    "file-unavailable",
+                    "file-deleted"
+                  ]
+                }
+              ]
+            }
+          ],
+          "findings": [
+            {
+              "fileId": "file-ts",
+              "line": 2,
+              "kind": "improvement",
+              "message": "Synthetic finding"
+            }
+          ]
+        },
+        "acceptProposal": true
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "id": "snapshot-current",
+          "sessionId": "session-fixture",
+          "capturedAt": "<timestamp>",
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "head": null,
+          "base": null,
+          "files": [
+            {
+              "id": "file-ts",
+              "path": "src/choose.ts",
+              "oldPath": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "patchHash": "8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd",
+              "patch": "--- a/src/choose.ts\n+++ b/src/choose.ts\n@@ -1 +1,4 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n"
+            },
+            {
+              "id": "file-java",
+              "path": "src/Choose.java",
+              "oldPath": "src/Old.java",
+              "status": "renamed",
+              "fingerprint": "java-fingerprint",
+              "before": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "patchHash": "35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18",
+              "patch": "rename from src/Old.java\nrename to src/Choose.java\n"
+            },
+            {
+              "id": "file-binary",
+              "path": "binary.dat",
+              "oldPath": "binary.dat",
+              "status": "modified",
+              "fingerprint": "binary",
+              "before": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "after": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-oversized",
+              "path": "oversized.dat",
+              "oldPath": "oversized.dat",
+              "status": "modified",
+              "fingerprint": "oversized",
+              "before": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "after": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-unavailable",
+              "path": "unavailable.dat",
+              "oldPath": "unavailable.dat",
+              "status": "modified",
+              "fingerprint": "unavailable",
+              "before": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "after": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-deleted",
+              "path": "deleted.ts",
+              "oldPath": "deleted.ts",
+              "status": "deleted",
+              "fingerprint": "deleted",
+              "before": {
+                "kind": "text",
+                "text": "export {};\n"
+              },
+              "after": {
+                "kind": "absent"
+              },
+              "patchHash": "c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb",
+              "patch": "-export {};\n"
+            }
+          ],
+          "complete": true
+        },
+        "state": {
+          "reviewed": [
+            "file-ts",
+            "file-java"
+          ],
+          "accepted": {
+            "cohorts": [
+              {
+                "name": "Fixture",
+                "explanation": "Synthetic cohort",
+                "layers": [
+                  {
+                    "name": "Read",
+                    "explanation": "Synthetic layer",
+                    "fileIds": [
+                      "file-ts",
+                      "file-java",
+                      "file-binary",
+                      "file-oversized",
+                      "file-unavailable",
+                      "file-deleted"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "fileId": "file-ts",
+                "line": 2,
+                "kind": "improvement",
+                "message": "Synthetic finding"
+              }
+            ]
+          },
+          "proposal": null,
+          "drafts": [
+            {
+              "id": "draft-saved",
+              "fileId": "file-ts",
+              "path": "src/choose.ts",
+              "side": "after",
+              "line": 2,
+              "text": "Synthetic review comment: café",
+              "needsReattachment": false
+            }
+          ],
+          "analysisStatus": "interrupted",
+          "analysisError": "Analysis interrupted by application restart."
+        },
+        "history": [
+          {
+            "id": "snapshot-current",
+            "capturedAt": "<timestamp>"
+          },
+          {
+            "id": "snapshot-history",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "invalid grouping",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/grouping",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "analysis": {
+          "cohorts": [],
+          "findings": []
+        }
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "[\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_small\",\n    \"minimum\": 1,\n    \"inclusive\": true,\n    \"path\": [\n      \"cohorts\"\n    ],\n    \"message\": \"Too small: expected array to have >=1 items\"\n  }\n]"
+      }
+    }
+  },
+  {
+    "name": "create draft",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/drafts",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "fileId": "file-ts",
+        "side": "after",
+        "line": 2,
+        "text": "  Check café  "
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "id": "snapshot-current",
+          "sessionId": "session-fixture",
+          "capturedAt": "<timestamp>",
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "head": null,
+          "base": null,
+          "files": [
+            {
+              "id": "file-ts",
+              "path": "src/choose.ts",
+              "oldPath": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "patchHash": "8c497e5989e2c567d27ac0f65892b18d061188edc9df58ef7f934344ffe085bd",
+              "patch": "--- a/src/choose.ts\n+++ b/src/choose.ts\n@@ -1 +1,4 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n"
+            },
+            {
+              "id": "file-java",
+              "path": "src/Choose.java",
+              "oldPath": "src/Old.java",
+              "status": "renamed",
+              "fingerprint": "java-fingerprint",
+              "before": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "package fixture; class Choose {}\n"
+              },
+              "patchHash": "35739a6c7eb8547a690f938b7b6df50f3729489a4919f31c80af8ca8d2b18f18",
+              "patch": "rename from src/Old.java\nrename to src/Choose.java\n"
+            },
+            {
+              "id": "file-binary",
+              "path": "binary.dat",
+              "oldPath": "binary.dat",
+              "status": "modified",
+              "fingerprint": "binary",
+              "before": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "after": {
+                "kind": "binary",
+                "reason": "Synthetic binary"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-oversized",
+              "path": "oversized.dat",
+              "oldPath": "oversized.dat",
+              "status": "modified",
+              "fingerprint": "oversized",
+              "before": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "after": {
+                "kind": "oversized",
+                "reason": "Synthetic oversized"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-unavailable",
+              "path": "unavailable.dat",
+              "oldPath": "unavailable.dat",
+              "status": "modified",
+              "fingerprint": "unavailable",
+              "before": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "after": {
+                "kind": "unavailable",
+                "reason": "Synthetic unavailable"
+              },
+              "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "patch": ""
+            },
+            {
+              "id": "file-deleted",
+              "path": "deleted.ts",
+              "oldPath": "deleted.ts",
+              "status": "deleted",
+              "fingerprint": "deleted",
+              "before": {
+                "kind": "text",
+                "text": "export {};\n"
+              },
+              "after": {
+                "kind": "absent"
+              },
+              "patchHash": "c65aaf5f4b1c2c803b8327236055ad5868aad5118a064cb8fb59287380080aeb",
+              "patch": "-export {};\n"
+            }
+          ],
+          "complete": true
+        },
+        "state": {
+          "reviewed": [
+            "file-ts",
+            "file-java"
+          ],
+          "accepted": {
+            "cohorts": [
+              {
+                "name": "Fixture",
+                "explanation": "Synthetic cohort",
+                "layers": [
+                  {
+                    "name": "Read",
+                    "explanation": "Synthetic layer",
+                    "fileIds": [
+                      "file-ts",
+                      "file-java",
+                      "file-binary",
+                      "file-oversized",
+                      "file-unavailable",
+                      "file-deleted"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "fileId": "file-ts",
+                "line": 2,
+                "kind": "improvement",
+                "message": "Synthetic finding"
+              }
+            ]
+          },
+          "proposal": null,
+          "drafts": [
+            {
+              "id": "draft-saved",
+              "fileId": "file-ts",
+              "path": "src/choose.ts",
+              "side": "after",
+              "line": 2,
+              "text": "Synthetic review comment: café",
+              "needsReattachment": false
+            },
+            {
+              "fileId": "file-ts",
+              "side": "after",
+              "line": 2,
+              "text": "Check café",
+              "id": "<uuid-1>",
+              "path": "src/choose.ts",
+              "needsReattachment": false
+            }
+          ],
+          "analysisStatus": "interrupted",
+          "analysisError": "Analysis interrupted by application restart."
+        },
+        "history": [
+          {
+            "id": "snapshot-current",
+            "capturedAt": "<timestamp>"
+          },
+          {
+            "id": "snapshot-history",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "invalid draft coordinates",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/drafts",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "fileId": "file-ts",
+        "side": "after",
+        "line": 999,
+        "text": "Invalid"
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Comment location is outside captured text."
+      }
+    }
+  },
+  {
+    "name": "delete draft",
+    "request": {
+      "method": "DELETE",
+      "path": "/api/sessions/session-fixture/drafts/<uuid-1>",
+      "body": {
+        "snapshotId": "snapshot-current"
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "[\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]"
+      }
+    }
+  },
+  {
+    "name": "coverage",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/coverage?format=istanbul"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "config": null,
+        "metrics": {
+          "snapshotId": "snapshot-current",
+          "format": "istanbul",
+          "capturedAt": "<timestamp>",
+          "reportHash": "8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672",
+          "aligned": false,
+          "files": [
+            {
+              "fileId": "file-ts",
+              "path": "src/choose.ts",
+              "language": "ts/js",
+              "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+              "functions": [
+                {
+                  "id": "a55b4c47d1cc3c1e3364fb68",
+                  "name": "choose",
+                  "line": 1,
+                  "complexity": 2,
+                  "coverage": 0.5,
+                  "crap": 2.5
+                }
+              ]
+            },
+            {
+              "fileId": "file-java",
+              "path": "src/Choose.java",
+              "language": "java",
+              "convention": "JaCoCo method complexity + instruction coverage",
+              "functions": [],
+              "reason": "No matching JaCoCo methods; method count unknown."
+            }
+          ],
+          "warnings": [],
+          "threshold": 8,
+          "highest": 2.5,
+          "measured": 1,
+          "missing": 0,
+          "aboveThreshold": 0
+        },
+        "run": {
+          "id": "test-running",
+          "snapshotId": "snapshot-current",
+          "config": {
+            "format": "istanbul",
+            "cwd": ".",
+            "reportPath": "coverage/report.json",
+            "timeoutSeconds": 5,
+            "threshold": 8,
+            "steps": [
+              {
+                "executable": "fixture-do-not-execute",
+                "args": [],
+                "shell": false
+              }
+            ]
+          },
+          "startedAt": "<timestamp>",
+          "status": "interrupted",
+          "log": "synthetic output\n",
+          "finishedAt": "<timestamp>",
+          "error": "Test run interrupted by application restart; not resumed automatically."
+        }
+      }
+    }
+  },
+  {
+    "name": "coverage artifact",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/coverage/artifact?format=istanbul"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "report": "{\"src/choose.ts\":{\"path\":\"src/choose.ts\",\"statementMap\":{\"0\":{\"start\":{\"line\":2,\"column\":2},\"end\":{\"line\":2,\"column\":22}},\"1\":{\"start\":{\"line\":3,\"column\":2},\"end\":{\"line\":3,\"column\":11}}},\"s\":{\"0\":1,\"1\":0}}}",
+        "provenance": {
+          "version": 1,
+          "reportHash": "8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672",
+          "sourceHashes": {
+            "src/choose.ts": "0ef4de140637e47053840361c7bdcc7d2359e6fc66de6525bfac5decb2cd6aff"
+          },
+          "tool": "synthetic fixture",
+          "capturedAt": "<timestamp>",
+          "head": null
+        }
+      }
+    }
+  },
+  {
+    "name": "missing coverage artifact",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/coverage/artifact?format=jacoco"
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Coverage report not found."
+      }
+    }
+  },
+  {
+    "name": "import unaligned coverage",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/coverage/import",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "format": "istanbul",
+        "report": "{\"src/choose.ts\":{\"path\":\"src/choose.ts\",\"statementMap\":{\"0\":{\"start\":{\"line\":2,\"column\":2},\"end\":{\"line\":2,\"column\":22}},\"1\":{\"start\":{\"line\":3,\"column\":2},\"end\":{\"line\":3,\"column\":11}}},\"s\":{\"0\":1,\"1\":0}}}",
+        "provenance": null
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "format": "istanbul",
+        "capturedAt": "<timestamp>",
+        "reportHash": "8375e80d8bc31fe2d9c28cb4410c6ae0d6645639fff8de189bf13bec767d8672",
+        "aligned": false,
+        "files": [
+          {
+            "fileId": "file-ts",
+            "path": "src/choose.ts",
+            "language": "ts/js",
+            "convention": "Source classic cyclomatic complexity + per-function statement coverage",
+            "functions": [
+              {
+                "id": "a55b4c47d1cc3c1e3364fb68",
+                "name": "choose",
+                "line": 1,
+                "complexity": 2,
+                "coverage": null,
+                "crap": null,
+                "reason": "Missing/stale source provenance"
+              }
+            ]
+          },
+          {
+            "fileId": "file-java",
+            "path": "src/Choose.java",
+            "language": "java",
+            "convention": "JaCoCo method complexity + instruction coverage",
+            "functions": [],
+            "reason": "No matching JaCoCo methods; method count unknown."
+          }
+        ],
+        "warnings": [
+          "Report fingerprint/source provenance is missing or mismatched. CRAP is unavailable until an aligned report is supplied."
+        ],
+        "threshold": 8,
+        "highest": null,
+        "measured": 0,
+        "missing": 1,
+        "aboveThreshold": 0
+      }
+    }
+  },
+  {
+    "name": "set test config",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/coverage/config",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "config": {
+          "format": "istanbul",
+          "cwd": ".",
+          "reportPath": "coverage/report.json",
+          "timeoutSeconds": 5,
+          "threshold": 8,
+          "steps": [
+            {
+              "executable": "fixture-do-not-execute",
+              "args": [],
+              "shell": false
+            }
+          ]
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "format": "istanbul",
+        "cwd": ".",
+        "reportPath": "coverage/report.json",
+        "timeoutSeconds": 5,
+        "threshold": 8,
+        "steps": [
+          {
+            "executable": "fixture-do-not-execute",
+            "args": [],
+            "shell": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "reject changed checkout preview",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/coverage/preview",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "format": "istanbul"
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Working source differs from snapshot: src/choose.ts. Refresh or use a matching checkout."
+      }
+    }
+  },
+  {
+    "name": "reject unconfirmed tests",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/coverage/run",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "previewId": "missing",
+        "confirmed": false
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      true\n    ],\n    \"path\": [\n      \"confirmed\"\n    ],\n    \"message\": \"Invalid input: expected true\"\n  }\n]"
+      }
+    }
+  },
+  {
+    "name": "cancel interrupted tests",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/coverage/cancel",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "runId": "test-running"
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  {
+    "name": "recovered partial graph",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/graph?snapshot=snapshot-current&side=before"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "graph": {
+          "version": 1,
+          "snapshotId": "snapshot-current",
+          "side": "before",
+          "revision": "synthetic",
+          "capturedAt": "<timestamp>",
+          "options": {
+            "side": "before",
+            "maxFiles": 1,
+            "maxBytes": 1024
+          },
+          "nodes": [],
+          "edges": [],
+          "cycles": [],
+          "coverage": {
+            "listed": 2,
+            "eligible": 2,
+            "scanned": 0,
+            "skipped": 2,
+            "bytes": 0,
+            "parserFailures": 0,
+            "unresolved": 0,
+            "incoming": "scanned sources only",
+            "complete": false,
+            "omissions": [],
+            "warnings": [
+              "Synthetic partial graph"
+            ]
+          },
+          "provenance": {
+            "typescript": "6.0.3",
+            "java": "fixture",
+            "configuration": []
+          }
+        },
+        "run": {
+          "status": "interrupted",
+          "startedAt": "<timestamp>",
+          "error": "Graph scan interrupted by application restart.",
+          "finishedAt": "<timestamp>"
+        }
+      }
+    }
+  },
+  {
+    "name": "graph status only",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/graph?snapshot=snapshot-current&side=before&statusOnly=1"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "graph": null,
+        "run": {
+          "status": "interrupted",
+          "startedAt": "<timestamp>",
+          "error": "Graph scan interrupted by application restart.",
+          "finishedAt": "<timestamp>"
+        }
+      }
+    }
+  },
+  {
+    "name": "missing graph source",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/graph/source?snapshot=snapshot-current&node=missing"
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Select a captured source node."
+      }
+    }
+  },
+  {
+    "name": "invalid graph options",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/graph",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "options": {
+          "maxFiles": 0
+        }
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "[\n  {\n    \"origin\": \"number\",\n    \"code\": \"too_small\",\n    \"minimum\": 1,\n    \"inclusive\": true,\n    \"path\": [\n      \"options\",\n      \"maxFiles\"\n    ],\n    \"message\": \"Too small: expected number to be >=1\"\n  }\n]"
+      }
+    }
+  },
+  {
+    "name": "cancel idle graph",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/graph/cancel",
+      "body": {
+        "snapshotId": "snapshot-current"
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  {
+    "name": "stale refresh",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/refresh",
+      "body": {
+        "snapshotId": "snapshot-history"
+      }
+    },
+    "response": {
+      "status": 400,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "error": "Snapshot changed. Reload this review before editing."
+      }
+    }
+  },
+  {
+    "name": "start capped graph",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/session-fixture/graph",
+      "body": {
+        "snapshotId": "snapshot-current",
+        "options": {
+          "side": "after",
+          "maxFiles": 1,
+          "maxBytes": 1024
+        }
+      }
+    },
+    "response": {
+      "status": 202,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "graph": null,
+        "run": {
+          "status": "running",
+          "startedAt": "<timestamp>",
+          "progress": {
+            "phase": "reading",
+            "completed": 0,
+            "total": 1,
+            "bytes": 0,
+            "path": "src/Choose.java"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "completed capped graph",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/graph?snapshot=snapshot-current&side=after"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "graph": {
+          "version": 1,
+          "snapshotId": "snapshot-current",
+          "side": "after",
+          "revision": "4f0061bf28fd6a1a6c83c7c021f9e70d37b6919e474495a614b0e919d5579b40",
+          "capturedAt": "<timestamp>",
+          "options": {
+            "side": "after",
+            "maxFiles": 1,
+            "maxBytes": 1024
+          },
+          "nodes": [
+            {
+              "id": "2e2a58cc53b8bc2c2fd359cb",
+              "label": "fixture.Choose",
+              "kind": "class",
+              "language": "java",
+              "path": "src/Choose.java",
+              "fileId": "file-java",
+              "changed": true,
+              "line": 1,
+              "packageId": "f7a7c918dfdfd9d9c1097f4f"
+            },
+            {
+              "id": "f7a7c918dfdfd9d9c1097f4f",
+              "label": "fixture",
+              "kind": "package",
+              "language": "java",
+              "changed": true
+            }
+          ],
+          "edges": [],
+          "cycles": [],
+          "coverage": {
+            "listed": 5,
+            "eligible": 2,
+            "scanned": 1,
+            "skipped": 1,
+            "bytes": 33,
+            "parserFailures": 0,
+            "unresolved": 0,
+            "incoming": "scanned sources only",
+            "complete": false,
+            "omissions": [
+              {
+                "path": "src/choose.ts",
+                "reason": "Source file scan cap reached"
+              }
+            ],
+            "warnings": [
+              "Incoming relationships cover scanned sources only. Java resolution is bounded source analysis, without compiler/classpath or generated-code completeness.",
+              "Pinned repository inventory is incomplete or unavailable. Refresh legacy snapshots to capture full context."
+            ]
+          },
+          "provenance": {
+            "typescript": "TypeScript 6.0.3 source/module resolver",
+            "java": "Tree-sitter Java 0.20.2 grammar via tree-sitter-wasms 0.1.13 / runtime 0.20.8",
+            "configuration": []
+          }
+        },
+        "run": {
+          "status": "succeeded",
+          "startedAt": "<timestamp>",
+          "progress": {
+            "phase": "saving",
+            "completed": 1,
+            "total": 2,
+            "bytes": 33
+          },
+          "finishedAt": "<timestamp>"
+        }
+      }
+    }
+  },
+  {
+    "name": "captured graph source",
+    "request": {
+      "method": "GET",
+      "path": "/api/sessions/session-fixture/graph/source?snapshot=snapshot-current&side=after&node=2e2a58cc53b8bc2c2fd359cb"
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "path": "src/Choose.java",
+        "text": "package fixture; class Choose {}\n",
+        "line": 1
+      }
+    }
+  },
+  {
+    "name": "capture branch",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions",
+      "body": {
+        "root": "<repository>",
+        "comparison": {
+          "mode": "branch",
+          "base": "main"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "files": [],
+          "head": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "base": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "graphContext": {
+            "before": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            },
+            "after": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            }
+          },
+          "root": "<repository>",
+          "comparison": {
+            "mode": "branch",
+            "base": "main"
+          },
+          "sessionId": "<uuid-2>",
+          "id": "<uuid-3>",
+          "capturedAt": "<timestamp>",
+          "complete": true
+        },
+        "state": {
+          "reviewed": [],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [],
+          "analysisStatus": "idle"
+        },
+        "history": [
+          {
+            "id": "<uuid-3>",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "capture staged",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions",
+      "body": {
+        "root": "<repository>",
+        "comparison": {
+          "mode": "staged",
+          "base": "main"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "files": [
+            {
+              "id": "9d8314551aaf6e26888c15d7",
+              "oldPath": "src/choose.ts",
+              "path": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "aec140fd1abd5f9dc3bbe5b99c3a5b1878ca12b7694acc5fb4947a52600a7435",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "patchHash": "8a0f716ce5490fd766c84bf2e83c3ed3b228d00a1ba9290667420d47fb06e600",
+              "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,1 +1,4 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n"
+            }
+          ],
+          "head": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "base": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "graphContext": {
+            "before": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            },
+            "after": {
+              "revision": "captured-index",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "49257e4cd7fdd8965ca88e54c53908d52ce583d3"
+                }
+              ]
+            }
+          },
+          "root": "<repository>",
+          "comparison": {
+            "mode": "staged",
+            "base": "main"
+          },
+          "sessionId": "<uuid-4>",
+          "id": "<uuid-5>",
+          "capturedAt": "<timestamp>",
+          "complete": true
+        },
+        "state": {
+          "reviewed": [],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [],
+          "analysisStatus": "idle"
+        },
+        "history": [
+          {
+            "id": "<uuid-5>",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "capture unstaged",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions",
+      "body": {
+        "root": "<repository>",
+        "comparison": {
+          "mode": "unstaged",
+          "base": "main"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "files": [
+            {
+              "id": "9d8314551aaf6e26888c15d7",
+              "oldPath": "src/choose.ts",
+              "path": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "ac6b032ba35b7ddeebd178572a70b0c5756d209f142b92b1e6970dba19edf742",
+              "before": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n// working change\n"
+              },
+              "patchHash": "7c0ab9a1afb9df79cfd887900fcbb3729a20278e29093f3af62684ba555bda0f",
+              "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,4 +1,5 @@\n export function choose(x: number) {\n   if (x > 0) return 1;\n   return 0;\n }\n+// working change\n"
+            }
+          ],
+          "head": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "base": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "graphContext": {
+            "before": {
+              "revision": "captured-index",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "49257e4cd7fdd8965ca88e54c53908d52ce583d3"
+                }
+              ]
+            },
+            "after": {
+              "revision": "captured-index",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "49257e4cd7fdd8965ca88e54c53908d52ce583d3"
+                }
+              ]
+            }
+          },
+          "root": "<repository>",
+          "comparison": {
+            "mode": "unstaged",
+            "base": "main"
+          },
+          "sessionId": "<uuid-6>",
+          "id": "<uuid-7>",
+          "capturedAt": "<timestamp>",
+          "complete": true
+        },
+        "state": {
+          "reviewed": [],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [],
+          "analysisStatus": "idle"
+        },
+        "history": [
+          {
+            "id": "<uuid-7>",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "capture all",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions",
+      "body": {
+        "root": "<repository>",
+        "comparison": {
+          "mode": "all",
+          "base": "main"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "files": [
+            {
+              "id": "9d8314551aaf6e26888c15d7",
+              "oldPath": "src/choose.ts",
+              "path": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "c5393b317fef9427141448fbbf25b13853aeaca01ac6e33063ea39a80ef91cbe",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n// working change\n"
+              },
+              "patchHash": "eb8cd33e75f1a8a5ebf246f884e47081fce41f8905c3f16e6f18deb46b6d4e57",
+              "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,1 +1,5 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n+// working change\n"
+            }
+          ],
+          "head": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "base": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "graphContext": {
+            "before": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            },
+            "after": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            }
+          },
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "sessionId": "<uuid-8>",
+          "id": "<uuid-9>",
+          "capturedAt": "<timestamp>",
+          "complete": true
+        },
+        "state": {
+          "reviewed": [],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [],
+          "analysisStatus": "idle"
+        },
+        "history": [
+          {
+            "id": "<uuid-9>",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "refresh current snapshot",
+    "request": {
+      "method": "POST",
+      "path": "/api/sessions/<uuid-8>/refresh",
+      "body": {
+        "snapshotId": "<uuid-9>"
+      }
+    },
+    "response": {
+      "status": 200,
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "body": {
+        "snapshot": {
+          "files": [
+            {
+              "id": "9d8314551aaf6e26888c15d7",
+              "oldPath": "src/choose.ts",
+              "path": "src/choose.ts",
+              "status": "modified",
+              "fingerprint": "c5393b317fef9427141448fbbf25b13853aeaca01ac6e33063ea39a80ef91cbe",
+              "before": {
+                "kind": "text",
+                "text": "export const choose = 0;\n"
+              },
+              "after": {
+                "kind": "text",
+                "text": "export function choose(x: number) {\n  if (x > 0) return 1;\n  return 0;\n}\n// working change\n"
+              },
+              "patchHash": "eb8cd33e75f1a8a5ebf246f884e47081fce41f8905c3f16e6f18deb46b6d4e57",
+              "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,1 +1,5 @@\n-export const choose = 0;\n+export function choose(x: number) {\n+  if (x > 0) return 1;\n+  return 0;\n+}\n+// working change\n"
+            }
+          ],
+          "head": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "base": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+          "graphContext": {
+            "before": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            },
+            "after": {
+              "revision": "b0fc81bb88454070af3a65c577ca73922e17f1de",
+              "complete": true,
+              "entries": [
+                {
+                  "path": "src/choose.ts",
+                  "mode": "100644",
+                  "oid": "dbe690bcdfd1e954d3a4cb729a88fd1e905a8b3e"
+                }
+              ]
+            }
+          },
+          "root": "<repository>",
+          "comparison": {
+            "mode": "all",
+            "base": "main"
+          },
+          "sessionId": "<uuid-8>",
+          "id": "<uuid-10>",
+          "capturedAt": "<timestamp>",
+          "complete": true
+        },
+        "state": {
+          "reviewed": [],
+          "accepted": null,
+          "proposal": null,
+          "drafts": [],
+          "analysisStatus": "idle"
+        },
+        "history": [
+          {
+            "id": "<uuid-10>",
+            "capturedAt": "<timestamp>"
+          },
+          {
+            "id": "<uuid-9>",
+            "capturedAt": "<timestamp>"
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,8 @@
+--- a/src/choose.ts
++++ b/src/choose.ts
+@@ -1 +1,4 @@
+-export const choose = 0;
++export function choose(x: number) {
++  if (x > 0) return 1;
++  return 0;
++}
