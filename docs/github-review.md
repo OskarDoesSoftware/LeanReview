@@ -26,7 +26,7 @@ Publication rechecks the current revision, complete file listing, and selected d
 
 ## Verification limits
 
-Controlled CLI fixtures cover sign-in, capture, local drafts/replies, selective publication, thread resolution, reopening, changed revisions, incomplete listings, and uncertain publication reconciliation. Fixture tests do not establish live GitHub OAuth, private repository permissions, organization SSO, or real publication. Use a designated test PR for those shared writes before closing issue 30.
+Controlled CLI fixtures cover sign-in, capture, local drafts/replies, selective publication, thread resolution, reopening, changed revisions, incomplete listings, and uncertain publication reconciliation. Fixture tests do not establish live GitHub OAuth, private repository permissions, organization SSO, or real publication. On 2026-10-15, the user accepted fixture publication tests plus passing live read-only checks as sufficient verification for the MVP. Live publication acceptance is not required to close issue 30 under that amendment.
 
 Regression coverage includes composer isolation between PRs, preserving unchecked drafts when adding feedback, resuming recent reviews without recapture, linked local changes when remote listing is denied, paginated repository/PR/team discovery, and retaining a failed reply after its inline feedback succeeded. Live GitHub checks remain read-only at the user's request; no actual comment, reply, review, or thread mutation is claimed as verified.
 
