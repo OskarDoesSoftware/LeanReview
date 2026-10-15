@@ -1,10 +1,11 @@
 import { fork } from "node:child_process";
 import { once } from "node:events";
-import { mkdtemp } from "node:fs/promises";
+import { mkdir, mkdtemp } from "node:fs/promises";
 import path from "node:path";
 import { createServer } from "node:net";
 import assert from "node:assert/strict";
 
+await mkdir(path.resolve(".leanreview-test"), { recursive: true });
 const data = await mkdtemp(path.resolve(".leanreview-test/launch-acceptance-"));
 const reservation = createServer();
 await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
