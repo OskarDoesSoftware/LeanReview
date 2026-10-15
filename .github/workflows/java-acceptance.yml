@@ -39,13 +39,13 @@ jobs:
         if: runner.os == 'macOS'
         timeout-minutes: 3
         run: |
-          original=$(security default-keychain -d user | tr -d '"')
+          original=$(security default-keychain -d user | sed -e 's/^[[:space:]]*"//' -e 's/"[[:space:]]*$//')
           keychain="$RUNNER_TEMP/leanreview-fixture.keychain-db"
           trap 'security default-keychain -d user -s "$original"; security delete-keychain "$keychain"' EXIT
           security create-keychain -p fixture-only "$keychain"
           security default-keychain -d user -s "$keychain"
           security unlock-keychain -p fixture-only "$keychain"
-          LEANREVIEW_TEST_KEYCHAIN="$keychain" sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test
+          LEANREVIEW_TEST_KEYCHAIN="$keychain" LEANREVIEW_TEST_NODE="$(command -v node)" sh backend-java/mvnw -f backend-java/pom.xml -Dtest=CredentialVaultTest test
         env:
           LEANREVIEW_KEYRING_ACCEPTANCE: "1"
       - name: Secret Service interoperability on Linux

@@ -84,7 +84,7 @@ class CredentialVaultTest {
             "/usr/bin/security", "add-generic-password", "-a", account, "-s", "LeanReview",
             "-w", token, "-T", "/usr/bin/security", "-T",
             ProcessHandle.current().info().command().orElseThrow(), "-T",
-            dev.leanreview.analysis.AnalysisHelper.executable("node"), fixtureKeychain)
+            Path.of(System.getenv("LEANREVIEW_TEST_NODE")).toRealPath().toString(), fixtureKeychain)
             .redirectErrorStream(true).start();
         assertThat(permission.waitFor(10, TimeUnit.SECONDS)).isTrue();
         assertThat(permission.exitValue()).isZero();
