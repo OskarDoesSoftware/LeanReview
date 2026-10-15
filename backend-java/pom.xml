@@ -11,6 +11,13 @@
   <groupId>dev.leanreview</groupId>
   <artifactId>leanreview-backend</artifactId>
   <version>0.1.0-SNAPSHOT</version>
+  <licenses>
+    <license>
+      <name>GNU Affero General Public License v3.0 only</name>
+      <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <properties>
     <java.version>25</java.version>
     <sqlite-jdbc.version>3.53.4.0</sqlite-jdbc.version>

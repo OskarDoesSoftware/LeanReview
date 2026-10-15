@@ -88,3 +88,7 @@ The canonical [decision map](https://github.com/OskarDoesSoftware/LeanReview/iss
 ## UI components
 
 Owned shadcn/ui source lives in `frontend/src/components/ui`. Registry configuration is in `components.json`; the `@/` alias resolves to `frontend/src`. Use these components for forms, badges, cards, tabs, and dialogs. `ReviewDialog` adds the shared scrollable layout and restores focus to the opening control. Native selects preserve platform keyboard behavior.
+
+## License
+
+LeanReview is licensed under the GNU Affero General Public License version 3 only (`AGPL-3.0-only`). See [LICENSE](LICENSE) for the full terms. Third-party dependencies retain their own licenses.
