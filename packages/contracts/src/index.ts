@@ -74,7 +74,7 @@ export const analysisSchema = z.object({
 });
 export type Analysis = z.infer<typeof analysisSchema>;
 export type Draft = {
-  replyTo?: number;
+  replyTo?: string | number;
   id: string;
   fileId: string;
   path: string;

@@ -152,9 +152,22 @@ class GitHubWorkflowTest {
               id,
               json.createObjectNode()
                   .put("snapshotId", snapshot)
-                  .put("replyTo", 11)
+                  .put("replyTo", "5000000000000000011")
                   .put("text", "Keep this reply local on failure."));
       String partialReply = review.path("state").path("drafts").get(1).path("id").asText();
+      assertThat(review.path("state").path("drafts").get(1).path("replyTo").asText())
+          .isEqualTo("5000000000000000011");
+      assertThat(
+              feedback
+                  .checkDraft(
+                      id,
+                      json.createObjectNode()
+                          .put("snapshotId", snapshot)
+                          .put("draftId", partialReply))
+                  .path("state")
+                  .path("drafts")
+                  .size())
+          .isEqualTo(2);
       publish
           .put("submissionId", UUID.randomUUID().toString())
           .put("decision", "COMMENT")
@@ -170,9 +183,13 @@ class GitHubWorkflowTest {
       int publishedReviews =
           json.readTree(Files.readString(fixture.resolve("state.json"))).path("reviews").size();
       control(fixture, "failReply", false);
+      control(fixture, "failReplyUncertain", true);
       publish.put("submissionId", UUID.randomUUID().toString());
       publish.putArray("draftIds").add(partialReply);
+      assertThat(feedback.publish(id, publish).path("status").asText()).isEqualTo("uncertain");
+      assertThat(store.review(id, null).path("state").path("drafts").size()).isEqualTo(1);
       assertThat(feedback.publish(id, publish).path("status").asText()).isEqualTo("complete");
+      control(fixture, "failReplyUncertain", false);
       assertThat(store.review(id, null).path("state").path("drafts").size()).isZero();
       assertThat(
               json.readTree(Files.readString(fixture.resolve("state.json"))).path("reviews").size())

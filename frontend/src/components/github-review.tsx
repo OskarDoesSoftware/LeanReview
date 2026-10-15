@@ -8,7 +8,7 @@ import { ReviewDialog } from "./review-dialog";
 import { DialogTitle } from "./ui/dialog";
 
 type Comment = {
-  databaseId?: number;
+  databaseId?: string | number;
   id?: number;
   body: string;
   author?: { login: string };
@@ -47,7 +47,7 @@ export function GitHubReview({
   const [error, setError] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [feedback, setFeedback] = React.useState("");
-  const [replyTo, setReplyTo] = React.useState<number>();
+  const [replyTo, setReplyTo] = React.useState<string | number>();
   const [selected, setSelected] = React.useState<string[]>(
     review.state.drafts.map((d) => d.id),
   );

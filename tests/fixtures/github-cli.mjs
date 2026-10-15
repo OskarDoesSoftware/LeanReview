@@ -21,7 +21,13 @@ const state = fs.existsSync(file)
       resolved: false,
     };
 const save = () => fs.writeFileSync(file, JSON.stringify(state));
-const out = (value) => process.stdout.write(JSON.stringify(value));
+const out = (value) =>
+  process.stdout.write(
+    JSON.stringify(value).replace(
+      /"in_reply_to_id":"(\d+)"/g,
+      '"in_reply_to_id":$1',
+    ),
+  );
 if (args[0] === "auth") {
   if (args[1] === "status")
     out({
@@ -92,7 +98,7 @@ if (args[0] === "auth") {
                     comments: {
                       nodes: [
                         {
-                          databaseId: 11,
+                          databaseId: "5000000000000000011",
                           body: "Can you explain this rule?",
                           author: { login: "author" },
                         },
@@ -251,10 +257,11 @@ if (args[0] === "auth") {
       id: 200,
       body: input.body,
       user: { login: "reviewer" },
-      in_reply_to_id: Number(url.pathname.split("/").at(-2)),
+      in_reply_to_id: url.pathname.split("/").at(-2),
     });
     save();
-    out(state.comments.at(-1));
+    if (state.failReplyUncertain) process.exitCode = 1;
+    else out(state.comments.at(-1));
   } else if (url.pathname.endsWith("/comments"))
     out(url.pathname.includes("/issues/") ? [] : state.comments);
   else {
