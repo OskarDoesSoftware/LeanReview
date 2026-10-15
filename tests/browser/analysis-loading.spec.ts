@@ -4,6 +4,8 @@ import type { Review } from "../../packages/contracts/src/index";
 test("analysis stays visible while the diff is usable and cancellation has its own pending state", async ({
   page,
 }) => {
+  const now = Date.now();
+  await page.clock.setFixedTime(now);
   const review: Review = {
     snapshot: {
       id: "loading",
@@ -33,8 +35,8 @@ test("analysis stays visible while the diff is usable and cancellation has its o
       proposal: null,
       analysisStatus: "running",
       analysisProgress: {
-        startedAt: Date.now() - 45000,
-        updatedAt: Date.now(),
+        startedAt: now - 45000,
+        updatedAt: now,
         phase: "analyzing",
         completedBatches: 1,
         totalBatches: 3,
@@ -97,7 +99,7 @@ test("analysis stays visible while the diff is usable and cancellation has its o
     "1 / 3 batches checked · 20 / 60 files processed",
   );
   await expect(loading).toContainText(/About .* remaining/);
-  await expect(loading.getByText(/0:[45]\d elapsed/)).toBeVisible();
+  await expect(loading.getByText("0:45 elapsed", { exact: true })).toBeVisible();
   await expect(
     loading.getByRole("progressbar", { name: "Analysis batches completed" }),
   ).toHaveAttribute("aria-valuenow", "1");
@@ -129,7 +131,7 @@ test("analysis stays visible while the diff is usable and cancellation has its o
   await expect(loading.getByRole("status")).toHaveText(
     "Analyzing batch 2 of 3…",
   );
-  await expect(loading.getByText(/0:[45]\d elapsed/)).toBeVisible();
+  await expect(loading.getByText("0:45 elapsed", { exact: true })).toBeVisible();
   await expect(page.locator(".monaco-diff-editor")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Analysis in progress…", exact: true }),
