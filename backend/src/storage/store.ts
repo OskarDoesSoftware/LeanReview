@@ -29,7 +29,7 @@ export class Store {
     this.db.pragma("journal_mode = WAL");
     this.db.pragma("busy_timeout = 5000");
     const version = this.db.pragma("user_version", { simple: true }) as number;
-    if (version > 2)
+    if (version > 3)
       throw new Error(
         "Database is newer than this application; use the newer version.",
       );
@@ -52,6 +52,30 @@ export class Store {
           CREATE TABLE test_runs (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, data TEXT NOT NULL);
           PRAGMA user_version = 2;`);
       })();
+    }
+    if (version < 3) {
+      if (version === 2)
+        this.db
+          .prepare("VACUUM INTO ?")
+          .run(path.join(directory, `leanreview.pre-v3.${Date.now()}.sqlite`));
+      this.db.transaction(() =>
+        this.db.exec(
+          `CREATE TABLE graphs (snapshot_id TEXT NOT NULL REFERENCES snapshots(id) ON DELETE CASCADE, side TEXT NOT NULL, artifact TEXT, sources TEXT NOT NULL, run TEXT NOT NULL, PRIMARY KEY(snapshot_id,side)); PRAGMA user_version=3;`,
+        ),
+      )();
+    }
+    for (const row of this.db
+      .prepare("SELECT snapshot_id,side,run FROM graphs")
+      .all() as { snapshot_id: string; side: string; run: string }[]) {
+      const run = JSON.parse(row.run);
+      if (run.status === "running") {
+        run.status = "interrupted";
+        run.error = "Graph scan interrupted by application restart.";
+        run.finishedAt = new Date().toISOString();
+        this.db
+          .prepare("UPDATE graphs SET run=? WHERE snapshot_id=? AND side=?")
+          .run(JSON.stringify(run), row.snapshot_id, row.side);
+      }
     }
     for (const row of this.db
       .prepare("SELECT id,data FROM test_runs")

@@ -17,6 +17,7 @@ import {
   type EditorConfig,
 } from "./editor";
 import { mountCoverage } from "./coverage";
+import { mountGraphs } from "./graph";
 export function createApp(
   store: Store,
   origin: string,
@@ -258,6 +259,7 @@ export function createApp(
     res.json({ ok: true });
   });
   const coverageRunner = mountCoverage(app, store, current);
+  const graphs = mountGraphs(app, store);
   app.use("/api", (_req, res) =>
     res.status(404).json({ error: "API endpoint not found." }),
   );
@@ -277,7 +279,11 @@ export function createApp(
     app,
     nonce,
     abort: async () => {
-      await Promise.all([analysis.shutdown(), coverageRunner.shutdown()]);
+      await Promise.all([
+        analysis.shutdown(),
+        coverageRunner.shutdown(),
+        graphs.shutdown(),
+      ]);
     },
   };
 }

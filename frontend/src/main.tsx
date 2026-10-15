@@ -30,6 +30,7 @@ import "./style.css";
 import { useReviewNavigation } from "./lib/use-review-navigation";
 import { api } from "./lib/api";
 import { CoveragePanel } from "./components/coverage-panel";
+import { ModuleGraphViewer } from "./components/module-graph";
 type EditorConfig = { name: string; executable: string; args: string[] };
 (globalThis as any).MonacoEnvironment = {
   getWorker: (_id: string, label: string) =>
@@ -53,6 +54,9 @@ function App({ startupError }: { startupError?: string }) {
   >("all");
   const [base, setBase] = React.useState("main");
   const [tab, setTab] = React.useState("Explanation");
+  const [graphScope, setGraphScope] = React.useState<
+    "review" | "repository" | null
+  >(null);
   const [split, setSplit] = React.useState(true);
   const [error, setError] = React.useState(startupError ?? "");
   const reportNavigationError = React.useCallback(
@@ -323,8 +327,8 @@ function App({ startupError }: { startupError?: string }) {
             </div>
           </div>
           <p className="small muted">
-            Local vertical slice · remote providers, measured CRAP, and module
-            graphs are subsequent implementation work.
+            Local review, measured CRAP, and module graphs are available. GitHub
+            and Azure DevOps adapters are subsequent implementation work.
           </p>
         </main>
       ) : (
@@ -412,6 +416,29 @@ function App({ startupError }: { startupError?: string }) {
               <RefreshCw size={15} />
               Refresh snapshot
             </Button>
+            <Button
+              variant="outline"
+              disabled={navigating}
+              onClick={() => setGraphScope("review")}
+            >
+              Review dependencies
+            </Button>
+            <Button
+              variant="ghost"
+              disabled={navigating}
+              onClick={() => setGraphScope("repository")}
+            >
+              Repository graph
+            </Button>
+            {graphScope && (
+              <ModuleGraphViewer
+                key={review.snapshot.id}
+                review={review}
+                initialScope={graphScope}
+                onClose={() => setGraphScope(null)}
+                onNavigate={setSelected}
+              />
+            )}
             {review.state.analysisStatus === "running" && (
               <>
                 <span className="badge">Analyzing with {config.provider}…</span>
@@ -908,8 +935,8 @@ function App({ startupError }: { startupError?: string }) {
                     <h3>Measured metrics</h3>
                     <p>
                       Use the CRAP tab to import coverage or explicitly run your
-                      tests. Module graphs are still a separate implementation
-                      step.
+                      tests. Open Review dependencies for changed modules or
+                      Repository graph for the full pinned source graph.
                     </p>
                   </div>
                 </div>

@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "dev": "node scripts/dev.mjs",
-    "build": "vite build --config frontend/vite.config.ts && tsup backend/src/index.ts --format esm --out-dir backend/dist --platform node --external better-sqlite3 --external @napi-rs/keyring",
+    "build": "vite build --config frontend/vite.config.ts && tsup backend/src/index.ts --format esm --out-dir backend/dist --platform node --external better-sqlite3 --external @napi-rs/keyring --external web-tree-sitter",
     "start": "node backend/dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -23,10 +23,12 @@
   "dependencies": {
     "@napi-rs/keyring": "2.1.1",
     "@radix-ui/react-slot": "1.5.0",
+    "@xyflow/react": "12.12.0",
     "better-sqlite3": "13.0.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "diff": "9.0.0",
+    "elkjs": "0.12.0",
     "express": "5.3.0",
     "fast-xml-parser": "5.11.2",
     "lucide-react": "1.57.0",
@@ -35,7 +37,9 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "tailwind-merge": "3.7.0",
+    "tree-sitter-wasms": "0.1.13",
     "typescript-ast": "npm:typescript@6.0.3",
+    "web-tree-sitter": "0.20.8",
     "zod": "4.6.7"
   },
   "overrides": {

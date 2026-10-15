@@ -21,6 +21,10 @@ export type FileChange = {
   patch: string;
 };
 export type Snapshot = {
+  graphContext?: {
+    before: import("./graph").PinnedInventory;
+    after: import("./graph").PinnedInventory;
+  };
   id: string;
   sessionId: string;
   capturedAt: string;

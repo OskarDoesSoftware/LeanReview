@@ -56,13 +56,17 @@ Integration tests create isolated fixture repositories/databases under ignored `
 
 The CRAP tab supports TS/JS Istanbul JSON and Java JaCoCo XML, coverage report import/export, and explicitly approved local test execution. Results and progress persist locally. See [coverage setup and alignment](docs/coverage.md) for commands, provenance, and verification.
 
+## Module dependency viewer
+
+Choose **Review dependencies** for changed modules and their dependencies, or **Repository graph** for the full pinned TS/JS and Java source scan. The viewer supports before/after snapshots, Java package/class drill-down, cycles, filters, neighbor expansion, source evidence, and cached source navigation. See [module graph behavior and limits](docs/module-graphs.md).
+
 ## Current scope
 
 This is the **core Phase 1 vertical slice**, not the completed Phase 1 contract or MVP. It supports local comparisons and local drafts, three foreground LLM HTTP adapters, bounded sequential batches, explicit proposal acceptance, immediate SQLite progress, immutable source caching, refresh/history, and protected loopback access.
 
-Remaining Phase 1 work includes TS/JS and Java module graphs, richer related-file context/dependency evidence and cross-batch semantic reconciliation, transient retry policy, draft editing/reattachment UX, full backup/restore and cache deletion, and broad quality/platform acceptance. Snapshot capture currently rejects unsupported/conflicted/submodule changes rather than silently showing a complete result. Content over 2 MiB or non-UTF-8/binary/symlink files is metadata-only. Byte-based token estimates are deliberately conservative, not exact token counts.
+Remaining Phase 1 work includes richer related-file context/dependency evidence and cross-batch semantic reconciliation, transient retry policy, draft editing/reattachment UX, full backup/restore and cache deletion, and broad quality/platform acceptance. Snapshot capture currently rejects unsupported/conflicted/submodule changes rather than silently showing a complete result. Content over 2 MiB or non-UTF-8/binary/symlink files is metadata-only. Byte-based token estimates are deliberately conservative, not exact token counts.
 
-GitHub and Azure DevOps repository/PR adapters and tested publication are later phases. No remote publishing, PR verdicts, or graph extraction is wired into this slice. Live Ollama/cloud model quality and macOS/Linux acceptance still need verification. The MVP requires all three sources and the remaining features in the [approved contract](https://github.com/OskarDoesSoftware/LeanReview/issues/10).
+GitHub and Azure DevOps repository/PR adapters and tested publication are later phases. Remote publishing and PR verdicts are not wired into this slice. Live Ollama/cloud model quality and macOS/Linux acceptance still need verification. The MVP requires all three sources and the remaining features in the [approved contract](https://github.com/OskarDoesSoftware/LeanReview/issues/10).
 
 ## Structure
 

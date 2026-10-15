@@ -22,6 +22,25 @@ await writeFile(
   path.join(root, "src/auth/validatePassword.ts"),
   "export function validatePassword(value: string) {\n  return value.length >= 8;\n}\n",
 );
+await mkdir(path.join(root, "src/graph"), { recursive: true });
+await mkdir(path.join(root, "src/main/java/a"), { recursive: true });
+await mkdir(path.join(root, "src/main/java/b"), { recursive: true });
+await writeFile(
+  path.join(root, "src/graph/entry.ts"),
+  'import "./helper";import "javascript:alert(1)";export const entry=1;',
+);
+await writeFile(
+  path.join(root, "src/graph/helper.ts"),
+  'import "./entry";export const helper=1;',
+);
+await writeFile(
+  path.join(root, "src/main/java/a/A.java"),
+  "package a; import b.B; public class A { B dependency; }",
+);
+await writeFile(
+  path.join(root, "src/main/java/b/B.java"),
+  "package b; public class B { a.A dependency; }",
+);
 git("add", ".");
 git("commit", "-m", "initial");
 await writeFile(
@@ -80,11 +99,11 @@ const fixtureProvider = createServer(async (req, res) => {
 }).listen(11435, "127.0.0.1");
 const { app, abort } = createApp(
   store,
-  "http://127.0.0.1:4318",
+  "http://127.0.0.1:4320",
   "browser-fixture-nonce",
 );
 app.use(express.static(path.resolve("frontend/dist")));
-const server = app.listen(4318, "127.0.0.1");
+const server = app.listen(4320, "127.0.0.1");
 const close = async () => {
   await abort();
   server.closeAllConnections();

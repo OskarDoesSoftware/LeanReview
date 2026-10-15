@@ -256,7 +256,39 @@ async function captureFiles(root: string, comparison: Comparison) {
         : "",
     });
   }
-  return { files, head: headId, base };
+  const inventory = async (revision: string | null, index = false) => {
+    const raw = index
+      ? await git(root, ["ls-files", "--stage", "-z"])
+      : revision
+        ? await git(root, ["ls-tree", "-r", "-z", revision])
+        : Buffer.from("");
+    const entries = raw
+      .toString()
+      .split("\0")
+      .filter(Boolean)
+      .map((record) => {
+        const tab = record.indexOf("\t"),
+          meta = record.slice(0, tab).split(" ");
+        if (index && meta[2] !== "0")
+          throw new Error("Resolve index conflicts before graph capture.");
+        return {
+          path: record.slice(tab + 1),
+          mode: meta[0],
+          oid: meta[index ? 1 : 2],
+        };
+      });
+    return {
+      revision: index ? "captured-index" : (revision ?? "empty"),
+      complete: entries.length <= 100000,
+      entries: entries.slice(0, 100000),
+    };
+  };
+  const before = await inventory(base, comparison.mode === "unstaged");
+  const after =
+    comparison.mode === "staged" || comparison.mode === "unstaged"
+      ? await inventory(null, true)
+      : await inventory(target ?? headId);
+  return { files, head: headId, base, graphContext: { before, after } };
 }
 export async function captureSnapshot(
   root: string,

@@ -245,5 +245,56 @@ test("review a captured Git diff, accept AI proposal, persist progress, and refr
   );
   await expect(history).toHaveValue(oldValue!);
   await expect(page.getByText("Previous snapshot · read only")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Repository graph", exact: true })
+    .click();
+  const graph = page.getByRole("dialog", { name: "Module dependency viewer" });
+  await graph
+    .getByRole("button", { name: "Scan pinned sources", exact: true })
+    .click();
+  await expect(graph.getByRole("status")).toContainText("Source scan complete");
+  await expect(graph.getByRole("status")).toContainText("2 cycles");
+  await expect(
+    graph.getByRole("button", {
+      name: "javascript:alert(1) external",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await graph.getByRole("button", { name: "a package", exact: true }).click();
+  await graph.getByRole("button", { name: "Drill into classes" }).click();
+  await graph.getByRole("button", { name: "a.A class", exact: true }).click();
+  await graph.getByRole("button", { name: "View pinned source" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Pinned graph source" }),
+  ).toContainText("public class A");
+  await page.getByRole("button", { name: "Close source" }).click();
+  await graph.getByRole("button", { name: "Back to packages" }).click();
+  await expect(graph.locator(".react-flow__node")).not.toHaveCount(0);
+  await expect(graph.getByText("ELK layout ready")).toBeVisible();
+  await page.screenshot({ path: ".leanreview-test/module-graph.png" });
+  await graph
+    .getByRole("button", { name: "Review graph", exact: true })
+    .click();
+  await expect(
+    graph.getByRole("button", { name: "src/graph/entry.ts", exact: false }),
+  ).not.toBeVisible();
+  await graph
+    .getByRole("button", { name: /src\/auth\/validatePassword.ts/ })
+    .click();
+  await graph.getByRole("button", { name: "Open changed file" }).click();
+  await expect(graph).not.toBeVisible();
+  await page
+    .getByRole("button", { name: "Repository graph", exact: true })
+    .click();
+  await expect(page.getByRole("status")).toContainText("Source scan complete");
+  await page.getByLabel("Graph snapshot side").selectOption("before");
+  await page
+    .getByRole("button", { name: "Scan pinned sources", exact: true })
+    .click();
+  await expect(page.getByRole("status")).toContainText("Source scan complete");
+  await page.getByLabel("Graph file limit").fill("1");
+  await page.getByRole("button", { name: "Rescan pinned sources" }).click();
+  await expect(page.getByRole("status")).toContainText("Partial source scan");
+  await page.getByRole("button", { name: "Close graph" }).click();
   expect(errors).toEqual([]);
 });
