@@ -1,0 +1,744 @@
+[
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "",
+    "after": "x",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -0,0 +1,1 @@\n+x\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "x",
+    "after": "",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,1 +0,0 @@\n-x\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "a\n",
+    "after": "b\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,1 +1,1 @@\n-a\n+b\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "a",
+    "after": "b",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,1 +1,1 @@\n-a\n\\ No newline at end of file\n+b\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "same\n",
+    "after": "same\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "a\r\nb\r\n",
+    "after": "a\r\nc\r\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,2 +1,2 @@\n a\r\n-b\r\n+c\r\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 7\nline 2\nnew 7\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 3\nline 6\nline 5\nline 0\nnew 9\nline 7\nline 2\nline 1\nnew 9",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,6 +1,7 @@\n line 7\n line 2\n+new 7\n line 1\n line 4\n line 3\n line 6\n@@ -9,10 +10,8 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n line 5\n line 0\n line 7\n line 2\n@@ -24,12 +23,13 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n line 3\n line 6\n line 5\n line 0\n+new 9\n line 7\n line 2\n line 1\n+new 9\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "",
+    "after": "new 3\nnew 3",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -0,0 +1,2 @@\n+new 3\n+new 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 7\nnew 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 4\nnew 1\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 0\nnew 7",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -5,11 +5,10 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n-line 7\n+new 7\n+new 7\n line 2\n line 1\n line 4\n line 3\n@@ -20,8 +19,10 @@\n line 2\n line 1\n line 4\n line 3\n+new 4\n+new 1\n line 6\n line 5\n line 0\n line 7\n@@ -34,5 +35,6 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n+new 0\n+new 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 5\nnew 6\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 0\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 8\nnew 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 2\nnew 9",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -9,29 +9,30 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n+new 5\n+new 6\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 0\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n+new 8\n+new 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 2\n+new 9\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 7\nline 4\nline 3\nline 6\nline 5\nnew 5\nnew 4\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 7\nline 6\nnew 0\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -4,17 +4,19 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n+new 7\n line 4\n line 3\n line 6\n line 5\n+new 5\n+new 4\n line 0\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n\\ No newline at end of file\n+new 7\n+line 6\n+new 0\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "after": "line 0\nline 7\nline 2\nnew 9\nline 3\nnew 9\nline 5\nline 0\nline 2\nnew 9\nline 1\nline 4\nnew 1",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,13 +1,13 @@\n line 0\n line 7\n line 2\n-line 1\n-line 4\n+new 9\n line 3\n-line 6\n+new 9\n line 5\n line 0\n-line 7\n line 2\n+new 9\n line 1\n line 4\n+new 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 0\nnew 3\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 6\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 9\nnew 2\nline 1\nline 4\nline 3\nline 6\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -2,9 +2,8 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n line 7\n line 2\n line 1\n line 4\n@@ -14,23 +13,25 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n+new 0\n+new 3\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n+new 6\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n+new 9\n+new 2\n line 1\n line 4\n line 3\n-line 6\n\\ No newline at end of file\n+line 6\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 6\nline 5\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 4\nnew 7\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 0\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,28 +1,24 @@\n line 6\n line 5\n-line 0\n-line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n+new 4\n+new 7\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n+new 0\n line 6\n line 5\n line 0\n line 7\n@@ -32,5 +28,5 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n+line 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 7\nnew 8\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 0\nnew 3\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 5\nnew 8\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -6,11 +6,10 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n-line 2\n+new 7\n+new 8\n line 1\n line 4\n line 3\n line 6\n@@ -18,18 +17,19 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n+new 0\n+new 3\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n+new 5\n+new 8\n line 3\n line 6\n line 5\n line 0\n-line 7\n+line 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5",
+    "after": "new 1\nnew 3\nnew 6\nnew 1\nline 3\nline 6\nline 5\nline 0\nline 7\nline 4\nline 5\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,13 +1,11 @@\n-line 1\n-line 4\n+new 1\n+new 3\n+new 6\n+new 1\n line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n line 4\n-line 3\n-line 6\n-line 5\n\\ No newline at end of file\n+line 5\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\n",
+    "after": "new 9\nnew 9\nnew 6\nnew 6\nnew 7",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,4 +1,5 @@\n-line 0\n-line 7\n-line 2\n-line 1\n+new 9\n+new 9\n+new 6\n+new 6\n+new 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\n",
+    "after": "new 5\nnew 8\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 2\nnew 5\nnew 4\nline 6\nnew 4\nnew 5\nline 7\nline 2",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,14 +1,15 @@\n-line 3\n-line 6\n+new 5\n+new 8\n line 5\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n+new 2\n+new 5\n+new 4\n line 6\n-line 5\n-line 0\n+new 4\n+new 5\n line 7\n-line 2\n+line 2\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "new 1\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 3\nnew 0\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 0\nnew 5\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,12 +1,15 @@\n+new 1\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n+new 3\n+new 0\n line 3\n line 6\n line 5\n line 0\n@@ -26,6 +29,7 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n+new 0\n+new 5\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 1\nnew 4\nline 7\nline 2\nnew 3\nnew 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 2\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -3,12 +3,14 @@\n line 3\n line 6\n line 5\n line 0\n+new 1\n+new 4\n line 7\n line 2\n-line 1\n-line 4\n+new 3\n+new 4\n line 3\n line 6\n line 5\n line 0\n@@ -25,12 +27,13 @@\n line 1\n line 4\n line 3\n line 6\n+new 2\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n\\ No newline at end of file\n+line 6\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\n",
+    "after": "line 0\nline 7\nline 6\nnew 0\nnew 9\nnew 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,10 +1,6 @@\n-line 6\n-line 5\n line 0\n line 7\n-line 2\n-line 1\n-line 4\n-line 3\n line 6\n-line 5\n+new 0\n+new 9\n+new 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "after": "line 3\nline 6\nline 5\nline 0\nnew 3\nline 4\nline 3\nline 6\nline 5\nnew 4\nnew 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,21 +1,19 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n+new 3\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 4\n+new 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n-line 7\n\\ No newline at end of file\n+line 7\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 4\nnew 7\nline 7\nline 2\nline 1\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 0\nline 7\nline 2\nline 1\nnew 5\nnew 4\nnew 7\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -4,14 +4,13 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n+new 4\n+new 7\n line 7\n line 2\n line 1\n-line 4\n line 3\n line 6\n line 5\n line 0\n@@ -19,19 +18,19 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n line 0\n line 7\n line 2\n line 1\n-line 4\n+new 5\n+new 4\n+new 7\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n-line 4\n\\ No newline at end of file\n+line 4\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\n",
+    "after": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 4\nnew 7\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 4\nnew 3\nline 5\nline 0\nline 2\nline 1\nline 4\nline 6\nline 5\nline 0\nline 7\nline 2",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -10,10 +10,10 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n+new 4\n+new 7\n line 1\n line 4\n line 3\n line 6\n@@ -22,18 +22,16 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n+new 4\n+new 3\n line 5\n line 0\n-line 7\n line 2\n line 1\n line 4\n-line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n+line 2\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\n",
+    "after": "new 0\nnew 2\nline 2\nline 1\nnew 1\nline 3\nline 6\nline 5",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,7 +1,8 @@\n-line 7\n+new 0\n+new 2\n line 2\n line 1\n-line 4\n+new 1\n line 3\n line 6\n-line 5\n+line 5\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nnew 8\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 5\nline 3\nline 6\nline 5\nnew 1\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 9\nnew 8\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,9 +1,9 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n+new 8\n line 4\n line 3\n line 6\n line 5\n@@ -11,20 +11,24 @@\n line 7\n line 2\n line 1\n line 4\n+new 5\n line 3\n line 6\n line 5\n+new 1\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n+new 9\n+new 8\n line 0\n line 7\n line 2\n line 1\n-line 4\n+line 4\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2",
+    "after": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 2\nnew 5\nnew 3\nnew 4\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 1\nnew 6\nnew 3\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -7,9 +7,12 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n+new 2\n+new 5\n+new 3\n+new 4\n line 0\n line 7\n line 2\n line 1\n@@ -34,5 +37,7 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n\\ No newline at end of file\n+new 1\n+new 6\n+new 3\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\n",
+    "after": "new 3\nline 5\nnew 5",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,4 +1,3 @@\n-line 4\n-line 3\n-line 6\n+new 3\n line 5\n+new 5\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 6\nline 5\nline 0\nline 7\nnew 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 0\nnew 5\nline 1\nline 4\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -3,20 +3,18 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n line 6\n line 5\n line 0\n line 7\n+new 7\n line 2\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n-line 7\n-line 2\n+new 0\n+new 5\n line 1\n-line 4\n\\ No newline at end of file\n+line 4\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 2\nline 1\nline 4\nline 3",
+    "after": "line 2\nnew 7\nline 4\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,4 +1,3 @@\n line 2\n-line 1\n+new 7\n line 4\n-line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 6\nnew 9\nline 3\nline 6\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 7\nline 4\nnew 5\nnew 4\nnew 3\nnew 0\nline 7\nline 2\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -4,14 +4,12 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n+new 6\n+new 9\n line 3\n line 6\n-line 5\n-line 0\n line 7\n line 2\n line 1\n line 4\n@@ -27,14 +25,13 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n+new 7\n line 4\n-line 3\n-line 6\n-line 5\n-line 0\n+new 5\n+new 4\n+new 3\n+new 0\n line 7\n line 2\n-line 1\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 4\nnew 5\nline 3\nline 6\nline 5\nnew 9\nnew 4\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 8\nnew 9\nline 0\nline 7\nline 2\nline 3\nline 6",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,26 +1,25 @@\n-line 3\n-line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n+new 4\n+new 5\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 9\n+new 4\n line 2\n line 1\n line 4\n line 3\n line 6\n-line 5\n+new 8\n+new 9\n line 0\n line 7\n line 2\n-line 1\n-line 4\n line 3\n-line 6\n+line 6\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5",
+    "after": "new 7\nnew 4\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,1 +1,2 @@\n-line 5\n\\ No newline at end of file\n+new 7\n+new 4\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "line 4\nline 6\nline 5\nline 0\nline 1\nline 4\nnew 2\nnew 9\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 5\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,20 +1,20 @@\n line 4\n-line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n line 1\n line 4\n+new 2\n+new 9\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n+new 5\n line 4\n line 3\n line 6\n line 5\n@@ -29,5 +29,5 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n\\ No newline at end of file\n+line 4\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "after": "line 2\nnew 2\nnew 5\nline 4\nline 3\nline 6\nnew 3\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 7\nline 6\nline 5\nline 0\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,9 +1,11 @@\n line 2\n-line 1\n+new 2\n+new 5\n line 4\n line 3\n line 6\n+new 3\n line 5\n line 0\n line 7\n line 2\n@@ -23,10 +25,8 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n+new 7\n line 6\n line 5\n line 0\n-line 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "after": "line 0\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 6\nnew 9\nline 7\nline 2\nnew 3\nnew 0\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 2\nnew 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,17 +1,17 @@\n line 0\n-line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n+new 6\n+new 9\n line 7\n line 2\n-line 1\n-line 4\n+new 3\n+new 0\n line 3\n line 6\n line 5\n line 0\n@@ -25,12 +25,12 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n+new 2\n+new 3\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n\\ No newline at end of file\n+line 1\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 4\nnew 4\nnew 0\nline 6\nline 5\nnew 7\nnew 6\nline 0",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,6 +1,8 @@\n line 4\n-line 3\n+new 4\n+new 0\n line 6\n line 5\n-line 0\n-line 7\n+new 7\n+new 6\n+line 0\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "after": "line 7\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 4\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,6 +1,5 @@\n line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n@@ -12,8 +11,9 @@\n line 4\n line 3\n line 6\n line 5\n+new 4\n line 0\n line 7\n line 2\n line 1\n@@ -21,5 +21,5 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n\\ No newline at end of file\n+line 7\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "line 6\nnew 1\nline 0\nline 7\nline 2\nnew 8\nnew 6\nline 4\nnew 8\nnew 5\nnew 8\nline 6\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,9 +1,12 @@\n line 6\n-line 5\n+new 1\n line 0\n line 7\n line 2\n-line 1\n+new 8\n+new 6\n line 4\n-line 3\n-line 6\n\\ No newline at end of file\n+new 8\n+new 5\n+new 8\n+line 6\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\n",
+    "after": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 0\nnew 3\nnew 7\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -14,10 +14,8 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n@@ -28,14 +26,15 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n+new 0\n+new 3\n+new 7\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n+line 0\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 1\nline 3\nline 6\nline 5\nline 0\nnew 1\nline 7\nline 2\nline 1\nnew 3\nnew 8\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 6\nnew 1\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -3,26 +3,29 @@\n line 7\n line 2\n line 1\n line 4\n+new 1\n line 3\n line 6\n line 5\n line 0\n+new 1\n line 7\n line 2\n line 1\n-line 4\n+new 3\n+new 8\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n-line 3\n line 6\n+new 1\n line 5\n line 0\n line 7\n line 2\n@@ -31,5 +34,5 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n+line 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\n",
+    "after": "line 7\nnew 8\nline 1\nline 4\nline 3\nnew 2\nnew 7\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 1",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,9 +1,11 @@\n line 7\n-line 2\n+new 8\n line 1\n line 4\n line 3\n+new 2\n+new 7\n line 6\n line 5\n line 0\n line 7\n@@ -11,6 +13,5 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n+new 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "line 0\nnew 4\nline 1\nline 4\nnew 1\nnew 4\nnew 1\nnew 8\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,7 +1,8 @@\n-line 5\n line 0\n-line 7\n-line 2\n+new 4\n line 1\n line 4\n-line 3\n\\ No newline at end of file\n+new 1\n+new 4\n+new 1\n+new 8\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "after": "line 6\nline 5\nnew 7\nnew 2\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 6\nnew 3\nnew 0\nnew 7\nline 6\nline 5\nline 0\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,8 +1,8 @@\n line 6\n line 5\n-line 0\n-line 7\n+new 7\n+new 2\n line 2\n line 1\n line 4\n line 3\n@@ -12,14 +12,16 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n+new 6\n+new 3\n+new 0\n+new 7\n line 6\n line 5\n line 0\n-line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n+line 6\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nnew 4\nnew 5\nline 6\nline 5\nline 0\nline 7\nline 2\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 1\nnew 0\nline 4\nline 3\nline 6\nnew 1\nnew 8\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -2,28 +2,28 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n+new 4\n+new 5\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n line 1\n+new 0\n line 4\n line 3\n line 6\n-line 5\n+new 1\n+new 8\n line 0\n line 7\n line 2\n line 1\n@@ -33,5 +33,5 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\n",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 4\nnew 8\nnew 9\nnew 6\nnew 7\nnew 8",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -3,12 +3,16 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n+new 4\n+new 8\n+new 9\n+new 6\n+new 7\n+new 8\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 9\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -4,10 +4,8 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n line 4\n line 3\n line 6\n line 5\n@@ -16,7 +14,5 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n-line 0\n\\ No newline at end of file\n+new 9\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "after": "line 4\nnew 0\nnew 9\nline 3\nline 6\nline 5\nline 0\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 5\nnew 8\nline 4\nline 3",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,26 +1,27 @@\n line 4\n+new 0\n+new 9\n line 3\n line 6\n line 5\n line 0\n-line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n+new 5\n+new 8\n line 4\n-line 3\n+line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "line 3\nline 6\nnew 3\nline 0\nnew 1\nline 2\nnew 9\nline 3\nnew 1\nnew 6\nline 6\nnew 7\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,17 +1,18 @@\n line 3\n line 6\n-line 5\n+new 3\n line 0\n-line 7\n+new 1\n line 2\n-line 1\n-line 4\n+new 9\n line 3\n+new 1\n+new 6\n line 6\n-line 5\n+new 7\n line 0\n line 7\n line 2\n line 1\n line 4\n-line 3\n\\ No newline at end of file\n+line 3\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "after": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 6\nline 5\nnew 5\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 8\nnew 9\nnew 3\nnew 6\nline 4\nline 3\nnew 9",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -12,13 +12,11 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 5\n line 2\n line 1\n line 4\n line 3\n@@ -34,8 +32,11 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n+new 8\n+new 9\n+new 3\n+new 6\n line 4\n line 3\n-line 6\n+new 9\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "line 5\nline 0\nnew 3\nnew 2\nline 7\nline 2\nline 1\nnew 0\nnew 1\nnew 0\nline 5\nnew 6\nnew 3\nnew 8\nnew 7\nline 1\nline 4\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,14 +1,17 @@\n line 5\n line 0\n+new 3\n+new 2\n line 7\n line 2\n line 1\n-line 4\n-line 3\n-line 6\n+new 0\n+new 1\n+new 0\n line 5\n-line 0\n-line 7\n-line 2\n+new 6\n+new 3\n+new 8\n+new 7\n line 1\n-line 4\n\\ No newline at end of file\n+line 4\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "after": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 8\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 5\nnew 2\nline 5\nline 0\nnew 8\nnew 9\nline 1\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -5,32 +5,32 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n+new 8\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n+new 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n+new 5\n+new 2\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n\\ No newline at end of file\n+new 8\n+new 9\n+line 1\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "line 4\nnew 6\nnew 5\nline 0\nline 7\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,10 +1,5 @@\n line 4\n-line 3\n-line 6\n-line 5\n+new 6\n+new 5\n line 0\n line 7\n-line 2\n-line 1\n-line 4\n-line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "line 2\nline 1\nline 6\nline 5\nline 0\nnew 0\nnew 5\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 7\nnew 0\nnew 9\nline 6\nnew 0\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,12 +1,11 @@\n line 2\n line 1\n-line 4\n-line 3\n line 6\n line 5\n line 0\n-line 7\n+new 0\n+new 5\n line 2\n line 1\n line 4\n line 3\n@@ -14,8 +13,9 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n-line 3\n-line 6\n\\ No newline at end of file\n+new 7\n+new 0\n+new 9\n+line 6\n+new 0\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5",
+    "after": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 9\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 5\nline 0\nline 7\nnew 0\nline 4\nline 3\nline 6\nline 5\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -3,10 +3,8 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n line 0\n line 7\n line 2\n line 1\n@@ -15,9 +13,9 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n+new 9\n line 1\n line 4\n line 3\n line 6\n@@ -27,14 +25,12 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n+new 0\n line 4\n line 3\n line 6\n-line 5\n\\ No newline at end of file\n+line 5\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 4\nline 3\nline 6\nnew 4\nline 5\nline 0\nnew 1\nnew 4",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,8 +1,8 @@\n line 4\n line 3\n line 6\n+new 4\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n+new 1\n+new 4\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "line 2\nnew 6\nnew 5\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,5 +1,3 @@\n-line 7\n line 2\n-line 1\n-line 4\n-line 3\n\\ No newline at end of file\n+new 6\n+new 5\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "after": "line 4\nnew 1\nnew 4\nnew 9\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 7\nnew 2\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,8 +1,12 @@\n line 4\n-line 3\n+new 1\n+new 4\n+new 9\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n\\ No newline at end of file\n+line 1\n+new 7\n+new 2\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 0\nline 3\nnew 1\nline 0\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 0\nline 0\nline 7\nnew 5\nnew 8\nline 2\nline 1\nline 4\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -4,22 +4,21 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n+new 0\n line 3\n-line 6\n-line 5\n+new 1\n line 0\n-line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n-line 5\n+new 0\n line 0\n line 7\n+new 5\n+new 8\n line 2\n line 1\n-line 4\n\\ No newline at end of file\n+line 4\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "new 1\nline 6\nnew 5\nline 5\nline 0\nline 7\nnew 9\nline 3\nnew 3\nnew 0\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,10 +1,10 @@\n-line 4\n-line 3\n+new 1\n line 6\n+new 5\n line 5\n line 0\n line 7\n-line 2\n-line 1\n-line 4\n-line 3\n\\ No newline at end of file\n+new 9\n+line 3\n+new 3\n+new 0\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 6\nline 5\nline 0\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 3\nnew 4\nnew 1\nline 5\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,9 +1,7 @@\n line 6\n line 5\n line 0\n-line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n@@ -14,11 +12,12 @@\n line 1\n line 4\n line 3\n line 6\n+new 3\n+new 4\n+new 1\n line 5\n-line 0\n-line 7\n line 2\n line 1\n line 4\n line 3\n@@ -34,5 +33,5 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "after": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 4\nline 3\nline 6",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -31,8 +31,7 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n+new 4\n line 3\n-line 6\n+line 6\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "new 0\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 8\nnew 9\nline 7\nnew 6\nnew 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,25 +1,27 @@\n+new 0\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n+new 8\n+new 9\n line 7\n+new 6\n+new 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 7\nnew 5\nline 1\nline 4\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -5,15 +5,16 @@\n line 5\n line 0\n line 7\n line 2\n+new 7\n+new 5\n line 1\n line 4\n-line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n-line 3\n+line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5",
+    "after": "line 3\nnew 8\nnew 1\nnew 9\nnew 8\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,5 +1,5 @@\n-line 1\n-line 4\n line 3\n-line 6\n-line 5\n\\ No newline at end of file\n+new 8\n+new 1\n+new 9\n+new 8\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\n",
+    "after": "new 5\nline 0\nline 7\nline 2\nnew 5\nline 1\nnew 6\nnew 5",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,4 +1,8 @@\n+new 5\n line 0\n line 7\n line 2\n+new 5\n line 1\n+new 6\n+new 5\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\n",
+    "after": "line 1\nnew 9\nnew 8\nnew 7\nnew 9\nnew 2",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,4 +1,6 @@\n line 1\n-line 4\n-line 3\n-line 6\n+new 9\n+new 8\n+new 7\n+new 9\n+new 2\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\n",
+    "after": "line 7\nnew 0\nnew 5\nnew 0",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,4 +1,4 @@\n-line 5\n-line 0\n line 7\n-line 2\n+new 0\n+new 5\n+new 0\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\n",
+    "after": "new 5\nline 3\nline 6\nline 5\nnew 0\nline 0\nline 2\nline 1\nline 4\nline 3\nline 5\nline 7\nline 2",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,16 +1,13 @@\n-line 1\n-line 4\n+new 5\n line 3\n line 6\n line 5\n+new 0\n line 0\n-line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n line 5\n-line 0\n line 7\n-line 2\n+line 2\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 5\nline 0\nnew 7\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 1\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 3\nnew 7\nline 7",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,19 +1,19 @@\n line 5\n line 0\n+new 7\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n+new 1\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n-line 7\n+new 3\n+new 7\n+line 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "after": "line 7\nnew 2\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 4\nline 3\nnew 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 9\nnew 0\nline 1\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,18 +1,17 @@\n line 7\n+new 2\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n-line 1\n line 4\n line 3\n-line 6\n+new 6\n line 5\n line 0\n line 7\n line 2\n@@ -29,7 +28,7 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n\\ No newline at end of file\n+new 9\n+new 0\n+line 1\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "after": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 4\nnew 9\nline 0\nline 7\nline 2\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 2\nnew 1\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 9\nnew 0",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -3,12 +3,13 @@\n line 4\n line 3\n line 6\n line 5\n+new 4\n+new 9\n line 0\n line 7\n line 2\n-line 1\n line 4\n line 3\n line 6\n line 5\n@@ -25,13 +26,15 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n+new 2\n+new 1\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n+new 9\n+new 0\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "after": "line 5\nline 0\nline 7\nline 2\nline 1\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 9\nnew 2\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 6\nnew 4\nnew 5\nline 2\nline 1\nline 4\nline 3",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -2,17 +2,18 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n+new 9\n+new 2\n line 3\n line 6\n line 5\n line 0\n@@ -30,10 +31,11 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 6\n+new 4\n+new 5\n line 2\n line 1\n line 4\n-line 3\n+line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2",
+    "after": "new 8\nnew 4\nline 0\nline 7\nline 2\nnew 0\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,6 +1,6 @@\n-line 3\n-line 6\n-line 5\n+new 8\n+new 4\n line 0\n line 7\n-line 2\n\\ No newline at end of file\n+line 2\n+new 0\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "new 5\nline 1\nline 4\nnew 6\nnew 9\nline 5\nline 0\nline 7\nline 2\nnew 4\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 3\nnew 8\nline 3\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,20 +1,21 @@\n-line 2\n+new 5\n line 1\n line 4\n-line 3\n-line 6\n+new 6\n+new 9\n line 5\n line 0\n line 7\n line 2\n-line 1\n+new 4\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n\\ No newline at end of file\n+new 3\n+new 8\n+line 3\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "after": "line 6\nline 5\nnew 9\nnew 9\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 5\nnew 4\nline 3\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,7 +1,8 @@\n line 6\n line 5\n-line 0\n+new 9\n+new 9\n line 7\n line 2\n line 1\n line 4\n@@ -12,11 +13,11 @@\n line 7\n line 2\n line 1\n line 4\n+new 5\n+new 4\n line 3\n-line 6\n-line 5\n line 0\n line 7\n line 2\n line 1\n@@ -24,5 +25,5 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n\\ No newline at end of file\n+line 7\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2",
+    "after": "line 0\nline 7\nline 2\nline 1\nline 4\nline 6\nline 5\nline 0\nnew 0\nline 1\nnew 6\nnew 5\nline 4\nline 3\nnew 9\nnew 4\nline 6\nline 5\nline 0\nline 7\nline 2\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -2,18 +2,20 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n+new 0\n line 1\n+new 6\n+new 5\n line 4\n line 3\n+new 9\n+new 4\n line 6\n line 5\n line 0\n line 7\n-line 2\n\\ No newline at end of file\n+line 2\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3",
+    "after": "line 2\nline 1\nnew 9\nnew 6\nline 4\nline 3\nline 6\nline 5\nnew 8\nnew 3\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 5\nnew 2\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,19 +1,22 @@\n line 2\n line 1\n+new 9\n+new 6\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 8\n+new 3\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n+new 5\n+new 2\n line 7\n line 2\n line 1\n line 4\n@@ -32,5 +35,5 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n\\ No newline at end of file\n+line 3\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "",
+    "after": "new 7\nnew 2\nnew 4\nnew 8\nnew 9\nnew 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -0,0 +1,6 @@\n+new 7\n+new 2\n+new 4\n+new 8\n+new 9\n+new 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "after": "new 7\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 9\nnew 0\nnew 9\nline 2\nline 1\nline 4\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 8\nnew 3",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,4 +1,5 @@\n+new 7\n line 7\n line 2\n line 1\n line 4\n@@ -12,17 +13,18 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 9\n+new 0\n+new 9\n line 2\n line 1\n line 4\n-line 3\n-line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n+new 8\n+new 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 0\nnew 9\nnew 8\nnew 3\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 8\nline 0\nnew 8\nnew 1\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -6,18 +6,19 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n line 0\n-line 7\n+new 9\n+new 8\n+new 3\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n+new 8\n line 0\n-line 7\n-line 2\n-line 1\n+new 8\n+new 1\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\n",
+    "after": "line 3\nline 6\nnew 9\nline 5\nline 0\nline 7\nline 2\nnew 5\nline 4\nnew 8\nnew 0\nnew 7",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,8 +1,12 @@\n line 3\n line 6\n+new 9\n line 5\n line 0\n line 7\n line 2\n-line 1\n+new 5\n line 4\n+new 8\n+new 0\n+new 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "after": "new 5\nnew 8\nnew 4\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 2\nline 1\nline 4\nline 3",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,6 +1,7 @@\n-line 3\n-line 6\n+new 5\n+new 8\n+new 4\n line 5\n line 0\n line 7\n line 2\n@@ -9,9 +10,8 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n line 2\n line 1\n line 4\n-line 3\n+line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0",
+    "after": "line 1\nline 4\nnew 3\nnew 2\nline 5\nline 0\nline 7\nline 2\nnew 6\nnew 9\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 7\nline 6\nline 5\nline 0\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,16 +1,14 @@\n line 1\n line 4\n-line 3\n-line 6\n+new 3\n+new 2\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n-line 3\n-line 6\n+new 6\n+new 9\n line 5\n line 0\n line 7\n line 2\n@@ -24,7 +22,8 @@\n line 2\n line 1\n line 4\n line 3\n+new 7\n line 6\n line 5\n-line 0\n\\ No newline at end of file\n+line 0\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "after": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 8\nnew 5\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 1\nnew 8\nline 1\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -6,15 +6,15 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n-line 4\n+new 8\n+new 5\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n\\ No newline at end of file\n+new 1\n+new 8\n+line 1\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "after": "line 2\nline 1\nline 4\nline 3\nnew 5\nline 5\nline 0\nline 7\nnew 3\nline 2\nline 1\nline 4\nline 3\nnew 8\nline 6\nline 5\nline 0\nline 7\nnew 1\nnew 2\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 3\nline 2\nline 1\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,26 +1,31 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n+new 5\n line 5\n line 0\n line 7\n+new 3\n line 2\n line 1\n line 4\n line 3\n+new 8\n line 6\n line 5\n line 0\n line 7\n+new 1\n+new 2\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n+new 3\n line 2\n-line 1\n\\ No newline at end of file\n+line 1\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\n",
+    "after": "line 4\nline 3\nline 6\nline 5\nline 0\nnew 4\nnew 3\nnew 8\nnew 1\nnew 5\nnew 6\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 1\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -2,12 +2,14 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n-line 4\n+new 4\n+new 3\n+new 8\n+new 1\n+new 5\n+new 6\n line 3\n line 6\n line 5\n line 0\n@@ -25,9 +27,9 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n+new 1\n line 7\n line 2\n line 1\n line 4\n@@ -40,5 +42,5 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n+line 5\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "after": "line 7\nline 2\nline 1\nline 4\nnew 8\nnew 5\nline 7\nline 2\nline 1\nline 4\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 6\nnew 7",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,22 +1,20 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n-line 5\n-line 0\n+new 8\n+new 5\n line 7\n line 2\n line 1\n line 4\n-line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n+new 6\n+new 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 1\nnew 8\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -8,8 +8,7 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n-line 2\n-line 1\n+new 1\n+new 8\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\n",
+    "after": "line 1\nline 4\nline 3\nnew 9\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 0\nline 7\nline 2\nline 1\nnew 7\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 5\nnew 0\nline 2\nnew 8\nnew 1",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,24 +1,27 @@\n line 1\n line 4\n line 3\n+new 9\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n line 0\n line 7\n line 2\n line 1\n-line 4\n+new 7\n line 3\n line 6\n line 5\n line 0\n line 7\n+new 5\n+new 0\n line 2\n+new 8\n+new 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 1\nnew 9\nline 6\nline 5\nline 0\nnew 2\nline 2\nline 1\nnew 0\nnew 7",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,9 +1,10 @@\n line 1\n-line 4\n-line 3\n+new 9\n line 6\n line 5\n line 0\n-line 7\n+new 2\n line 2\n line 1\n+new 0\n+new 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "line 1\nline 4\nline 3\nline 6\nline 5\nnew 0\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 6\nline 7\nline 2\nline 1\nnew 2\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 5\nnew 2\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -2,20 +2,20 @@\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 0\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n+new 6\n line 7\n line 2\n line 1\n+new 2\n line 4\n line 3\n line 6\n line 5\n@@ -31,9 +31,11 @@\n line 7\n line 2\n line 1\n line 4\n+new 5\n+new 2\n line 3\n line 6\n line 5\n line 0\n-line 7\n+line 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\n",
+    "after": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 0\nline 1\nnew 6\nnew 7\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nnew 6\nnew 3\nline 6\nline 5\nline 0\nline 7\nline 2\nnew 1\nnew 4\nline 3",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -6,10 +6,12 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n+new 0\n line 1\n+new 6\n+new 7\n line 4\n line 3\n line 6\n line 5\n@@ -24,14 +26,14 @@\n line 0\n line 7\n line 2\n line 1\n-line 4\n-line 3\n+new 6\n+new 3\n line 6\n line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n-line 3\n+new 1\n+new 4\n+line 3\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "new 2\nnew 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nnew 1\nnew 4\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 5\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 0\nline 7\nline 2\nnew 4\nnew 3\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,24 +1,25 @@\n-line 5\n+new 2\n+new 5\n line 0\n line 7\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n-line 0\n-line 7\n+new 1\n+new 4\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n line 7\n-line 2\n+new 5\n line 1\n line 4\n line 3\n line 6\n@@ -28,11 +29,9 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n line 0\n line 7\n line 2\n-line 1\n-line 4\n\\ No newline at end of file\n+new 4\n+new 3\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\n",
+    "after": "line 6\nline 5\nline 0\nnew 9\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nnew 2\nnew 9\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,19 +1,17 @@\n line 6\n line 5\n line 0\n-line 7\n+new 9\n line 2\n line 1\n line 4\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n-line 1\n-line 4\n+new 2\n+new 9\n line 3\n line 6\n line 5\n line 0\n@@ -26,5 +24,5 @@\n line 5\n line 0\n line 7\n line 2\n-line 1\n+line 1\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\n",
+    "after": "new 3\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nnew 7\nnew 2\nline 7\nline 2\nline 1\nline 4\nnew 1\nnew 8\nline 6\nline 5\nline 0\nnew 8\nnew 7",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,6 +1,5 @@\n-line 7\n-line 2\n+new 3\n line 1\n line 4\n line 3\n line 6\n@@ -11,15 +10,17 @@\n line 1\n line 4\n line 3\n line 6\n-line 5\n-line 0\n+new 7\n+new 2\n line 7\n line 2\n line 1\n line 4\n-line 3\n+new 1\n+new 8\n line 6\n line 5\n line 0\n-line 7\n+new 8\n+new 7\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 1",
+    "after": "new 5\nnew 0\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,1 +1,2 @@\n-line 1\n\\ No newline at end of file\n+new 5\n+new 0\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 2\nline 1\nline 4\nline 3\n",
+    "after": "new 3\nnew 3\nnew 6\nline 1\nline 4\nline 3\nnew 1\nnew 4",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,4 +1,8 @@\n-line 2\n+new 3\n+new 3\n+new 6\n line 1\n line 4\n line 3\n+new 1\n+new 4\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5",
+    "after": "line 3\nline 6\nline 5\nline 0\nnew 7\nnew 2\nline 1\nline 4\nnew 7\nline 5\nline 0\nnew 0\nnew 3\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 3\nline 5\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,17 +1,17 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n-line 2\n+new 7\n+new 2\n line 1\n line 4\n-line 3\n-line 6\n+new 7\n line 5\n line 0\n-line 7\n+new 0\n+new 3\n line 2\n line 1\n line 4\n line 3\n@@ -21,7 +21,6 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n-line 5\n\\ No newline at end of file\n+new 3\n+line 5\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "new 5\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nnew 7\nline 1\nnew 9\nnew 7\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,5 +1,5 @@\n-line 0\n+new 5\n line 7\n line 2\n line 1\n line 4\n@@ -7,11 +7,12 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n+new 7\n line 1\n-line 4\n+new 9\n+new 7\n line 3\n line 6\n line 5\n line 0\n@@ -27,5 +28,5 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n\\ No newline at end of file\n+line 6\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 6\nline 5\nline 0",
+    "after": "line 6\nline 5\nnew 1\nnew 1\nnew 8\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,3 +1,5 @@\n line 6\n line 5\n-line 0\n\\ No newline at end of file\n+new 1\n+new 1\n+new 8\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\n",
+    "after": "line 0\nnew 6\nnew 3\nline 3\nnew 8\nnew 7\nline 6\nline 5\nnew 9",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -1,8 +1,9 @@\n line 0\n-line 7\n-line 2\n-line 1\n-line 4\n+new 6\n+new 3\n line 3\n+new 8\n+new 7\n line 6\n line 5\n+new 9\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 5\nline 0\nline 7\nline 2\n",
+    "after": "new 1\nnew 6\nline 5\nline 7\nnew 0\nnew 3\nnew 0\nnew 9",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -1,4 +1,8 @@\n+new 1\n+new 6\n line 5\n-line 0\n line 7\n-line 2\n+new 0\n+new 3\n+new 0\n+new 9\n\\ No newline at end of file\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7",
+    "after": "line 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nnew 8\nnew 3\nnew 1\nnew 4\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nnew 1\nnew 4\nnew 4\nline 5\nline 0\nline 7\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -6,13 +6,12 @@\n line 2\n line 1\n line 4\n line 3\n-line 6\n-line 5\n-line 0\n-line 7\n-line 2\n+new 8\n+new 3\n+new 1\n+new 4\n line 1\n line 4\n line 3\n line 6\n@@ -29,9 +28,10 @@\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n+new 1\n+new 4\n+new 4\n line 5\n line 0\n-line 7\n\\ No newline at end of file\n+line 7\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/original.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6",
+    "after": "line 4\nline 3\nline 6\nline 5\nline 0\nline 2\nline 1\nnew 6\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 6\nnew 2\nnew 3\n",
+    "patch": "Index: src/original.ts\n===================================================================\n--- src/original.ts\n+++ src/original.ts\n@@ -2,18 +2,18 @@\n line 3\n line 6\n line 5\n line 0\n-line 7\n line 2\n line 1\n-line 4\n+new 6\n line 3\n line 6\n line 5\n line 0\n line 7\n line 2\n line 1\n line 4\n-line 3\n-line 6\n\\ No newline at end of file\n+line 6\n+new 2\n+new 3\n"
+  },
+  {
+    "oldPath": "src/original.ts",
+    "path": "src/renamed.ts",
+    "before": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 2\nline 1\nline 4",
+    "after": "line 4\nline 3\nline 6\nline 5\nline 0\nline 7\nline 1\nline 4\nline 3\nnew 7\nline 5\nline 0\nnew 4\nnew 1\nnew 4\nnew 9\nline 1\nline 4\n",
+    "patch": "===================================================================\n--- src/original.ts\n+++ src/renamed.ts\n@@ -3,15 +3,16 @@\n line 6\n line 5\n line 0\n line 7\n-line 2\n line 1\n line 4\n line 3\n-line 6\n+new 7\n line 5\n line 0\n-line 7\n-line 2\n+new 4\n+new 1\n+new 4\n+new 9\n line 1\n-line 4\n\\ No newline at end of file\n+line 4\n"
+  }
+]

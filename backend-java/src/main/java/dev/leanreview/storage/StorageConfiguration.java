@@ -55,6 +55,7 @@ public class StorageConfiguration {
 
   @Bean
   ObjectMapper storageJson() {
-    return new ObjectMapper();
+    return new ObjectMapper()
+        .enable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
   }
 }

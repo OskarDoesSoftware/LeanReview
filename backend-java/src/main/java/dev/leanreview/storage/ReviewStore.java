@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Objects;
+import java.util.function.Consumer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,30 @@ public class ReviewStore {
     this.snapshots = snapshots;
     this.artifacts = artifacts;
     this.json = json;
+  }
+
+  /** Validate and mutate within one transaction, preserving unknown state fields. */
+  @Transactional(rollbackFor = Exception.class)
+  public ObjectNode updateCurrentState(
+      String sessionId, String snapshotId, Consumer<ObjectNode> update) throws IOException {
+    Rows.Session session =
+        sessions
+            .findById(sessionId)
+            .orElseThrow(() -> new IllegalArgumentException("Review session not found."));
+    if (!Objects.equals(session.activeSnapshot, snapshotId)) {
+      throw new IllegalArgumentException("Snapshot changed. Reload this review before editing.");
+    }
+    Rows.Snapshot row =
+        snapshots
+            .findByIdAndSessionId(snapshotId, sessionId)
+            .orElseThrow(() -> new IllegalArgumentException("Snapshot not found."));
+    ObjectNode state = (ObjectNode) json.readTree(row.state);
+    update.accept(state);
+    row.state = json.writeValueAsString(state);
+    session.updatedAt =
+        new DateTimeFormatterBuilder().appendInstant(3).toFormatter().format(Instant.now());
+    snapshots.flush();
+    return review(sessionId, null);
   }
 
   @Transactional(readOnly = true)

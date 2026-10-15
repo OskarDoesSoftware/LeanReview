@@ -1,0 +1,1281 @@
+{
+  "version": 1,
+  "date": "2026-10-15",
+  "gitEnvironment": {
+    "GIT_AUTHOR_DATE": "2026-10-15T10:00:00Z",
+    "GIT_COMMITTER_DATE": "2026-10-15T10:00:00Z"
+  },
+  "scenarios": [
+    {
+      "name": "index-working-branch",
+      "operations": [
+        {
+          "op": "git",
+          "args": [
+            "init",
+            "--object-format=sha1",
+            "-b",
+            "main"
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "config",
+            "user.name",
+            "Core fixture"
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "config",
+            "user.email",
+            "fixture@example.invalid"
+          ]
+        },
+        {
+          "op": "write",
+          "path": "src/choose.ts",
+          "text": "export function choose(x: number) {\n  return x;\n}\n"
+        },
+        {
+          "op": "write",
+          "path": "old name.ts",
+          "text": "export const renamed = 1;\n"
+        },
+        {
+          "op": "write",
+          "path": "deleted.ts",
+          "text": "export const removed = 1;\n"
+        },
+        {
+          "op": "write",
+          "path": "endings.ts",
+          "text": "export const ending = 1;\n"
+        },
+        {
+          "op": "write",
+          "path": "large.dat",
+          "text": "small\n"
+        },
+        {
+          "op": "write",
+          "path": "binary.dat",
+          "base64": "AAEC"
+        },
+        {
+          "op": "git",
+          "args": [
+            "add",
+            "."
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "commit",
+            "-m",
+            "base"
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "checkout",
+            "-b",
+            "feature"
+          ]
+        },
+        {
+          "op": "write",
+          "path": "src/choose.ts",
+          "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n"
+        },
+        {
+          "op": "git",
+          "args": [
+            "mv",
+            "old name.ts",
+            "new name.ts"
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "rm",
+            "deleted.ts"
+          ]
+        },
+        {
+          "op": "write",
+          "path": "added.ts",
+          "text": "export const added = true;"
+        },
+        {
+          "op": "write",
+          "path": "endings.ts",
+          "text": "export const ending = 1;"
+        },
+        {
+          "op": "write",
+          "path": "large.dat",
+          "repeat": 2097153,
+          "mtimeMillis": 1792058400123
+        },
+        {
+          "op": "write",
+          "path": "binary.dat",
+          "base64": "AAED"
+        },
+        {
+          "op": "git",
+          "args": [
+            "add",
+            "."
+          ]
+        },
+        {
+          "op": "write",
+          "path": "src/choose.ts",
+          "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n// working change\n"
+        },
+        {
+          "op": "write",
+          "path": "café.ts",
+          "text": "export const café = '😀';\r\n"
+        },
+        {
+          "op": "capture",
+          "name": "all changes",
+          "mode": "all",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "6c31df68e071d8cf67ea1a52",
+                  "oldPath": "added.ts",
+                  "path": "added.ts",
+                  "status": "added",
+                  "fingerprint": "9f6a28d445790dd719d6ef5f6663049c60f2d48ab20c402a4052af374baa7667",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const added = true;"
+                  },
+                  "patchHash": "24b618365ef2a70cdb81af12f12238ff5579b65b4d4ab358663175c7832a9686",
+                  "patch": "Index: added.ts\n===================================================================\n--- added.ts\n+++ added.ts\n@@ -0,0 +1,1 @@\n+export const added = true;\n\\ No newline at end of file\n"
+                },
+                {
+                  "id": "ecfab7762add6adf155b1a2d",
+                  "oldPath": "binary.dat",
+                  "path": "binary.dat",
+                  "status": "modified",
+                  "fingerprint": "95f4631cd521b1361a5e9ec3d38c0a44ae5bcc9bd6328d4c3e0b5d4099e91904",
+                  "before": {
+                    "kind": "binary"
+                  },
+                  "after": {
+                    "kind": "binary"
+                  },
+                  "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "patch": ""
+                },
+                {
+                  "id": "7ea8c8e0b38f242c9a599c49",
+                  "oldPath": "deleted.ts",
+                  "path": "deleted.ts",
+                  "status": "deleted",
+                  "fingerprint": "cfa674c7f89947dcb88b176bc51e0244344016ca099438f21c057e8e57e5ae6f",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const removed = 1;\n"
+                  },
+                  "after": {
+                    "kind": "absent"
+                  },
+                  "patchHash": "f0f7a1d42b7c06e6744c24e308073c66902d9afbf92ae18311da4853e89eb1f0",
+                  "patch": "Index: deleted.ts\n===================================================================\n--- deleted.ts\n+++ deleted.ts\n@@ -1,1 +0,0 @@\n-export const removed = 1;\n"
+                },
+                {
+                  "id": "b561c9c4b1e23f7a9808a9bd",
+                  "oldPath": "endings.ts",
+                  "path": "endings.ts",
+                  "status": "modified",
+                  "fingerprint": "e30870ca5a257450c797c1de08fa62a7bfb5760d5a46077e2a8609c0400b4ecf",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const ending = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const ending = 1;"
+                  },
+                  "patchHash": "b4d89613c1100e9462bb68679247ea91d323229c935d36d520df473f1bef5d61",
+                  "patch": "Index: endings.ts\n===================================================================\n--- endings.ts\n+++ endings.ts\n@@ -1,1 +1,1 @@\n-export const ending = 1;\n+export const ending = 1;\n\\ No newline at end of file\n"
+                },
+                {
+                  "id": "52bb319659a641d840a7fe8f",
+                  "oldPath": "large.dat",
+                  "path": "large.dat",
+                  "status": "modified",
+                  "fingerprint": "4a3feac6da2574fd6ddf46f124a8d649088e5a33371f778dd5eef25398a6a386",
+                  "before": {
+                    "kind": "text",
+                    "text": "small\n"
+                  },
+                  "after": {
+                    "kind": "oversized",
+                    "reason": "Text display limit is 2 MiB."
+                  },
+                  "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "patch": ""
+                },
+                {
+                  "id": "925464aa5dc6db887cc2d50f",
+                  "oldPath": "old name.ts",
+                  "path": "new name.ts",
+                  "status": "renamed",
+                  "fingerprint": "7980aa7cc6c76c2f44c6d6513bbaee469df1d08261103659374733c368a71532",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const renamed = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const renamed = 1;\n"
+                  },
+                  "patchHash": "a562bc7bb7e18b1c031b05e81b1d291dfa11cc8a8be43b8c72a57fb6463a5225",
+                  "patch": "===================================================================\n--- old name.ts\n+++ new name.ts\n"
+                },
+                {
+                  "id": "9d8314551aaf6e26888c15d7",
+                  "oldPath": "src/choose.ts",
+                  "path": "src/choose.ts",
+                  "status": "modified",
+                  "fingerprint": "015ab14d44f3ba165ea721086fd209d873b4f6d88703cc791a015b4c913bd019",
+                  "before": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  return x;\n}\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n// working change\n"
+                  },
+                  "patchHash": "2c47e9fa1290ecf17912f7109205d9d18dfa0220886b1808161cf77bfe5c107c",
+                  "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,3 +1,5 @@\n export function choose(x: number) {\n-  return x;\n+  if (x > 0) return x;\n+  return 0;\n }\n+// working change\n"
+                },
+                {
+                  "id": "7ebdbe841b7f3d777c02b328",
+                  "oldPath": "café.ts",
+                  "path": "café.ts",
+                  "status": "added",
+                  "fingerprint": "8c329d2289fe8839f21660beb35bfb4e7633ba5d207f7fe7d3eb5b5a8a6ff2e3",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const café = '😀';\r\n"
+                  },
+                  "patchHash": "7efe0e37a46253ce5267e9fa270cc9186714b7e65e4b1d5b65c18a41c3e1707a",
+                  "patch": "Index: café.ts\n===================================================================\n--- \"caf\\303\\251.ts\"\n+++ \"caf\\303\\251.ts\"\n@@ -0,0 +1,1 @@\n+export const café = '😀';\r\n"
+                }
+              ],
+              "head": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "base": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "graphContext": {
+                "before": {
+                  "revision": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "8352675d67aed6625ece79af41c27fdb4ee2e867"
+                    },
+                    {
+                      "path": "deleted.ts",
+                      "mode": "100644",
+                      "oid": "378d9f7cf5c48ab35f5f8896fdb6992a3fa4a762"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "29dd761c618fee2aa89f4b9f5c2f115b66f1363b"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "ac790413e2d7a26c3767e78c57bb28716686eebc"
+                    },
+                    {
+                      "path": "old name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "ad6c6a8794858a738eeff103f17dfaf2bb85e1b1"
+                    }
+                  ]
+                },
+                "after": {
+                  "revision": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "8352675d67aed6625ece79af41c27fdb4ee2e867"
+                    },
+                    {
+                      "path": "deleted.ts",
+                      "mode": "100644",
+                      "oid": "378d9f7cf5c48ab35f5f8896fdb6992a3fa4a762"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "29dd761c618fee2aa89f4b9f5c2f115b66f1363b"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "ac790413e2d7a26c3767e78c57bb28716686eebc"
+                    },
+                    {
+                      "path": "old name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "ad6c6a8794858a738eeff103f17dfaf2bb85e1b1"
+                    }
+                  ]
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "all",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "capture",
+          "name": "index only",
+          "mode": "staged",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "6c31df68e071d8cf67ea1a52",
+                  "oldPath": "added.ts",
+                  "path": "added.ts",
+                  "status": "added",
+                  "fingerprint": "9f6a28d445790dd719d6ef5f6663049c60f2d48ab20c402a4052af374baa7667",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const added = true;"
+                  },
+                  "patchHash": "24b618365ef2a70cdb81af12f12238ff5579b65b4d4ab358663175c7832a9686",
+                  "patch": "Index: added.ts\n===================================================================\n--- added.ts\n+++ added.ts\n@@ -0,0 +1,1 @@\n+export const added = true;\n\\ No newline at end of file\n"
+                },
+                {
+                  "id": "ecfab7762add6adf155b1a2d",
+                  "oldPath": "binary.dat",
+                  "path": "binary.dat",
+                  "status": "modified",
+                  "fingerprint": "95f4631cd521b1361a5e9ec3d38c0a44ae5bcc9bd6328d4c3e0b5d4099e91904",
+                  "before": {
+                    "kind": "binary"
+                  },
+                  "after": {
+                    "kind": "binary"
+                  },
+                  "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "patch": ""
+                },
+                {
+                  "id": "7ea8c8e0b38f242c9a599c49",
+                  "oldPath": "deleted.ts",
+                  "path": "deleted.ts",
+                  "status": "deleted",
+                  "fingerprint": "cfa674c7f89947dcb88b176bc51e0244344016ca099438f21c057e8e57e5ae6f",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const removed = 1;\n"
+                  },
+                  "after": {
+                    "kind": "absent"
+                  },
+                  "patchHash": "f0f7a1d42b7c06e6744c24e308073c66902d9afbf92ae18311da4853e89eb1f0",
+                  "patch": "Index: deleted.ts\n===================================================================\n--- deleted.ts\n+++ deleted.ts\n@@ -1,1 +0,0 @@\n-export const removed = 1;\n"
+                },
+                {
+                  "id": "b561c9c4b1e23f7a9808a9bd",
+                  "oldPath": "endings.ts",
+                  "path": "endings.ts",
+                  "status": "modified",
+                  "fingerprint": "e30870ca5a257450c797c1de08fa62a7bfb5760d5a46077e2a8609c0400b4ecf",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const ending = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const ending = 1;"
+                  },
+                  "patchHash": "b4d89613c1100e9462bb68679247ea91d323229c935d36d520df473f1bef5d61",
+                  "patch": "Index: endings.ts\n===================================================================\n--- endings.ts\n+++ endings.ts\n@@ -1,1 +1,1 @@\n-export const ending = 1;\n+export const ending = 1;\n\\ No newline at end of file\n"
+                },
+                {
+                  "id": "52bb319659a641d840a7fe8f",
+                  "oldPath": "large.dat",
+                  "path": "large.dat",
+                  "status": "modified",
+                  "fingerprint": "8b02bbe7ab1e4f1341cfb1d1a022315911dfa466b084e6d2b989cba8cb7607a6",
+                  "before": {
+                    "kind": "text",
+                    "text": "small\n"
+                  },
+                  "after": {
+                    "kind": "oversized",
+                    "reason": "Text display limit is 2 MiB."
+                  },
+                  "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "patch": ""
+                },
+                {
+                  "id": "925464aa5dc6db887cc2d50f",
+                  "oldPath": "old name.ts",
+                  "path": "new name.ts",
+                  "status": "renamed",
+                  "fingerprint": "7980aa7cc6c76c2f44c6d6513bbaee469df1d08261103659374733c368a71532",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const renamed = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const renamed = 1;\n"
+                  },
+                  "patchHash": "a562bc7bb7e18b1c031b05e81b1d291dfa11cc8a8be43b8c72a57fb6463a5225",
+                  "patch": "===================================================================\n--- old name.ts\n+++ new name.ts\n"
+                },
+                {
+                  "id": "9d8314551aaf6e26888c15d7",
+                  "oldPath": "src/choose.ts",
+                  "path": "src/choose.ts",
+                  "status": "modified",
+                  "fingerprint": "ca2bb9c5c71e65794467dc2ce5f5a06226ad2ef1e97712e4706dbf8433815312",
+                  "before": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  return x;\n}\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n"
+                  },
+                  "patchHash": "b74e5e21ed2b7107c321f639ffad72cb39e115fd64f9e15a8b2ec8cc11501731",
+                  "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,3 +1,4 @@\n export function choose(x: number) {\n-  return x;\n+  if (x > 0) return x;\n+  return 0;\n }\n"
+                }
+              ],
+              "head": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "base": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "graphContext": {
+                "before": {
+                  "revision": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "8352675d67aed6625ece79af41c27fdb4ee2e867"
+                    },
+                    {
+                      "path": "deleted.ts",
+                      "mode": "100644",
+                      "oid": "378d9f7cf5c48ab35f5f8896fdb6992a3fa4a762"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "29dd761c618fee2aa89f4b9f5c2f115b66f1363b"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "ac790413e2d7a26c3767e78c57bb28716686eebc"
+                    },
+                    {
+                      "path": "old name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "ad6c6a8794858a738eeff103f17dfaf2bb85e1b1"
+                    }
+                  ]
+                },
+                "after": {
+                  "revision": "captured-index",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "added.ts",
+                      "mode": "100644",
+                      "oid": "78bbe42519d929e8a2cbf4ad2608bb1de8f6c912"
+                    },
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "1592e5c60f1a460928916dc5681fee1a9bd10868"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "fb8742705cdfd5624ffa9bb2dc3b76f4763f8b37"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "f4a96e8b95a2adf2d400de517e23497adefe2ffc"
+                    },
+                    {
+                      "path": "new name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "72809eb598a58a2d16c55ac792027075344b3c3d"
+                    }
+                  ]
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "staged",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "capture",
+          "name": "working versus index",
+          "mode": "unstaged",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "9d8314551aaf6e26888c15d7",
+                  "oldPath": "src/choose.ts",
+                  "path": "src/choose.ts",
+                  "status": "modified",
+                  "fingerprint": "d936ac3a1a02ca40b93643b9def13c989cdacb20c62115b60368f9a7ba4b8136",
+                  "before": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n// working change\n"
+                  },
+                  "patchHash": "2aaa05cc7477f4b30cdc0005f2105d659a106a05bad0acebff52a87aa226d057",
+                  "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,4 +1,5 @@\n export function choose(x: number) {\n   if (x > 0) return x;\n   return 0;\n }\n+// working change\n"
+                },
+                {
+                  "id": "7ebdbe841b7f3d777c02b328",
+                  "oldPath": "café.ts",
+                  "path": "café.ts",
+                  "status": "added",
+                  "fingerprint": "8c329d2289fe8839f21660beb35bfb4e7633ba5d207f7fe7d3eb5b5a8a6ff2e3",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const café = '😀';\r\n"
+                  },
+                  "patchHash": "7efe0e37a46253ce5267e9fa270cc9186714b7e65e4b1d5b65c18a41c3e1707a",
+                  "patch": "Index: café.ts\n===================================================================\n--- \"caf\\303\\251.ts\"\n+++ \"caf\\303\\251.ts\"\n@@ -0,0 +1,1 @@\n+export const café = '😀';\r\n"
+                }
+              ],
+              "head": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "base": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "graphContext": {
+                "before": {
+                  "revision": "captured-index",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "added.ts",
+                      "mode": "100644",
+                      "oid": "78bbe42519d929e8a2cbf4ad2608bb1de8f6c912"
+                    },
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "1592e5c60f1a460928916dc5681fee1a9bd10868"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "fb8742705cdfd5624ffa9bb2dc3b76f4763f8b37"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "f4a96e8b95a2adf2d400de517e23497adefe2ffc"
+                    },
+                    {
+                      "path": "new name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "72809eb598a58a2d16c55ac792027075344b3c3d"
+                    }
+                  ]
+                },
+                "after": {
+                  "revision": "captured-index",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "added.ts",
+                      "mode": "100644",
+                      "oid": "78bbe42519d929e8a2cbf4ad2608bb1de8f6c912"
+                    },
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "1592e5c60f1a460928916dc5681fee1a9bd10868"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "fb8742705cdfd5624ffa9bb2dc3b76f4763f8b37"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "f4a96e8b95a2adf2d400de517e23497adefe2ffc"
+                    },
+                    {
+                      "path": "new name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "72809eb598a58a2d16c55ac792027075344b3c3d"
+                    }
+                  ]
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "unstaged",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "git",
+          "args": [
+            "commit",
+            "-m",
+            "feature"
+          ]
+        },
+        {
+          "op": "capture",
+          "name": "merge-base branch",
+          "mode": "branch",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "6c31df68e071d8cf67ea1a52",
+                  "oldPath": "added.ts",
+                  "path": "added.ts",
+                  "status": "added",
+                  "fingerprint": "9f6a28d445790dd719d6ef5f6663049c60f2d48ab20c402a4052af374baa7667",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const added = true;"
+                  },
+                  "patchHash": "24b618365ef2a70cdb81af12f12238ff5579b65b4d4ab358663175c7832a9686",
+                  "patch": "Index: added.ts\n===================================================================\n--- added.ts\n+++ added.ts\n@@ -0,0 +1,1 @@\n+export const added = true;\n\\ No newline at end of file\n"
+                },
+                {
+                  "id": "ecfab7762add6adf155b1a2d",
+                  "oldPath": "binary.dat",
+                  "path": "binary.dat",
+                  "status": "modified",
+                  "fingerprint": "95f4631cd521b1361a5e9ec3d38c0a44ae5bcc9bd6328d4c3e0b5d4099e91904",
+                  "before": {
+                    "kind": "binary"
+                  },
+                  "after": {
+                    "kind": "binary"
+                  },
+                  "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "patch": ""
+                },
+                {
+                  "id": "7ea8c8e0b38f242c9a599c49",
+                  "oldPath": "deleted.ts",
+                  "path": "deleted.ts",
+                  "status": "deleted",
+                  "fingerprint": "cfa674c7f89947dcb88b176bc51e0244344016ca099438f21c057e8e57e5ae6f",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const removed = 1;\n"
+                  },
+                  "after": {
+                    "kind": "absent"
+                  },
+                  "patchHash": "f0f7a1d42b7c06e6744c24e308073c66902d9afbf92ae18311da4853e89eb1f0",
+                  "patch": "Index: deleted.ts\n===================================================================\n--- deleted.ts\n+++ deleted.ts\n@@ -1,1 +0,0 @@\n-export const removed = 1;\n"
+                },
+                {
+                  "id": "b561c9c4b1e23f7a9808a9bd",
+                  "oldPath": "endings.ts",
+                  "path": "endings.ts",
+                  "status": "modified",
+                  "fingerprint": "e30870ca5a257450c797c1de08fa62a7bfb5760d5a46077e2a8609c0400b4ecf",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const ending = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const ending = 1;"
+                  },
+                  "patchHash": "b4d89613c1100e9462bb68679247ea91d323229c935d36d520df473f1bef5d61",
+                  "patch": "Index: endings.ts\n===================================================================\n--- endings.ts\n+++ endings.ts\n@@ -1,1 +1,1 @@\n-export const ending = 1;\n+export const ending = 1;\n\\ No newline at end of file\n"
+                },
+                {
+                  "id": "52bb319659a641d840a7fe8f",
+                  "oldPath": "large.dat",
+                  "path": "large.dat",
+                  "status": "modified",
+                  "fingerprint": "8b02bbe7ab1e4f1341cfb1d1a022315911dfa466b084e6d2b989cba8cb7607a6",
+                  "before": {
+                    "kind": "text",
+                    "text": "small\n"
+                  },
+                  "after": {
+                    "kind": "oversized",
+                    "reason": "Text display limit is 2 MiB."
+                  },
+                  "patchHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "patch": ""
+                },
+                {
+                  "id": "925464aa5dc6db887cc2d50f",
+                  "oldPath": "old name.ts",
+                  "path": "new name.ts",
+                  "status": "renamed",
+                  "fingerprint": "7980aa7cc6c76c2f44c6d6513bbaee469df1d08261103659374733c368a71532",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const renamed = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const renamed = 1;\n"
+                  },
+                  "patchHash": "a562bc7bb7e18b1c031b05e81b1d291dfa11cc8a8be43b8c72a57fb6463a5225",
+                  "patch": "===================================================================\n--- old name.ts\n+++ new name.ts\n"
+                },
+                {
+                  "id": "9d8314551aaf6e26888c15d7",
+                  "oldPath": "src/choose.ts",
+                  "path": "src/choose.ts",
+                  "status": "modified",
+                  "fingerprint": "ca2bb9c5c71e65794467dc2ce5f5a06226ad2ef1e97712e4706dbf8433815312",
+                  "before": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  return x;\n}\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export function choose(x: number) {\n  if (x > 0) return x;\n  return 0;\n}\n"
+                  },
+                  "patchHash": "b74e5e21ed2b7107c321f639ffad72cb39e115fd64f9e15a8b2ec8cc11501731",
+                  "patch": "Index: src/choose.ts\n===================================================================\n--- src/choose.ts\n+++ src/choose.ts\n@@ -1,3 +1,4 @@\n export function choose(x: number) {\n-  return x;\n+  if (x > 0) return x;\n+  return 0;\n }\n"
+                }
+              ],
+              "head": "e9cf2dddb1b0883ad24daa970ab9dfcdbdf18d73",
+              "base": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+              "graphContext": {
+                "before": {
+                  "revision": "688211ed81ea6206c3499ed533b3f0951fd7aeb7",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "8352675d67aed6625ece79af41c27fdb4ee2e867"
+                    },
+                    {
+                      "path": "deleted.ts",
+                      "mode": "100644",
+                      "oid": "378d9f7cf5c48ab35f5f8896fdb6992a3fa4a762"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "29dd761c618fee2aa89f4b9f5c2f115b66f1363b"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "ac790413e2d7a26c3767e78c57bb28716686eebc"
+                    },
+                    {
+                      "path": "old name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "ad6c6a8794858a738eeff103f17dfaf2bb85e1b1"
+                    }
+                  ]
+                },
+                "after": {
+                  "revision": "e9cf2dddb1b0883ad24daa970ab9dfcdbdf18d73",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "added.ts",
+                      "mode": "100644",
+                      "oid": "78bbe42519d929e8a2cbf4ad2608bb1de8f6c912"
+                    },
+                    {
+                      "path": "binary.dat",
+                      "mode": "100644",
+                      "oid": "1592e5c60f1a460928916dc5681fee1a9bd10868"
+                    },
+                    {
+                      "path": "endings.ts",
+                      "mode": "100644",
+                      "oid": "fb8742705cdfd5624ffa9bb2dc3b76f4763f8b37"
+                    },
+                    {
+                      "path": "large.dat",
+                      "mode": "100644",
+                      "oid": "f4a96e8b95a2adf2d400de517e23497adefe2ffc"
+                    },
+                    {
+                      "path": "new name.ts",
+                      "mode": "100644",
+                      "oid": "9a53245f7926b95462d99bfb286068b7048b8b3e"
+                    },
+                    {
+                      "path": "src/choose.ts",
+                      "mode": "100644",
+                      "oid": "72809eb598a58a2d16c55ac792027075344b3c3d"
+                    }
+                  ]
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "branch",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "unborn",
+      "operations": [
+        {
+          "op": "git",
+          "args": [
+            "init",
+            "--object-format=sha1",
+            "-b",
+            "main"
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "config",
+            "user.name",
+            "Core fixture"
+          ]
+        },
+        {
+          "op": "git",
+          "args": [
+            "config",
+            "user.email",
+            "fixture@example.invalid"
+          ]
+        },
+        {
+          "op": "write",
+          "path": "staged.ts",
+          "text": "export const staged = 1;\n"
+        },
+        {
+          "op": "git",
+          "args": [
+            "add",
+            "."
+          ]
+        },
+        {
+          "op": "write",
+          "path": "staged.ts",
+          "text": "export const staged = 2;\n"
+        },
+        {
+          "op": "write",
+          "path": "new.ts",
+          "text": "export const fresh = true;\n"
+        },
+        {
+          "op": "capture",
+          "name": "unborn all",
+          "mode": "all",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "2b1d2593581feed5ca1f6848",
+                  "oldPath": "staged.ts",
+                  "path": "staged.ts",
+                  "status": "added",
+                  "fingerprint": "3a79f9a3466e4a26257a6ea0f99e5b45c80e503989f4df35f84c916d060468c7",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const staged = 2;\n"
+                  },
+                  "patchHash": "0f85a75ba3ab013c9083018a9a752442ea9fe3716c34b2d45a3ee7e008a8a3e5",
+                  "patch": "Index: staged.ts\n===================================================================\n--- staged.ts\n+++ staged.ts\n@@ -0,0 +1,1 @@\n+export const staged = 2;\n"
+                },
+                {
+                  "id": "94048ba03e67b8df1d0a4d2b",
+                  "oldPath": "new.ts",
+                  "path": "new.ts",
+                  "status": "added",
+                  "fingerprint": "32b016af29dfc48630f40c2de6bca09ecca978fb2dc2d2ac7aae36c28a9df080",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const fresh = true;\n"
+                  },
+                  "patchHash": "6e58ea59bc46c058f29166872017c5aca29f4780b9da41c6a72a02600a7e5dfb",
+                  "patch": "Index: new.ts\n===================================================================\n--- new.ts\n+++ new.ts\n@@ -0,0 +1,1 @@\n+export const fresh = true;\n"
+                }
+              ],
+              "head": null,
+              "base": null,
+              "graphContext": {
+                "before": {
+                  "revision": "empty",
+                  "complete": true,
+                  "entries": []
+                },
+                "after": {
+                  "revision": "empty",
+                  "complete": true,
+                  "entries": []
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "all",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "capture",
+          "name": "unborn index",
+          "mode": "staged",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "2b1d2593581feed5ca1f6848",
+                  "oldPath": "staged.ts",
+                  "path": "staged.ts",
+                  "status": "added",
+                  "fingerprint": "20a07e619dfb670c32b337914b79a69f6dbb5942c30de7bcd709b6a833e11620",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const staged = 1;\n"
+                  },
+                  "patchHash": "39727d129cc24d59042c504190b1231ac444478f61d98a9851a406fde4f2cdfa",
+                  "patch": "Index: staged.ts\n===================================================================\n--- staged.ts\n+++ staged.ts\n@@ -0,0 +1,1 @@\n+export const staged = 1;\n"
+                }
+              ],
+              "head": null,
+              "base": null,
+              "graphContext": {
+                "before": {
+                  "revision": "empty",
+                  "complete": true,
+                  "entries": []
+                },
+                "after": {
+                  "revision": "captured-index",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "staged.ts",
+                      "mode": "100644",
+                      "oid": "d89d59905bf0d553cb86a73674866440d193dd2c"
+                    }
+                  ]
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "staged",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "capture",
+          "name": "unborn working",
+          "mode": "unstaged",
+          "expected": {
+            "snapshot": {
+              "files": [
+                {
+                  "id": "2b1d2593581feed5ca1f6848",
+                  "oldPath": "staged.ts",
+                  "path": "staged.ts",
+                  "status": "modified",
+                  "fingerprint": "efd6ca3d719f216ddccc2fafc533a7418f4a00b5e7dae5031aea98da458405d3",
+                  "before": {
+                    "kind": "text",
+                    "text": "export const staged = 1;\n"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const staged = 2;\n"
+                  },
+                  "patchHash": "d5f79d4bedd0fcdfaed71abfaad73a48a82361e400664bc63904df344116b441",
+                  "patch": "Index: staged.ts\n===================================================================\n--- staged.ts\n+++ staged.ts\n@@ -1,1 +1,1 @@\n-export const staged = 1;\n+export const staged = 2;\n"
+                },
+                {
+                  "id": "94048ba03e67b8df1d0a4d2b",
+                  "oldPath": "new.ts",
+                  "path": "new.ts",
+                  "status": "added",
+                  "fingerprint": "32b016af29dfc48630f40c2de6bca09ecca978fb2dc2d2ac7aae36c28a9df080",
+                  "before": {
+                    "kind": "absent"
+                  },
+                  "after": {
+                    "kind": "text",
+                    "text": "export const fresh = true;\n"
+                  },
+                  "patchHash": "6e58ea59bc46c058f29166872017c5aca29f4780b9da41c6a72a02600a7e5dfb",
+                  "patch": "Index: new.ts\n===================================================================\n--- new.ts\n+++ new.ts\n@@ -0,0 +1,1 @@\n+export const fresh = true;\n"
+                }
+              ],
+              "head": null,
+              "base": null,
+              "graphContext": {
+                "before": {
+                  "revision": "captured-index",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "staged.ts",
+                      "mode": "100644",
+                      "oid": "d89d59905bf0d553cb86a73674866440d193dd2c"
+                    }
+                  ]
+                },
+                "after": {
+                  "revision": "captured-index",
+                  "complete": true,
+                  "entries": [
+                    {
+                      "path": "staged.ts",
+                      "mode": "100644",
+                      "oid": "d89d59905bf0d553cb86a73674866440d193dd2c"
+                    }
+                  ]
+                }
+              },
+              "root": "<repository>",
+              "comparison": {
+                "mode": "unstaged",
+                "base": "main"
+              },
+              "sessionId": "<session>",
+              "id": "<snapshot>",
+              "capturedAt": "<timestamp>",
+              "complete": true
+            },
+            "state": {
+              "reviewed": [],
+              "accepted": null,
+              "proposal": null,
+              "drafts": [],
+              "analysisStatus": "idle"
+            },
+            "history": [
+              {
+                "id": "<snapshot>",
+                "capturedAt": "<timestamp>"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
